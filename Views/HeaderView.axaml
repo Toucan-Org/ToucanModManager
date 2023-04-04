@@ -34,6 +34,13 @@
           <Menu>
 
             <MenuItem Header="File" Foreground="DarkGray">
+              <MenuItem Header="Install">
+                <MenuItem Header="Local" />
+                <MenuItem Header="Github" />
+                <MenuItem Header="Spacedock" />
+                <MenuItem Header="Toucan" />
+              </MenuItem>
+              <Separator />
               <MenuItem Header="New Profile" />
               <MenuItem Header="Open Profile" />
               <MenuItem Header="Save Profile" />
