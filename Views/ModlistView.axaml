@@ -1,0 +1,89 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:ToucanUI.ViewModels"
+             xmlns:converters="using:ToucanUI.Converters"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="ToucanUI.Views.ModlistView"
+             Background="Transparent">
+
+  <UserControl.DataContext>
+    <vm:ModlistViewModel/>
+  </UserControl.DataContext>
+
+  <UserControl.Resources>
+    <converters:ProgressToBrushConverter x:Key="ProgressToBrushConverter"/>
+    <converters:ProgressToStatusConverter x:Key="ProgressToStatusConverter"/>
+  </UserControl.Resources>
+
+
+  <Border CornerRadius="15">
+    <ListBox Name="ModListBox" Items="{Binding Mods}" SelectionMode="Single" Background="#181818">
+      <ListBox.Styles>
+        <Style Selector="ListBoxItem">
+          <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+          <Setter Property="Margin" Value="0 0 0 0"/>
+        </Style>
+
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+          <Setter Property="Background" Value="#3e3e3e" />
+        </Style>
+      </ListBox.Styles>
+      
+      
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <Border Background="#202020" CornerRadius="5" Padding="5">
+            <Grid RowDefinitions="*, Auto, Auto, *, Auto"
+                  ColumnDefinitions="Auto, Auto, *, *, *, 3*, Auto, Auto" Margin="10">
+
+              <CheckBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" Margin="5"></CheckBox>
+              <Ellipse Width="45" Height="45" Fill="White" Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Margin="5"></Ellipse>
+
+              <TextBlock Text="{Binding Name}" FontWeight="Bold"
+                         Grid.Row="1" Grid.Column="2" Margin="15 5 10 5"/>
+              <TextBlock Text="{Binding Author}" FontStyle="Italic" Foreground="Gray"
+                         Grid.Row="2" Grid.Column="2" Margin="15 5 10 5"/>
+
+              <TextBlock Text="Game Version" FontSize="10"
+                           Grid.Row="1" Grid.Column="3" Margin="15 5 0 15"/>
+              <TextBlock Text="{Binding GameVersion}" Foreground="Gray"
+                         Grid.Row="2" Grid.Column="3" Margin="15 0 0 15"/>
+
+
+
+              <TextBlock Text="Mod Version" FontSize="10"
+                         Grid.Row="1" Grid.Column="4" Margin="15 5 0 15"/>
+              <TextBlock Text="{Binding ModVersion}" Foreground="Gray"
+                         Grid.Row="2" Grid.Column="4" Margin="15 0 0 15"/>
+
+              <Button Content="Download" Grid.Row="1" Grid.RowSpan="2" Grid.Column="6" Margin="5"
+                      Command="{Binding DataContext.DownloadMod, ElementName=ModListBox}"
+                      CommandParameter="{Binding}"/>
+
+
+
+
+              <Path Fill="White" Data="M0,0 L20,10 L0,20Z" Grid.Row="1" Grid.RowSpan="2" Grid.Column="7" Margin="15 20 5 0"/>
+              
+              <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="8">
+                <TextBlock Text="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}}" FontSize="12"
+                           Foreground="Gray" Margin="5 10 0 5"/>
+
+                <ProgressBar Margin="5" Value="{Binding Progress}"
+                             Foreground="{Binding Progress, Converter={StaticResource ProgressToBrushConverter}}"/>
+
+
+              </StackPanel>
+
+            </Grid>
+          </Border>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+      
+    </ListBox>
+
+
+  </Border>
+</UserControl>
