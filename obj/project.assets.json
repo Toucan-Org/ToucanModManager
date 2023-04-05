@@ -4625,11 +4625,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\lokir\\Documents\\Programming\\ToucanUI\\ToucanUI.csproj",
+      "projectUniqueName": "C:\\Users\\lokir\\Documents\\Programming\\ToucanModManager\\ToucanUI.csproj",
       "projectName": "ToucanUI",
-      "projectPath": "C:\\Users\\lokir\\Documents\\Programming\\ToucanUI\\ToucanUI.csproj",
+      "projectPath": "C:\\Users\\lokir\\Documents\\Programming\\ToucanModManager\\ToucanUI.csproj",
       "packagesPath": "C:\\Users\\lokir\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\lokir\\Documents\\Programming\\ToucanUI\\obj\\",
+      "outputPath": "C:\\Users\\lokir\\Documents\\Programming\\ToucanModManager\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ekp0ZqqgGKIVwjz3US1yKyPitl3wDN1B+Gex1FYIjfy2bv8rbaFSGnsD5J/9iwWQHcN4bq6nJcxFtczoziPY9w==",
+  "dgSpecHash": "Sr7wz4Y6x3n4l9awGZ1wz/NapfWh1fvSVBnvatJnUTmIrNn98o4EZOapHft0ww05AYDj4IkWMVjglm3t61O4GA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\lokir\\Documents\\Programming\\ToucanUI\\ToucanUI.csproj",
+  "projectFilePath": "C:\\Users\\lokir\\Documents\\Programming\\ToucanModManager\\ToucanUI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\lokir\\.nuget\\packages\\avalonia\\0.10.18\\avalonia.0.10.18.nupkg.sha512",
     "C:\\Users\\lokir\\.nuget\\packages\\avalonia.angle.windows.natives\\2.1.0.2020091801\\avalonia.angle.windows.natives.2.1.0.2020091801.nupkg.sha512",

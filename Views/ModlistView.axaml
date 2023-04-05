@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:ToucanUI.ViewModels"
              xmlns:converters="using:ToucanUI.Converters"
+             xmlns:controls="using:ToucanUI.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ToucanUI.Views.ModlistView"
              Background="Transparent">
@@ -62,6 +63,11 @@
                       Command="{Binding DataContext.DownloadMod, ElementName=ModListBox}"
                       CommandParameter="{Binding}"/>
 
+              <!-- IN PROGRESS -->
+
+              <!--<Button Grid.Row="1" Grid.RowSpan="2" Grid.Column="6" Margin="5"
+                      Template="{StaticResource DownloadButtonTemplate}"
+                      Command="{Binding DownloadCommand}" CommandParameter="{Binding}" />-->
 
 
 

@@ -17,7 +17,6 @@ namespace ToucanUI.ViewModels
 {
     public class ModlistViewModel : ViewModelBase
     {
-        //SPACEDOCK API
         SpacedockAPI api = new SpacedockAPI();
 
         public ObservableCollection<Mod> Mods { get; set; }
@@ -29,6 +28,7 @@ namespace ToucanUI.ViewModels
             set => this.RaiseAndSetIfChanged(ref _selectedMod, value);
         }
 
+        // MODLIST VIEWMODEL CONSTRUCTOR
         public ModlistViewModel()
         {
             DownloadMod = ReactiveCommand.Create<Mod>(mod => DownloadModAsync(mod));
@@ -37,6 +37,8 @@ namespace ToucanUI.ViewModels
 
         public ReactiveCommand<Mod, Unit> DownloadMod { get; }
 
+
+        // Load the mod list from the API
         private async Task LoadMods(bool useDummyData = false)
         {
             var mods = await api.GetMods(useDummyData);
@@ -49,6 +51,8 @@ namespace ToucanUI.ViewModels
             }
         }
 
+
+        // Function to download a mod asynchronously
         public async Task DownloadModAsync(Mod mod)
         {
             mod.IsInstalled = false;
@@ -56,6 +60,7 @@ namespace ToucanUI.ViewModels
 
             while (mod.Progress <= 100)
             {
+                // Dummy code to simulate downloading
                 await Task.Delay(100);
                 mod.Progress += 1;
                 Debug.WriteLine($"Mod {mod.Name} at {mod.Progress}%");
