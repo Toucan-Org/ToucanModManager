@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:ToucanUI.ViewModels"
+             xmlns:converters="using:ToucanUI.Converters"
+             xmlns:controls="using:ToucanUI.Controls"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
+             x:Class="ToucanUI.Views.SidePanelView"
+             Background="Transparent">
+
+
+	<Border Padding = "5" Background="#181818">
+		<Border CornerRadius="5" Background="#202020">
+			<Grid RowDefinitions="*, *, *, *, *" 
+                      ColumnDefinitions="*, *, *, *, *, *,*" Margin="10">
+
+				<TextBlock Text="Test" FontWeight="Bold"
+				    Grid.Row="6" Grid.Column="0" VerticalAlignment="Bottom" Margin="15 5 10 5"/>
+
+
+				<TextBlock Text="Test" FontWeight="Bold"
+				    Grid.Row="6" Grid.Column="6" VerticalAlignment="Bottom" Margin="15 5 10 5"/>
+                
+			</Grid>
+		</Border>
+	</Border>
+</UserControl>
