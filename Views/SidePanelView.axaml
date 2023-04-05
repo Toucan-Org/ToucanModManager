@@ -5,24 +5,31 @@
              xmlns:vm="using:ToucanUI.ViewModels"
              xmlns:converters="using:ToucanUI.Converters"
              xmlns:controls="using:ToucanUI.Controls"
-             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+			 x:DataType="vm:SidePanelViewModel"
              x:Class="ToucanUI.Views.SidePanelView"
              Background="Transparent">
 
+	<UserControl.DataContext>
+		<vm:SidePanelViewModel/>
+	</UserControl.DataContext>
 
-	<Border Padding = "5" Background="#181818">
+	<Border IsVisible="{Binding SidePanelVisible}" Padding = "5" Background="#181818">
 		<Border CornerRadius="5" Background="#202020">
 			<Grid RowDefinitions="*, *, *, *, *" 
-                      ColumnDefinitions="*, *, *, *, *, *,*" Margin="10">
+                      ColumnDefinitions="2*, *, *, *, *, 2*" Margin="10">
+
+				<TextBlock Text="Test Test Test Test Test Test" FontWeight="Bold"
+				    Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" VerticalAlignment="Bottom" Margin="15 5 10 5"/>
 
 				<TextBlock Text="Test" FontWeight="Bold"
 				    Grid.Row="6" Grid.Column="0" VerticalAlignment="Bottom" Margin="15 5 10 5"/>
-
-
 				<TextBlock Text="Test" FontWeight="Bold"
-				    Grid.Row="6" Grid.Column="6" VerticalAlignment="Bottom" Margin="15 5 10 5"/>
-                
+				    Grid.Row="6" Grid.Column="5" VerticalAlignment="Bottom" Margin="15 5 10 5"/>
+				
+				<Button Content="{Binding BtnText, Mode=TwoWay}" Command="{Binding SwitchViewCommand}"/>
 			</Grid>
 		</Border>
 	</Border>
+	
 </UserControl>
