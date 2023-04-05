@@ -26,6 +26,7 @@ namespace ToucanUI.ViewModels
         {
             get => _selectedMod;
             set => this.RaiseAndSetIfChanged(ref _selectedMod, value);
+            
         }
 
         // MODLIST VIEWMODEL CONSTRUCTOR
@@ -33,6 +34,9 @@ namespace ToucanUI.ViewModels
         {
             DownloadMod = ReactiveCommand.Create<Mod>(mod => DownloadModAsync(mod));
             LoadMods(true);
+
+            
+            
         }
 
         public ReactiveCommand<Mod, Unit> DownloadMod { get; }
@@ -68,6 +72,7 @@ namespace ToucanUI.ViewModels
 
             mod.IsInstalled = true;
         }
+
 
     }
 }
