@@ -5,6 +5,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 
+// The Mod Object, which is used to store the data from the Spacedock API. This can be improved greatly
+
 namespace ToucanUI.Models
 {
     public class Mod : INotifyPropertyChanged

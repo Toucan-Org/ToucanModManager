@@ -35,4 +35,8 @@
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.18" />
     
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controls\" />
+  </ItemGroup>
 </Project>
