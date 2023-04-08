@@ -12,7 +12,11 @@ namespace ToucanUI.ViewModels
         public Mod SelectedMod
         {
             get => _selectedMod;
-            set => this.RaiseAndSetIfChanged(ref _selectedMod, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _selectedMod, value);
+                SidePanelVM.SidePanelVisible = true;
+            }
         }
 
         // In constructor create and refernce both child View Models
