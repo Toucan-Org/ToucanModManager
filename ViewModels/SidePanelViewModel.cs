@@ -19,36 +19,23 @@ namespace ToucanUI.ViewModels
     {
         //Create a MainViewModel as a parent
         public MainWindowViewModel MainViewModel { get; }
-        public ReactiveCommand<Unit, Unit> SwitchViewCommand { get; }
         public SidePanelViewModel(MainWindowViewModel mainViewModel) 
         {
             //Has to be passed into the child constructors
             MainViewModel = mainViewModel;
 
-            _btnText = "Not Clicked";
-            SwitchViewCommand = ReactiveCommand.Create(SwitchViewAndUpdateDisplayText);
+         
         }
-        private string? _btnText;
 
-        private bool _sidePanelVisible = true;
+        private bool _sidePanelVisible = false;
         public bool SidePanelVisible
         {
             get => _sidePanelVisible;
+            set => this.RaiseAndSetIfChanged(ref _sidePanelVisible, value);
             
-        }
-
-        public string? BtnText 
-        {
-            get => _btnText;
-            set => this.RaiseAndSetIfChanged(ref _btnText, value);
-
         }
 
         
-        public void SwitchViewAndUpdateDisplayText()
-        {
-            BtnText = "Clicked";
-            
-        }
+       
     }
 }
