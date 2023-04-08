@@ -32,11 +32,15 @@
       </ExperimentalAcrylicBorder.Material>
     </ExperimentalAcrylicBorder>
 
-    <Grid RowDefinitions="Auto, *">
+    <Grid RowDefinitions="Auto, *" ColumnDefinitions="*, Auto">
       <!-- Header -->
-      <views:HeaderView Grid.Row="0"/>
+      <views:HeaderView Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"/>
       <!-- Content -->
-      <views:ModlistView Grid.Row="1"/>
+      <views:ModlistView x:Name="ModlistViewControl" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="1"
+						 DataContext="{Binding ModlistVM}"/>
+	  <!--Side Panel -->
+	  <views:SidePanelView x:Name="SidePanelViewControl" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="1"
+						   DataContext="{Binding SidePanelVM}"/> 
 
     </Grid>
   </Panel>
