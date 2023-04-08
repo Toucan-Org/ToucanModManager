@@ -26,13 +26,23 @@ namespace ToucanUI.ViewModels
         {
             get => _selectedMod;
             set => this.RaiseAndSetIfChanged(ref _selectedMod, value);
+            
         }
 
+        //Parent ViewModel for communication
+        public MainWindowViewModel MainViewModel { get; }
+
         // MODLIST VIEWMODEL CONSTRUCTOR
-        public ModlistViewModel()
+        public ModlistViewModel(MainWindowViewModel mainViewModel)
         {
+            //Added this so MainViewModel acts as the communicator between sidepanel and modlist
+            MainViewModel = mainViewModel;
+
             DownloadMod = ReactiveCommand.Create<Mod>(mod => DownloadModAsync(mod));
             LoadMods(true);
+
+            
+            
         }
 
         public ReactiveCommand<Mod, Unit> DownloadMod { get; }
@@ -68,6 +78,7 @@ namespace ToucanUI.ViewModels
 
             mod.IsInstalled = true;
         }
+
 
     }
 }
