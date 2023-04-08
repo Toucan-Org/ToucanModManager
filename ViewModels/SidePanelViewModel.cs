@@ -17,9 +17,14 @@ namespace ToucanUI.ViewModels
 {
     public class SidePanelViewModel : ViewModelBase
     {
+        //Create a MainViewModel as a parent
+        public MainWindowViewModel MainViewModel { get; }
         public ReactiveCommand<Unit, Unit> SwitchViewCommand { get; }
-        public SidePanelViewModel() 
+        public SidePanelViewModel(MainWindowViewModel mainViewModel) 
         {
+            //Has to be passed into the child constructors
+            MainViewModel = mainViewModel;
+
             _btnText = "Not Clicked";
             SwitchViewCommand = ReactiveCommand.Create(SwitchViewAndUpdateDisplayText);
         }

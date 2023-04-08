@@ -2,16 +2,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="using:ToucanUI.ViewModels"
+			 
              xmlns:converters="using:ToucanUI.Converters"
              xmlns:controls="using:ToucanUI.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ToucanUI.Views.ModlistView"
              Background="Transparent">
 
-  <UserControl.DataContext>
+  <!--<UserControl.DataContext>
     <vm:ModlistViewModel/>
-  </UserControl.DataContext>
+  </UserControl.DataContext>-->
+	<!--xmlns:vm="using:ToucanUI.ViewModels"-->
 
   <UserControl.Resources>
     <converters:ProgressToBrushConverter x:Key="ProgressToBrushConverter"/>
@@ -20,7 +21,8 @@
 
 
   <Border CornerRadius="15">
-    <ListBox Name="ModListBox" Items="{Binding Mods}" SelectionMode="Single" Background="#181818">
+    <ListBox Name="ModListBox" Items="{Binding Mods}" SelectionMode="Single" Background="#181818"
+			 SelectedItem="{Binding MainViewModel.SelectedMod}">
       <ListBox.Styles>
         <Style Selector="ListBoxItem">
           <Setter Property="HorizontalContentAlignment" Value="Stretch" />
