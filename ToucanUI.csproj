@@ -21,6 +21,7 @@
     <None Remove="Assets\Fonts\Orbitron-Regular.ttf" />
     <None Remove="Assets\Fonts\ShareTechMono-Regular.ttf" />
     <None Remove="Assets\output.json" />
+    <None Remove="Assets\tmm_icon.ico" />
     <None Remove="Assets\tmm_logo.png" />
   </ItemGroup>
 

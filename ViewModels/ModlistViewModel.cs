@@ -17,15 +17,6 @@ namespace ToucanUI.ViewModels
 {
     public class ModlistViewModel : ViewModelBase
     {
-        // This is used to change the icon
-        //private string _iconPath;
-
-        //public string IconPath
-        //{
-        //    get => _iconPath;
-        //    set => this.RaiseAndSetIfChanged(ref _iconPath, value);
-        //}
-
         SpacedockAPI api = new SpacedockAPI();
 
         public ObservableCollection<Mod> Mods { get; set; }
