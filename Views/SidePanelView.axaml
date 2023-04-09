@@ -39,13 +39,38 @@
 				Margin="5 5 10 25"/>
 				
 
-				<!-- Placeholders for the buttons loki made -->
-				<TextBlock Text="Github" FontWeight="Bold"
-				    Grid.Row="6" Grid.Column="0" VerticalAlignment="Bottom" Margin="15 5 10 5"/>
-				<TextBlock Text="Download" FontWeight="Bold"
-				    Grid.Row="6" Grid.Column="4" VerticalAlignment="Bottom" Margin="15 5 10 5"/>
-				
-			</Grid>
+				<!-- BUTTONS -->
+        <Image Source="{DynamicResource GitHubIcon-White}" Grid.Row="6" Grid.Column="0" Width="50"
+               VerticalAlignment="Bottom" Margin="10"/>
+
+
+        <!-- DOWNLOAD BUTTON AND ICONS -->
+        <Button Command="{Binding MainViewModel.ModlistVM.DownloadMod}" Grid.Row="6" Grid.Column="4"
+								CommandParameter="{Binding MainViewModel.SelectedMod}" VerticalAlignment="Bottom"
+								IsEnabled="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToBooleanConverter}}"
+								IsVisible="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToBooleanConverter}}">
+
+          <Panel>
+
+            <Image Source="{DynamicResource DownloadIcon}" Width="50"
+                 IsVisible="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Download}"/>
+          </Panel>
+
+        </Button>
+
+        <!-- DOWNLOADING/DOWNLOADED ICONS -->
+        <Panel Grid.Row="6" Grid.Column="4" Margin="5" VerticalAlignment="Bottom">
+
+          <Image Source="{DynamicResource DownloadingIcon}" Width="50" Classes="rotating"
+               IsVisible="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloading}"/>
+
+          <Image Source="{DynamicResource DownloadedIcon}" Width="50"
+               IsVisible="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloaded}"/>
+
+        </Panel>
+
+
+      </Grid>
 		</Border>
 	</Border>
 	
