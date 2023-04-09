@@ -10,6 +10,7 @@
   <Application.Styles>
     <FluentTheme Mode="Dark"/>
     <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+    <StyleInclude Source="avares://ToucanUI/Icons.axaml"/>
 
   </Application.Styles>
 
@@ -19,19 +20,37 @@
     <FontFamily x:Key="Orbitron">/Assets/Fonts/Orbitron-Regular.ttf#Orbitron</FontFamily>
     <FontFamily x:Key="ShareTechMono">/Assets/Fonts/ShareTechMono-Regular.ttf#ShareTechMono</FontFamily>
 
-    <!-- ICONS -->
-    <Image x:Key="DownloadIconWhite" Source="avares://ToucanUI/Assets/Icons/Download-Icon-White.png"/>
-    <Image x:Key="DownloadingIconWhite" Source="avares://ToucanUI/Assets/Icons/Downloading-Icon-White.png"/>
+	<!-- ICONS -->
+	<Bitmap x:Key="DownloadIcon">
+		<x:Arguments>
+			<x:String>Assets/Icons/Download-Icon-White.png</x:String>
+		</x:Arguments>
+	</Bitmap>
 
+	<Bitmap x:Key="DownloadingIcon">
+		<x:Arguments>
+			<x:String>Assets/Icons/Downloading-Icon-White.png</x:String>
+		</x:Arguments>
+	</Bitmap>
 
-    <!-- TEMPLATES -->
-    <ControlTemplate x:Key="DownloadButtonTemplate" TargetType="Button">
-      <Grid>
-        <Image Source="{DynamicResource DownloadIconWhite}" />
-        <Button Background="Transparent" BorderThickness="0" />
-      </Grid>
-    </ControlTemplate>
-    
+	<Bitmap x:Key="DownloadedIcon">
+		<x:Arguments>
+			<x:String>Assets/Icons/Downloaded-Icon-White.png</x:String>
+		</x:Arguments>
+	</Bitmap>
+
+	<Bitmap x:Key="NotOpenedIcon">
+		<x:Arguments>
+			<x:String>Assets/Icons/OpenMenu-Not-Opened-Icon-White.png</x:String>
+		</x:Arguments>
+	</Bitmap>
+
+	<Bitmap x:Key="OpenedIcon">
+		<x:Arguments>
+			<x:String>Assets/Icons/OpenMenu-Opened-Icon-White.png</x:String>
+		</x:Arguments>
+	</Bitmap>
+	  
   </Application.Resources>
 
 </Application>

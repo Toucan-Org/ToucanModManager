@@ -17,6 +17,15 @@ namespace ToucanUI.ViewModels
 {
     public class ModlistViewModel : ViewModelBase
     {
+        // This is used to change the icon
+        //private string _iconPath;
+
+        //public string IconPath
+        //{
+        //    get => _iconPath;
+        //    set => this.RaiseAndSetIfChanged(ref _iconPath, value);
+        //}
+
         SpacedockAPI api = new SpacedockAPI();
 
         public ObservableCollection<Mod> Mods { get; set; }
@@ -72,11 +81,16 @@ namespace ToucanUI.ViewModels
             {
                 // Dummy code to simulate downloading
                 await Task.Delay(100);
-                mod.Progress += 1;
+                mod.Progress += 2;
                 Debug.WriteLine($"Mod {mod.Name} at {mod.Progress}%");
             }
 
             mod.IsInstalled = true;
+        }
+
+        public bool IsSelected(Mod mod)
+        {
+            return mod == SelectedMod;
         }
 
 
