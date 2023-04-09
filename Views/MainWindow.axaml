@@ -7,8 +7,8 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="ToucanUI.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="ToucanUI"
+        Icon="/Assets/tmm_icon.ico"
+        Title="Toucan Mod Manager"
         TransparencyLevelHint="AcrylicBlur"
         Background="Transparent"
         WindowStartupLocation="CenterScreen">
