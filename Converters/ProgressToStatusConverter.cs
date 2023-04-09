@@ -12,23 +12,49 @@ namespace ToucanUI.Converters
         {
             if (value is int progress)
             {
-                if (progress == 0)
+                if (parameter is string iconName)
                 {
-                    return "Status: Not Installed";
+                    return GetIconVisibility(progress, iconName);
                 }
-                if (progress < 100)
+                else
                 {
-                    return "Status: Installing...";
+                    if (progress == 0)
+                    {
+                        return "Status: Not Installed";
+                    }
+                    if (progress < 100)
+                    {
+                        return "Status: Installing...";
+                    }
+                    return "Status: Installed";
                 }
-                return "Status: Installed";
             }
 
             return "Status: Not Installed";
         }
 
+
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
+
+        //This function then tells the UI what Icon should currently be visible
+        private bool GetIconVisibility(int progress, string iconName)
+        {
+            switch (iconName)
+            {
+                case "Download":
+                    return progress == 0;
+                case "Downloading":
+                    return progress > 0 && progress < 100;
+                case "Downloaded":
+                    return progress >= 100;
+
+                default:
+                    return false;
+            }
+        }
+
     }
 }
