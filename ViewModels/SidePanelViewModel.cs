@@ -12,6 +12,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using ToucanUI.Models;
 using ToucanUI.Services;
+using ToucanUI.Views;
 
 namespace ToucanUI.ViewModels
 {
@@ -37,7 +38,9 @@ namespace ToucanUI.ViewModels
 
         public void HideSidePanel()
         {
+            MainViewModel.SelectedMod = null;
             SidePanelVisible = false;
+           
         }
 
         
