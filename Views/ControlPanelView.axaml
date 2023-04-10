@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:views="clr-namespace:ToucanUI.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ToucanUI.Views.ControlPanelView">
   
@@ -17,7 +18,10 @@
     <Button Grid.Column="3" Content="Profiles" Margin="10,0" />
 
     <!-- Classic/Grid View Toggle Button -->
-    <ToggleButton Grid.Column="4" Content="Classic/Grid View" Margin="10,0" />
+    <ToggleButton Grid.Column="4" Content="Toggle View"
+                  Command="{Binding DataContext.ModlistVM.ToggleViewCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=views:MainWindow}}" />
+
+
   </Grid>
 
 </UserControl>
