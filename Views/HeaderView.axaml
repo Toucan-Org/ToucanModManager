@@ -62,6 +62,16 @@
           </Menu>
 
           <Menu>
+            <MenuItem Header="View" Foreground="DarkGray">
+              <MenuItem Header="Classic List View" />
+              <MenuItem Header="Grid (Compact) List View" />
+              <Separator />
+              <MenuItem Header="Dark Mode" />
+              <MenuItem Header="Light Mode" />
+            </MenuItem>
+          </Menu>
+
+          <Menu>
             <MenuItem Header="Help" Foreground="DarkGray">
               <MenuItem Header="GitHub Page" />
               <Separator />

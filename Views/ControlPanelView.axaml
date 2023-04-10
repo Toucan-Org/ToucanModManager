@@ -1,0 +1,23 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="ToucanUI.Views.ControlPanelView">
+  
+  <Grid RowDefinitions="Auto" ColumnDefinitions="Auto, Auto, Auto, Auto, *">
+    
+    <!-- Search Bar -->
+    <TextBox Grid.Column="0" Watermark="Search..." Width="350" />
+
+    <!-- Filters Button -->
+    <Button Grid.Column="2" Content="Filters" Margin="10,0" />
+
+    <!-- Profiles Button -->
+    <Button Grid.Column="3" Content="Profiles" Margin="10,0" />
+
+    <!-- Classic/Grid View Toggle Button -->
+    <ToggleButton Grid.Column="4" Content="Classic/Grid View" Margin="10,0" />
+  </Grid>
+
+</UserControl>
