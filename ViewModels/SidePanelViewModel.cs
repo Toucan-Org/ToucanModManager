@@ -35,6 +35,11 @@ namespace ToucanUI.ViewModels
             
         }
 
+        public void HideSidePanel()
+        {
+            SidePanelVisible = false;
+        }
+
         
        
     }
