@@ -2,118 +2,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:views="clr-namespace:ToucanUI.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ToucanUI.Views.ModlistView"
              Background="Transparent">
 
 
   <Border CornerRadius="15">
-    <ListBox Name="ModListBox" Items="{Binding Mods}" SelectionMode="Single" Background="#181818"
-			 SelectedItem="{Binding MainViewModel.SelectedMod}">
-      <!-- LISTBOX STYLES -->
-      <ListBox.Styles>
-
-        <!-- Basic Styling for stretching item row -->
-        <Style Selector="ListBoxItem">
-          <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-          <Setter Property="Margin" Value="0 0 0 0"/>
-        </Style>
-
-        <!-- Changes the bacground colour of selected items from blue to dark grey-->
-        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-          <Setter Property="Background" Value="#3e3e3e" />
-        </Style>
-
-        <!-- These selectors are required to be in the Listbox styles to change the Opened/NotOpened image class -->
-        <Style Selector="Image.notOpened">
-          <Setter Property="Source" Value="{StaticResource NotOpenedIcon}" />
-        </Style>
-        <Style Selector="Image.opened">
-          <Setter Property="Source" Value="{StaticResource OpenedIcon}" />
-        </Style>
-      </ListBox.Styles>
-
-
-      <ListBox.ItemTemplate>
-        <DataTemplate>
-          <Border Background="#202020" CornerRadius="5" Padding="5">
-            <Grid RowDefinitions="*, Auto, Auto, *, Auto"
-							  ColumnDefinitions="Auto, Auto, *, *, *, 3*, Auto, Auto" Margin="10">
-
-              <!-- CHECKBOX -->
-              <CheckBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" Margin="5"></CheckBox>
-
-              <!-- PLACEHOLDER FOR MOD ICON -->
-              <Ellipse Width="45" Height="45" Fill="White" Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Margin="5"></Ellipse>
-
-              <TextBlock Text="{Binding Name}" FontWeight="Bold"
-										Grid.Row="1" Grid.Column="2" Margin="15 5 10 5"/>
-              <TextBlock Text="{Binding Author}" FontStyle="Italic" Foreground="Gray"
-										Grid.Row="2" Grid.Column="2" Margin="15 5 10 5"/>
-
-              <TextBlock Text="Game Version" FontSize="10"
-										Grid.Row="1" Grid.Column="3" Margin="15 5 0 15"/>
-              <TextBlock Text="{Binding GameVersion}" Foreground="Gray"
-										Grid.Row="2" Grid.Column="3" Margin="15 0 0 15"/>
-
-
-
-              <TextBlock Text="Mod Version" FontSize="10"
-										Grid.Row="1" Grid.Column="4" Margin="15 5 0 15"/>
-              <TextBlock Text="{Binding ModVersion}" Foreground="Gray"
-										Grid.Row="2" Grid.Column="4" Margin="15 0 0 15"/>
-
-              <!-- DOWNLOAD BUTTON/ICON -->
-              <Button Background="Transparent" Grid.Row="1" Grid.RowSpan="2" Grid.Column="6" Margin="5"
-									Command="{Binding DataContext.DownloadMod, ElementName=ModListBox}"
-									CommandParameter="{Binding}"
-									IsEnabled="{Binding Progress, Converter={StaticResource ProgressToBooleanConverter}}"
-									IsVisible="{Binding Progress, Converter={StaticResource ProgressToBooleanConverter}}">
-                <Panel>
-
-                  <Image Source="{DynamicResource DownloadIcon}" Width="50"
-										   IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Download}"/>
-                </Panel>
-
-              </Button>
-
-              <!-- DOWNLOADING/DOWNLOADED ICONS -->
-              <Panel Grid.Row="1" Grid.RowSpan="2" Grid.Column="6" Margin="5">
-
-                <Image Source="{DynamicResource DownloadingIcon}" Width="50" Classes="rotating"
-									   IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloading}"/>
-
-                <Image Source="{DynamicResource DownloadedIcon}" Width="50"
-									   IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloaded}"/>
-
-              </Panel>
-
-              <!-- SELECTED ICON -->
-              <Panel Grid.Row="1" Grid.RowSpan="2" Grid.Column="7" Margin="10">
-                <!-- This works quite well, does not require converters or behind-code -->
-                <Image Width="50"
-										Classes.opened="{Binding $parent[ListBoxItem].IsSelected}"
-										Classes.notOpened="{Binding !$parent[ListBoxItem].IsSelected}" />
-
-              </Panel>
-
-              <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="8">
-                <TextBlock Text="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}}" FontSize="12"
-											Foreground="Gray" Margin="5 10 0 5"/>
-
-                <ProgressBar Margin="5" Value="{Binding Progress}"
-												Foreground="{Binding Progress, Converter={StaticResource ProgressToBrushConverter}}"/>
-
-
-              </StackPanel>
-
-            </Grid>
-          </Border>
-        </DataTemplate>
-      </ListBox.ItemTemplate>
-
-    </ListBox>
-
-
+    
+    <Grid>
+      
+      <views:ClassicModlistView x:Name="ClassicViewControl" IsVisible="{Binding IsClassicViewVisible}" />
+      <views:GridModlistView x:Name="GridViewControl" IsVisible="{Binding IsGridViewVisible}" />
+      
+    </Grid>
   </Border>
 </UserControl>

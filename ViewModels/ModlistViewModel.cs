@@ -21,12 +21,30 @@ namespace ToucanUI.ViewModels
 
         public ObservableCollection<Mod> Mods { get; set; }
 
+        public ReactiveCommand<Mod, Unit> DownloadMod { get; }
+        public ReactiveCommand<Unit, Unit> ToggleViewCommand { get; }
+
+
         private Mod _selectedMod;
         public Mod SelectedMod
         {
             get => _selectedMod;
             set => this.RaiseAndSetIfChanged(ref _selectedMod, value);
             
+        }
+
+        private bool _isClassicViewVisible = true;
+        public bool IsClassicViewVisible
+        {
+            get => _isClassicViewVisible;
+            set => this.RaiseAndSetIfChanged(ref _isClassicViewVisible, value);
+        }
+
+        private bool _isGridViewVisible = false;
+        public bool IsGridViewVisible
+        {
+            get => _isGridViewVisible;
+            set => this.RaiseAndSetIfChanged(ref _isGridViewVisible, value);
         }
 
         //Parent ViewModel for communication
@@ -39,14 +57,16 @@ namespace ToucanUI.ViewModels
             MainViewModel = mainViewModel;
 
             DownloadMod = ReactiveCommand.Create<Mod>(mod => DownloadModAsync(mod));
+            ToggleViewCommand = ReactiveCommand.Create(SwitchView);
             LoadMods(true);
-
-            
             
         }
 
-        public ReactiveCommand<Mod, Unit> DownloadMod { get; }
-
+        public void SwitchView()
+        {
+            IsClassicViewVisible = !IsClassicViewVisible;
+            IsGridViewVisible = !IsGridViewVisible;
+        }
 
         // Load the mod list from the API
         private async Task LoadMods(bool useDummyData = false)
