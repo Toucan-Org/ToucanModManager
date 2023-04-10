@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="ToucanUI.Views.GridModlistView">
+
+  <DataGrid CornerRadius="5" Items="{Binding Mods}" Background="#181818"
+            SelectedItem="{Binding MainViewModel.SelectedMod}" AutoGenerateColumns="False"
+            Margin="10" IsReadOnly="True" CanUserReorderColumns="True" CanUserResizeColumns="True"
+            CanUserSortColumns="True">
+    <DataGrid.Columns>
+      <DataGridCheckBoxColumn Header="Selected" Binding="{Binding IsSelected}" />
+      <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="250"/>
+      <DataGridTextColumn Header="Author" Binding="{Binding Author}" Width="250"/>
+      <DataGridTextColumn Header="Game Version" Binding="{Binding GameVersion}" />
+      <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="500"/>
+      <DataGridTextColumn Header="Downloads" Binding="{Binding Downloads}"/>
+      <DataGridTextColumn Header="Followers" Binding="{Binding Followers}"/>
+      <DataGridTextColumn Header="License" Binding="{Binding License}"/>
+    </DataGrid.Columns>
+
+
+  </DataGrid>
+</UserControl>
