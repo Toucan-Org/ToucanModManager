@@ -32,15 +32,20 @@
       </ExperimentalAcrylicBorder.Material>
     </ExperimentalAcrylicBorder>
 
-    <Grid RowDefinitions="Auto, *" ColumnDefinitions="*, Auto">
+    <Grid RowDefinitions="Auto, Auto, *" ColumnDefinitions="*, Auto">
       <!-- Header -->
-      <views:HeaderView Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"/>
+      <views:HeaderView x:Name="HeaderViewControl" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                        DataContext="{Binding HeaderVM}"/>
+
+      <!-- Control Panel -->
+      <views:ControlPanelView x:Name="ControlPanelViewControl" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                              DataContext="{Binding ControlPanelVM}" Margin="10"/>
       <!-- Content -->
-      <views:ModlistView x:Name="ModlistViewControl" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="1"
-						 DataContext="{Binding ModlistVM}"/>
+      <views:ModlistView x:Name="ModlistViewControl" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="1"
+						 DataContext="{Binding ModlistVM}" Margin="10"/>
 	  <!--Side Panel -->
-	  <views:SidePanelView x:Name="SidePanelViewControl" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="1"
-						   DataContext="{Binding SidePanelVM}"/> 
+	  <views:SidePanelView x:Name="SidePanelViewControl" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="1"
+						   DataContext="{Binding SidePanelVM}" Margin="10"/> 
 
     </Grid>
   </Panel>

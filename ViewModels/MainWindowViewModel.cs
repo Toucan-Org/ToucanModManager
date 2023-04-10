@@ -5,6 +5,8 @@ namespace ToucanUI.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
+        public HeaderViewModel HeaderVM { get; }
+        public ControlPanelViewModel ControlPanelVM { get; }
         public ModlistViewModel ModlistVM { get; }
         public SidePanelViewModel SidePanelVM { get; }
 
@@ -22,6 +24,8 @@ namespace ToucanUI.ViewModels
         // In constructor create and refernce both child View Models
         public MainWindowViewModel()
         {
+            HeaderVM = new HeaderViewModel(this);
+            ControlPanelVM = new ControlPanelViewModel(this);
             ModlistVM = new ModlistViewModel(this);
             SidePanelVM = new SidePanelViewModel(this);
         }
