@@ -16,8 +16,13 @@ namespace ToucanUI.ViewModels
             get => _selectedMod;
             set
             {
+                if (value == _selectedMod)
+                {
+                    SidePanelVM.SidePanelVisible = false;
+                }
                 this.RaiseAndSetIfChanged(ref _selectedMod, value);
                 SidePanelVM.SidePanelVisible = true;
+               
             }
         }
 

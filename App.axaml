@@ -77,7 +77,13 @@
       <x:String>Assets/Icons/github-mark-white.png</x:String>
     </x:Arguments>
   </Bitmap>
-	  
+
+	  <!-- Close icons created by Pixel perfect - Flaticon -->
+  <Bitmap x:Key="CloseButton">
+    <x:Arguments>
+      <x:String>Assets/Icons/CloseButton.png</x:String>
+    </x:Arguments>
+  </Bitmap>
   </Application.Resources>
 
 </Application>

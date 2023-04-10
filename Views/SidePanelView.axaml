@@ -13,9 +13,6 @@
 			<Grid RowDefinitions="Auto,Auto, *, Auto, *, *, *" 
                       ColumnDefinitions="Auto, *, 500, *, Auto" Margin="10">
 
-				
-				
-
 				<!-- THIS IS HOW YOU REFERENCE THE SELECTED MOD DETAILS-->
 				<TextBlock Text="{Binding MainViewModel.SelectedMod.Name}" FontWeight="Bold" FontSize="24"
 				    Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15 5 10 5"/>
@@ -43,6 +40,12 @@
         <Image Source="{DynamicResource GitHubIcon-White}" Grid.Row="6" Grid.Column="0" Width="50"
                VerticalAlignment="Bottom" Margin="10"/>
 
+
+		<Button Command="{Binding HideSidePanel}" Grid.Row="0" Grid.Column="5" VerticalAlignment="Bottom">
+				<Panel>
+					<Image Source="{DynamicResource CloseButton}" Width="30" Margin="10"/>
+				</Panel>
+		</Button>
 
         <!-- DOWNLOAD BUTTON AND ICONS -->
         <Button Command="{Binding MainViewModel.ModlistVM.DownloadMod}" Grid.Row="6" Grid.Column="4"
