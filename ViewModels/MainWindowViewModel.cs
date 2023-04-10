@@ -1,4 +1,5 @@
 ﻿using ReactiveUI;
+using System.Diagnostics;
 using ToucanUI.Models;
 
 namespace ToucanUI.ViewModels
@@ -16,10 +17,7 @@ namespace ToucanUI.ViewModels
             get => _selectedMod;
             set
             {
-                if (value == _selectedMod)
-                {
-                    SidePanelVM.SidePanelVisible = false;
-                }
+                
                 this.RaiseAndSetIfChanged(ref _selectedMod, value);
                 SidePanelVM.SidePanelVisible = true;
                
