@@ -1,8 +1,8 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Views"
+    "\\ViewModels"
   ],
-  "SelectedNode": "\\ToucanUI.sln",
+  "SelectedNode": "\\ViewModels\\SidePanelViewModel.cs",
   "PreviewInSolutionExplorer": false
 }
