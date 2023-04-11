@@ -63,8 +63,7 @@
 
           <Menu>
             <MenuItem Header="View" Foreground="DarkGray">
-              <MenuItem Header="Classic List View" />
-              <MenuItem Header="Grid (Compact) List View" />
+              <MenuItem Header="Toggle List View" />
               <Separator />
               <MenuItem Header="Dark Mode" />
               <MenuItem Header="Light Mode" />

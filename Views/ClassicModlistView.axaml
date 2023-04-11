@@ -5,8 +5,8 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ToucanUI.Views.ClassicModlistView">
 
-  <ListBox Name="ModListBox" Items="{Binding Mods}" SelectionMode="Single" Background="#181818"
-			 SelectedItem="{Binding MainViewModel.SelectedMod}">
+  <ListBox Name="ModListBox" Items="{Binding Mods}" SelectionMode="Single" Background="Transparent"
+			     SelectedItem="{Binding MainViewModel.SelectedMod}" Padding="10">
     <!-- LISTBOX STYLES -->
     <ListBox.Styles>
 
@@ -33,9 +33,9 @@
 
     <ListBox.ItemTemplate>
       <DataTemplate>
-        <Border Background="#202020" CornerRadius="5" Padding="5">
+        <Border Background="#202020" CornerRadius="15" Padding="5">
           <Grid RowDefinitions="*, Auto, Auto, *, Auto"
-              ColumnDefinitions="Auto, Auto, *, *, *, 3*, Auto, Auto" Margin="10">
+              ColumnDefinitions="Auto, Auto, 2*, *, *, 2*, Auto, Auto" Margin="10">
 
             <!-- CHECKBOX -->
             <CheckBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" Margin="5"></CheckBox>
@@ -62,13 +62,13 @@
 
             <!-- DOWNLOAD BUTTON/ICON -->
             <Button Background="Transparent" Grid.Row="1" Grid.RowSpan="2" Grid.Column="6" Margin="5"
-                Command="{Binding DataContext.DownloadMod, ElementName=ModListBox}"
+                Command="{Binding DataContext.DownloadMod, ElementName=ModListBox}" Width="50" Height="50"
                 CommandParameter="{Binding}"
                 IsEnabled="{Binding Progress, Converter={StaticResource ProgressToBooleanConverter}}"
                 IsVisible="{Binding Progress, Converter={StaticResource ProgressToBooleanConverter}}">
               <Panel>
 
-                <Image Source="{DynamicResource DownloadIcon}" Width="50"
+                <Image Source="{DynamicResource DownloadIcon}" Width="50" Height="50"
                      IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Download}"/>
               </Panel>
 
@@ -77,10 +77,10 @@
             <!-- DOWNLOADING/DOWNLOADED ICONS -->
             <Panel Grid.Row="1" Grid.RowSpan="2" Grid.Column="6" Margin="5">
 
-              <Image Source="{DynamicResource DownloadingIcon}" Width="50" Classes="rotating"
+              <Image Source="{DynamicResource DownloadingIcon}" Width="50" Height="50" Classes="rotating"
                    IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloading}"/>
 
-              <Image Source="{DynamicResource DownloadedIcon}" Width="50"
+              <Image Source="{DynamicResource DownloadedIcon}" Width="50" Height="50"
                    IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloaded}"/>
 
             </Panel>
