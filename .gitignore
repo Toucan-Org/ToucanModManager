@@ -1,2 +1,8 @@
 **/bin/
 **/obj/
+#User Specific Files
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates

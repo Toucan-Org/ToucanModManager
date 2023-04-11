@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using ToucanUI.Models;
 using ToucanUI.Services;
+using ToucanUI.Views;
 
 namespace ToucanUI.ViewModels
 {
@@ -39,7 +40,10 @@ namespace ToucanUI.ViewModels
 
             CloseSidePanelCommand = ReactiveCommand.Create(() =>
             {
+                //This de-selects a selected mod from the listbox
+                MainViewModel.SelectedMod = null;
                 SidePanelVisible = false;
+               
             });
 
         }
