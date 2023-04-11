@@ -8,7 +8,7 @@
              Background="Transparent">
 
 
-  <Border CornerRadius="15">
+  <Border CornerRadius="15" Background="#181818">
     
     <Grid>
       
