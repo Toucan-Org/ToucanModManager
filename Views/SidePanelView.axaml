@@ -20,7 +20,7 @@
 
 				<!-- THIS IS HOW YOU REFERENCE THE SELECTED MOD DETAILS-->
 				<TextBlock Text="{Binding MainViewModel.SelectedMod.Name}" FontWeight="Bold" FontSize="24"
-				    Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="15 10 15 10"/>
+				    Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Margin="15 10 35 10"/>
 
 				<TextBlock Text= "{Binding MainViewModel.SelectedMod.Author}" FontWeight="SemiBold" FontStyle="Italic"
 				    Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Margin="15 10 15 10" Foreground="DarkGray"/>
