@@ -40,7 +40,10 @@ namespace ToucanUI.ViewModels
 
             CloseSidePanelCommand = ReactiveCommand.Create(() =>
             {
+                //This de-selects a selected mod from the listbox
+                MainViewModel.SelectedMod = null;
                 SidePanelVisible = false;
+               
             });
 
         }
