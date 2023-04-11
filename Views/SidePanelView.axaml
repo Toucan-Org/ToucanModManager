@@ -8,70 +8,85 @@
              x:Class="ToucanUI.Views.SidePanelView"
              Background="Transparent">
 	
-	<Border IsVisible="{Binding SidePanelVisible}" Padding = "5" Background="#181818">
-		<Border CornerRadius="5" Background="#202020">
-			<Grid RowDefinitions="Auto,Auto, *, Auto, *, *, *" 
-                      ColumnDefinitions="Auto, *, 500, *, Auto" Margin="10">
+	<Border IsVisible="{Binding SidePanelVisible}" Padding = "5" Background="#181818"
+          CornerRadius="15" Width="550">
+    <ScrollViewer >
+			<Grid RowDefinitions="Auto, Auto, Auto, *, Auto, Auto, *, Auto, Auto" 
+            ColumnDefinitions="*,*,*,*" Margin="10">
 
 				
-				
+				<Button Grid.Row="0" Grid.Column="3" HorizontalAlignment="Right" Content="X"
+                FontSize="24" Background="Transparent" Margin="5" Command="{Binding CloseSidePanelCommand}"/>
 
 				<!-- THIS IS HOW YOU REFERENCE THE SELECTED MOD DETAILS-->
 				<TextBlock Text="{Binding MainViewModel.SelectedMod.Name}" FontWeight="Bold" FontSize="24"
-				    Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15 5 10 5"/>
+				    Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="15 10 15 10"/>
 
-				<TextBlock Text= "{Binding MainViewModel.SelectedMod.Author}" FontWeight="Normal"
-				    Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15 5 10 5"/>
+				<TextBlock Text= "{Binding MainViewModel.SelectedMod.Author}" FontWeight="SemiBold" FontStyle="Italic"
+				    Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Margin="15 10 15 10" Foreground="DarkGray"/>
+
+        <Rectangle Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Height="1" Fill="Gray" Margin="15 10"/>
+
+
+        <TextBlock Text="{Binding MainViewModel.SelectedMod.Description}" TextWrapping="Wrap" 
+				    Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" Margin="15"/>
 				
-				<TextBlock Text="{Binding MainViewModel.SelectedMod.Description}" TextWrapping="Wrap" 
-				    Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15 5 10 5"/>
-				
-				<TextBlock Text= "Recommended Game Version" Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="1" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+				<TextBlock Text= "Recommended Game Version" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+                   TextAlignment="Center"/>
 				
 				<TextBlock Text="{Binding MainViewModel.SelectedMod.GameVersion}" TextWrapping="Wrap"
-				Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="1" VerticalAlignment="Top" HorizontalAlignment="Left"
-				Margin="25 5 10 5"/>
+				Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="10" TextAlignment="Center"/>
 				
-				<TextBlock Text= "Mod Version" Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="1" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+				<TextBlock Text= "Mod Version" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2"
+                   TextAlignment="Center"/>
 				
 				<TextBlock Text="{Binding MainViewModel.SelectedMod.ModVersion}" TextWrapping="Wrap"
-				Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="1" VerticalAlignment="Top" HorizontalAlignment="Right"
-				Margin="5 5 10 25"/>
+				Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="2" Margin="10" TextAlignment="Center"/>
 				
 
 				<!-- BUTTONS -->
-        <Image Source="{DynamicResource GitHubIcon-White}" Grid.Row="6" Grid.Column="0" Width="50"
-               VerticalAlignment="Bottom" Margin="10"/>
 
-
-        <!-- DOWNLOAD BUTTON AND ICONS -->
-        <Button Command="{Binding MainViewModel.ModlistVM.DownloadMod}" Grid.Row="6" Grid.Column="4"
-								CommandParameter="{Binding MainViewModel.SelectedMod}" VerticalAlignment="Bottom"
-								IsEnabled="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToBooleanConverter}}"
-								IsVisible="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToBooleanConverter}}">
-
-          <Panel>
-
-            <Image Source="{DynamicResource DownloadIcon}" Width="50"
-                 IsVisible="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Download}"/>
-          </Panel>
-
+        <Button Grid.Row="7" Grid.Column="0" HorizontalAlignment="Left" Margin="15" Width="60" Height="60"
+                Background="Transparent" Command="{Binding OpenGitHubCommand}">
+          <Button.Content>
+            <Image Source="{DynamicResource GitHubIcon-White}" Width="50" Height="50"/>
+          </Button.Content>
         </Button>
 
-        <!-- DOWNLOADING/DOWNLOADED ICONS -->
-        <Panel Grid.Row="6" Grid.Column="4" Margin="5" VerticalAlignment="Bottom">
 
-          <Image Source="{DynamicResource DownloadingIcon}" Width="50" Classes="rotating"
+
+        <Panel Grid.Row="7" Grid.Column="3" HorizontalAlignment="Right" Margin="15">
+
+          <!-- DOWNLOAD BUTTON AND ICONS -->
+          <Button Command="{Binding MainViewModel.ModlistVM.DownloadMod}" Width="60" Height="60"
+                  CommandParameter="{Binding MainViewModel.SelectedMod}" Background="Transparent"
+                  IsEnabled="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToBooleanConverter}}"
+                  IsVisible="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToBooleanConverter}}">
+
+            <Panel>
+
+              <Image Source="{DynamicResource DownloadIcon}" Width="60" Height="60"
+                     IsVisible="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Download}"/>
+            </Panel>
+
+          </Button>
+
+          <!-- DOWNLOADING/DOWNLOADED ICONS -->
+          <Image Source="{DynamicResource DownloadingIcon}" Width="60" Height="60" Classes="rotating"
                IsVisible="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloading}"/>
 
-          <Image Source="{DynamicResource DownloadedIcon}" Width="50"
+          <Image Source="{DynamicResource DownloadedIcon}" Width="60" Height="60"
                IsVisible="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloaded}"/>
 
         </Panel>
 
+        <!-- PROGRESS BAR -->
+        <ProgressBar Margin="15 25 15 5" Value="{Binding MainViewModel.SelectedMod.Progress}" Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="4"
+                     Foreground="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToBrushConverter}}"/>
+
 
       </Grid>
-		</Border>
+    </ScrollViewer>
 	</Border>
 	
 </UserControl>
