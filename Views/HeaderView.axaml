@@ -55,7 +55,9 @@
           <Menu>
             <MenuItem Header="Edit" Foreground="DarkGray">
               <MenuItem Header="Set Game Directory..." />
-              <MenuItem Header="Scan KSP2 Install Locations..." />
+              <MenuItem Header="Scan KSP2 Install Locations..."
+                        Command="{Binding ScanKSP2InstallLocationsCommand}" />
+
               <Separator />
               <MenuItem Header="Preferences" />
             </MenuItem>
