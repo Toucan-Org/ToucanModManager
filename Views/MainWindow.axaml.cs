@@ -1,9 +1,14 @@
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Markup.Xaml;
+using Avalonia.ReactiveUI;
+using ReactiveUI;
+using System.Reactive;
 using ToucanUI.ViewModels;
 
 namespace ToucanUI.Views
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     {
         public MainWindow()
         {
@@ -16,7 +21,8 @@ namespace ToucanUI.Views
             ControlPanelViewControl.DataContext = mainWindowViewModel.ControlPanelVM;
             ModlistViewControl.DataContext = mainWindowViewModel.ModlistVM;
             SidePanelViewControl.DataContext = mainWindowViewModel.SidePanelVM;
-        }
 
+
+        }
     }
 }
