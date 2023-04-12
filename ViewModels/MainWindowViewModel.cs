@@ -1,6 +1,9 @@
 ﻿using ReactiveUI;
 using System.Diagnostics;
+using System.Reactive;
+using System.Threading.Tasks;
 using ToucanUI.Models;
+using ToucanUI.Views;
 
 namespace ToucanUI.ViewModels
 {
