@@ -9,10 +9,10 @@
   <Grid RowDefinitions="Auto" ColumnDefinitions="Auto, Auto, Auto, Auto, *">
     
     <!-- Search Bar -->
-    <TextBox Grid.Column="0" Watermark="Search..." Width="350" />
+    <TextBox Text="{Binding MainViewModel.ModlistVM.SearchText, Mode=TwoWay}" Grid.Column="0" Watermark="Search..." Width="350"  />
 
     <!-- Filters Button -->
-    <Button Grid.Column="2" Content="Filters" Margin="10,0" />
+    <Button Grid.Column="2" Content="Filters" Margin="10,0" Command="{Binding Filter}" />
 
     <!-- Profiles Button -->
     <Button Grid.Column="3" Content="Profiles" Margin="10,0" />
