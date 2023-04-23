@@ -1,4 +1,6 @@
-﻿using ReactiveUI;
+﻿using DynamicData;
+using ReactiveUI;
+using System.Collections;
 using System.Diagnostics;
 using System.Reactive;
 using System.Threading.Tasks;
@@ -14,6 +16,7 @@ namespace ToucanUI.ViewModels
         public ModlistViewModel ModlistVM { get; }
         public SidePanelViewModel SidePanelVM { get; }
 
+
         private Mod _selectedMod;
         public Mod SelectedMod
         {
@@ -26,6 +29,8 @@ namespace ToucanUI.ViewModels
                
             }
         }
+
+        
 
         // In constructor create and refernce both child View Models
         public MainWindowViewModel()
