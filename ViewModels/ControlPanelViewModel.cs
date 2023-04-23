@@ -33,46 +33,27 @@ namespace ToucanUI.ViewModels
             MainViewModel = mainViewModel;
 
         }
+        
+        private bool _filterInstalled = false;
 
-        private String _searchInput;
-        public String SearchInput
+        public bool FilterInstalled
         {
-            get => _searchInput;
+            get => _filterInstalled;
             set
             {
-                this.RaiseAndSetIfChanged(ref _searchInput, value);
-                SearchForMod(value);
+                this.RaiseAndSetIfChanged(ref _filterInstalled, value);
             }
+
         }
-
-        public void SearchForMod(String name)
+        private bool _filterVersion = false;
+        public bool FilterVersion
         {
-            //MainViewModel.ModlistVM.DisplayMods.Clear();
-            for (int i = 0; i < MainViewModel.ModlistVM.Mods.Count; i++) {
-                if (MainViewModel.ModlistVM.Mods[i].Name == name || MainViewModel.ModlistVM.Mods[i].Name.Contains(name))
-                {
-                    MainViewModel.SelectedMod = MainViewModel.ModlistVM.Mods[i];
-                   
-                }
-              
-            }
-
-            if(name == "")
+            get => _filterVersion;
+            set
             {
-                MainViewModel.SelectedMod = null;
-                MainViewModel.SidePanelVM.SidePanelVisible = false;
+                this.RaiseAndSetIfChanged(ref _filterVersion, value);
             }
-        }
-
-
-        //https://docs.avaloniaui.net/guides/deep-dives/reactiveui/binding-to-sorted-filtered-list
-        public void Filter()
-        {
-            MainViewModel.ModlistVM.FilterMods();
 
         }
-
-
-
     }
 }

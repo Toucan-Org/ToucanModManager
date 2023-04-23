@@ -72,13 +72,16 @@ namespace ToucanUI.ViewModels
             LoadMods(true);
 
             //This is the filter that is applied to the sourcelist
-            var observableFilter = this.WhenAnyValue(viewModel => viewModel.SearchText).Select(MakeFilter);
-
+            var observableSearchFilter = this.WhenAnyValue(viewModel => viewModel.SearchText).Select(SearchName);
+            var InstalledFilter = this.WhenAnyValue(x => x.MainViewModel.ControlPanelVM.FilterInstalled).Select(SetInstalledFilter);
+            var VersionFilter = this.WhenAnyValue(x => x.MainViewModel.ControlPanelVM.FilterVersion).Select(SetVersionFilter);
             //this converts the modlist (which contains the mods recieved from the API) into an Observable List
             var _sourceList = ModList
                .ToObservableChangeSet()
                .Sort(SortExpressionComparer<Mod>.Ascending(x => x.Name)) //Sorts list by name
-               .Filter(observableFilter) //Applies the filter
+               .Filter(observableSearchFilter) //Applies the filter
+               .Filter(InstalledFilter)
+               .Filter(VersionFilter)
                .AsObservableList();
 
             _sourceList.Connect()
@@ -89,7 +92,7 @@ namespace ToucanUI.ViewModels
 
         }
 
-        private Func<Mod, bool> MakeFilter(string name)
+        private Func<Mod, bool> SearchName(string name)
         {
             if (string.IsNullOrEmpty(name)) //If searchbar is empty, show all the mods
             {
@@ -101,11 +104,42 @@ namespace ToucanUI.ViewModels
             }
         }
 
+        private Func<Mod, bool> SetInstalledFilter(bool isOn)
+        {
+            if (isOn)
+            {
+                return Mod => Mod.IsInstalled;
+            }
+            else
+            {
+                return Mod => true;
+            }
+        }
+
+        private Func<Mod, bool> SetVersionFilter(bool isOn)
+        {
+            if (isOn)
+            {
+                return Mod => Mod.GameVersion.Equals("0.1.0.0");
+            }
+            else
+            {
+                return Mod => true;
+            }
+        }
+
         private string _searchText;
         public string SearchText
         {
             get => _searchText;
-            set => this.RaiseAndSetIfChanged(ref _searchText, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _searchText, value);
+                //Clear the side panel if the user types - fixes visual bug
+                MainViewModel.SelectedMod = null;
+                MainViewModel.SidePanelVM.SidePanelVisible = false;
+               
+            }
         }
 
 
@@ -113,12 +147,7 @@ namespace ToucanUI.ViewModels
         {
             IsClassicViewVisible = !IsClassicViewVisible;
             IsGridViewVisible = !IsGridViewVisible;
-            
-        }
 
-        public void FilterMods()
-        {
-            Debug.WriteLine("Filtered");
         }
 
         // Load the mod list from the API
