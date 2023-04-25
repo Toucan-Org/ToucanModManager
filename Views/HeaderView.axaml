@@ -18,16 +18,13 @@
 
 
       <Grid RowDefinitions="*, Auto, Auto, *" ColumnDefinitions="Auto, Auto, *, Auto">
-        <Image Source="/Assets/tmm_logo.png" Width="120" Grid.Row="1" Grid.RowSpan="2"
-               Grid.Column="0"/>
+        <Image Source="/Assets/tmm_logo.png" Width="110" Grid.Row="1" Grid.RowSpan="2"
+               Grid.Column="0" Margin="0 0 50 0"/>
 
         <!-- TITLE/VERSION -->
-        <TextBlock Text="Toucan Mod Manager" FontSize="26"
-                   Foreground="White" Margin="10 20 0 10" Grid.Row="1"
-                   Grid.Column="1" FontFamily="{StaticResource Orbitron}"/>
-        <TextBlock x:Name="TextVersionNumber" Text="v1.0.0" FontSize="14" Foreground="#A0A0A0"
-                   Margin="15 0 0 20" Grid.Row="2" Grid.Column="1" FontFamily="{StaticResource Orbitron}"/>
-
+        <TextBlock Text="TMM" FontSize="26"
+                   Foreground="White" Grid.Row="1" Grid.RowSpan="2" VerticalAlignment="Center"
+                   Grid.Column="1" FontFamily="{StaticResource Orbitron}" Margin="-50 0 0 0"/>
         
         <!-- FILE/EDIT/HELP MENU -->
         <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0">
@@ -45,27 +42,30 @@
               <MenuItem Header="Open Profile" />
               <MenuItem Header="Save Profile" />
               <Separator />
-              <MenuItem Header="Import modpack" />
-              <MenuItem Header="Export modpack" />
-              <Separator />
-              <MenuItem Header="Exit" />
+              <MenuItem Header="Exit"
+                        Command="{Binding ExitCommand}"/>
             </MenuItem>
           </Menu>
 
           <Menu>
             <MenuItem Header="Edit" Foreground="DarkGray">
-              <MenuItem Header="Set Game Directory..." />
+              <MenuItem Header="Set Game Directory..."
+                        Command="{Binding SetGameInstallPathCommand}"/>
               <MenuItem Header="Scan KSP2 Install Locations..."
                         Command="{Binding ScanKSP2InstallLocationsCommand}" />
 
               <Separator />
-              <MenuItem Header="Preferences" />
+              <MenuItem Header="View Config File..."
+                        Command="{Binding ViewConfigFileCommand}" />
+              <MenuItem Header="Clear Config File..."
+                        Command="{Binding ClearConfigFileCommand}"/>
             </MenuItem>
           </Menu>
 
           <Menu>
             <MenuItem Header="View" Foreground="DarkGray">
-              <MenuItem Header="Toggle List View" />
+              <MenuItem Header="Toggle List View"
+                        Command="{Binding MainViewModel.ModlistVM.ToggleViewCommand}"/>
               <Separator />
               <MenuItem Header="Dark Mode" />
               <MenuItem Header="Light Mode" />
@@ -74,7 +74,8 @@
 
           <Menu>
             <MenuItem Header="Help" Foreground="DarkGray">
-              <MenuItem Header="GitHub Page" />
+              <MenuItem Header="GitHub Page" 
+                        Command="{Binding MainViewModel.FooterVM.OpenGitHubCommand}"/>
               <Separator />
               <MenuItem Header="Check for update" />
             </MenuItem>

@@ -1,8 +1,6 @@
 ﻿using ReactiveUI;
+using System.ComponentModel;
 
-namespace ToucanUI.ViewModels
+public class ViewModelBase : ReactiveObject
 {
-    public class ViewModelBase : ReactiveObject
-    {
-    }
 }

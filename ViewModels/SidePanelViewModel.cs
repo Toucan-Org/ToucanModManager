@@ -19,17 +19,25 @@ namespace ToucanUI.ViewModels
 {
     public class SidePanelViewModel : ViewModelBase
     {
-        //Create a MainViewModel as a parent
+        // VIEWMODELS
         public MainWindowViewModel MainViewModel { get; }
 
+        // COMMANDS
         public ICommand OpenGitHubCommand { get; }
         public ICommand CloseSidePanelCommand { get; }
 
+        // VARIABLES
+        private bool _sidePanelVisible = false;
+        public bool SidePanelVisible
+        {
+            get => _sidePanelVisible;
+            set => this.RaiseAndSetIfChanged(ref _sidePanelVisible, value);
+        }
 
 
+        // CONSTRUCTOR
         public SidePanelViewModel(MainWindowViewModel mainViewModel) 
         {
-            //Has to be passed into the child constructors
             MainViewModel = mainViewModel;
 
             OpenGitHubCommand = ReactiveCommand.Create(() =>
@@ -47,19 +55,6 @@ namespace ToucanUI.ViewModels
             });
 
         }
-
-        private bool _sidePanelVisible = false;
-        public bool SidePanelVisible
-        {
-            get => _sidePanelVisible;
-            set => this.RaiseAndSetIfChanged(ref _sidePanelVisible, value);
-            
-        }
-
-
-
-
-        
        
     }
 }
