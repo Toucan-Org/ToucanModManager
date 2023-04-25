@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Platform;
+using Avalonia.Threading;
 using DynamicData;
 using DynamicData.Binding;
 using ReactiveUI;
@@ -68,6 +69,7 @@ namespace ToucanUI.ViewModels
             DownloadModCommand = ReactiveCommand.Create<Mod>(mod => DownloadModAsync(mod), mainViewModel.WhenAnyValue(x => x.CanDownloadMod)); // Set whether the button is enabled or not
             ToggleViewCommand = ReactiveCommand.Create(SwitchView);
 
+            ModList = new ObservableCollection<Mod>();
             LoadMods(false);
 
             //This is the filter that is applied to the sourcelist
@@ -154,14 +156,21 @@ namespace ToucanUI.ViewModels
         private async Task LoadMods(bool useDummyData = false)
         {
             var mods = await api.GetMods(useDummyData);
-            ModList = new ObservableCollection<Mod>(mods);
-            foreach (var mod in mods)
+
+            // Update ModList on the UI thread
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                Debug.WriteLine("Name: " + mod.Name);
-                Debug.WriteLine("Id: " + mod.Id);
-                Debug.WriteLine("Game: " + mod.Game);
-            }
+                ModList.Clear();
+                foreach (var mod in mods)
+                {
+                    ModList.Add(mod);
+                    Debug.WriteLine("Name: " + mod.Name);
+                    Debug.WriteLine("Id: " + mod.Id);
+                    Debug.WriteLine("Game: " + mod.Game);
+                }
+            });
         }
+
 
         // Function to download a mod asynchronously
         public async Task DownloadModAsync(Mod mod)
