@@ -28,6 +28,7 @@ namespace ToucanUI.ViewModels
 
         // SERVICES
         SpacedockAPI api = new SpacedockAPI();
+        private readonly ConfigurationManager _configManager;
 
         // VARIABLES
         private ReadOnlyObservableCollection<Mod> _mods;
@@ -120,9 +121,10 @@ namespace ToucanUI.ViewModels
 
         private Func<Mod, bool> SetVersionFilter(bool isOn)
         {
+            var configManager = new ConfigurationManager();
             if (isOn)
             {
-                return Mod => Mod.GameVersion.Equals("0.1.0.0");
+                return Mod => Mod.GameVersion.Equals(configManager.GetGameVersion());
             }
             else
             {
