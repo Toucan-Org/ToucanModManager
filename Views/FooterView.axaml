@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="ToucanUI.Views.FooterView"
+             Background="Transparent">
+
+  <Border CornerRadius="5" BoxShadow="inset 0 -30 2 2 #191919">
+    <Grid ColumnDefinitions="Auto, *, *, Auto" RowDefinitions="Auto">
+
+      <Button Grid.Row="0" Grid.Column="0" Width="30" Height="30"
+              Background="Transparent" Command="{Binding OpenGitHubCommand}">
+        <Button.Content>
+          <Image Source="{DynamicResource GitHubIcon-White}" Width="20" Height="20"/>
+        </Button.Content>
+      </Button>
+      
+      <TextBlock Text="v1.0.0-pre release" Grid.Row="0" Grid.Column="1" Margin="10"
+                 Foreground="#A0A0A0" FontSize="14" VerticalAlignment="Center"/>
+
+    </Grid>
+
+  </Border>
+</UserControl>

@@ -7,19 +7,42 @@
 
   <DataGrid CornerRadius="5" Items="{Binding Mods}" Background="#181818"
             SelectedItem="{Binding MainViewModel.SelectedMod}" AutoGenerateColumns="False"
-            Margin="10" IsReadOnly="True" CanUserReorderColumns="True" CanUserResizeColumns="True"
+            Margin="10" IsReadOnly="False" CanUserReorderColumns="True" CanUserResizeColumns="True"
             CanUserSortColumns="True">
     <DataGrid.Columns>
-      <DataGridCheckBoxColumn Header="Selected" Binding="{Binding IsSelected}" />
-      <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="250"/>
-      <DataGridTextColumn Header="Author" Binding="{Binding Author}" Width="250"/>
-      <DataGridTextColumn Header="Game Version" Binding="{Binding GameVersion}" />
-      <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="500"/>
-      <DataGridTextColumn Header="Downloads" Binding="{Binding Downloads}"/>
-      <DataGridTextColumn Header="Followers" Binding="{Binding Followers}"/>
-      <DataGridTextColumn Header="License" Binding="{Binding License}"/>
+      <!-- Custom column for download/downloading/downloaded icons -->
+      <DataGridTemplateColumn Width="40" Header="Status">
+        <DataGridTemplateColumn.CellTemplate>
+          <DataTemplate>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+              <Button Background="Transparent"
+                      Command="{Binding DataContext.DownloadModCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                      Width="25" Height="25"
+                      CommandParameter="{Binding}"
+                      IsEnabled="{Binding Progress, Converter={StaticResource ProgressToBooleanConverter}}"
+                      IsVisible="{Binding Progress, Converter={StaticResource ProgressToBooleanConverter}}">
+                <Image Source="{DynamicResource DownloadIcon}" Width="25" Height="25"
+                       IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Download}"/>
+              </Button>
+
+              <Image Source="{DynamicResource DownloadingIcon}" Width="25" Height="25" Classes="rotating"
+                     IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloading}"/>
+
+              <Image Source="{DynamicResource DownloadedIcon}" Width="25" Height="25"
+                     IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloaded}"/>
+            </StackPanel>
+          </DataTemplate>
+        </DataGridTemplateColumn.CellTemplate>
+      </DataGridTemplateColumn>
+      <!-- Other columns -->
+      <DataGridCheckBoxColumn Header="Selected" Binding="{Binding IsSelected}" Width="100" />
+      <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="250" IsReadOnly="True"/>
+      <DataGridTextColumn Header="Author" Binding="{Binding Author}" Width="250" IsReadOnly="True"/>
+      <DataGridTextColumn Header="Game Version" Binding="{Binding GameVersion}" IsReadOnly="True"/>
+      <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="500" IsReadOnly="True"/>
+      <DataGridTextColumn Header="Downloads" Binding="{Binding Downloads}" IsReadOnly="True"/>
+      <DataGridTextColumn Header="Followers" Binding="{Binding Followers}" IsReadOnly="True"/>
+      <DataGridTextColumn Header="License" Binding="{Binding License}" IsReadOnly="True"/>
     </DataGrid.Columns>
-
-
   </DataGrid>
 </UserControl>
