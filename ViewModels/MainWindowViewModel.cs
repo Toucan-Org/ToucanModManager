@@ -1,4 +1,7 @@
-﻿using DynamicData;
+﻿using Avalonia.Controls;
+using DynamicData;
+using MessageBox.Avalonia.DTO;
+using MessageBox.Avalonia.Models;
 using ReactiveUI;
 using System.Collections;
 using System.Diagnostics;
