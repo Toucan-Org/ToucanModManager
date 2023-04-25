@@ -46,34 +46,47 @@ namespace ToucanUI.Services
             else
             {
                 Debug.WriteLine("Getting mod data");
-                // Get total number of pages
-                var url = $"{BASE_URL}";
-                Debug.WriteLine($"Requesting total number of pages from {url}");
+
+                // Request mod data from the first URL
+                var url = $"{BASE_URL}&page=1";
+                Debug.WriteLine($"Requesting mod data from {url}");
                 var response = await _client.GetAsync(url);
                 Debug.WriteLine($"Response status code: {response.StatusCode}");
-                var json = await response.Content.ReadAsStringAsync();
-                var data = JsonSerializer.Deserialize<JsonElement>(json);
-                int pages = data.GetProperty("pages").GetInt32();
-                Debug.WriteLine($"Total number of pages: {pages}");
+                var jsonString = await response.Content.ReadAsStringAsync();
 
-                // Iterate through all pages and retrieve mods
-                for (int page = 1; page <= pages; page++)
+                // Parse the JSON data
+                var jsonDocument = JsonDocument.Parse(jsonString);
+                var data = jsonDocument.RootElement;
+
+                // Get the totalPages
+                int totalPages = data.GetProperty("pages").GetInt32();
+
+                // Now iterate through all the pages
+                for (int currentPage = 1; currentPage <= totalPages; currentPage++)
                 {
-                    var pageUrl = $"{url}&page={page}";
-                    Debug.WriteLine($"Requesting mods from {pageUrl}");
-                    var pageResponse = await _client.GetAsync(pageUrl);
-                    Debug.WriteLine($"Response status code: {pageResponse.StatusCode}");
-                    var pageJson = await pageResponse.Content.ReadAsStringAsync();
-                    var pageData = JsonSerializer.Deserialize<JsonElement>(pageJson);
+                    // If it's not the first page, fetch the data
+                    if (currentPage != 1)
+                    {
+                        // Request mod data from the URL
+                        url = $"{BASE_URL}&page={currentPage}";
+                        Debug.WriteLine($"Requesting mod data from {url}");
+                        response = await _client.GetAsync(url);
+                        Debug.WriteLine($"Response status code: {response.StatusCode}");
+                        jsonString = await response.Content.ReadAsStringAsync();
 
-                    mods = ParseModData(pageData);
+                        // Parse the JSON data
+                        jsonDocument = JsonDocument.Parse(jsonString);
+                        data = jsonDocument.RootElement;
+                    }
 
-                    
+                    // Parse the mod data
+                    var pageMods = ParseModData(data);
+                    mods.AddRange(pageMods);
+
+                    Debug.WriteLine($"Finished retrieving {pageMods.Count} mods from page {currentPage}");
                 }
-
-                Debug.WriteLine($"Finished retrieving {mods.Count} mods");
-                
             }
+
 
             return mods;
 

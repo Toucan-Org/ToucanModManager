@@ -62,7 +62,7 @@
 
             <!-- DOWNLOAD BUTTON/ICON -->
             <Button Background="Transparent" Grid.Row="1" Grid.RowSpan="2" Grid.Column="6" Margin="5"
-                Command="{Binding DataContext.DownloadMod, ElementName=ModListBox}" Width="50" Height="50"
+                Command="{Binding DataContext.DownloadModCommand, ElementName=ModListBox}" Width="50" Height="50"
                 CommandParameter="{Binding}"
                 IsEnabled="{Binding Progress, Converter={StaticResource ProgressToBooleanConverter}}"
                 IsVisible="{Binding Progress, Converter={StaticResource ProgressToBooleanConverter}}">

@@ -58,7 +58,7 @@
         <Panel Grid.Row="7" Grid.Column="3" HorizontalAlignment="Right" Margin="15">
 
           <!-- DOWNLOAD BUTTON AND ICONS -->
-          <Button Command="{Binding MainViewModel.ModlistVM.DownloadMod}" Width="60" Height="60"
+          <Button Command="{Binding MainViewModel.ModlistVM.DownloadModCommand}" Width="60" Height="60"
                   CommandParameter="{Binding MainViewModel.SelectedMod}" Background="Transparent"
                   IsEnabled="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToBooleanConverter}}"
                   IsVisible="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToBooleanConverter}}">

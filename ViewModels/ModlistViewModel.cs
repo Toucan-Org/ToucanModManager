@@ -22,25 +22,23 @@ namespace ToucanUI.ViewModels
 {
     public class ModlistViewModel : ViewModelBase
     {
+        // VIEWMODELS
+        public MainWindowViewModel MainViewModel { get; }
+
+        // SERVICES
         SpacedockAPI api = new SpacedockAPI();
 
+        // VARIABLES
         private ReadOnlyObservableCollection<Mod> _mods;
         public ReadOnlyObservableCollection<Mod> Mods { get => _mods; set => this.RaiseAndSetIfChanged(ref _mods, value); }
-        
-
+    
         public ObservableCollection<Mod> ModList { get; set; }
-
-        public ReactiveCommand<Mod, Unit> DownloadMod { get; }
-        public ReactiveCommand<Unit, Unit> ToggleViewCommand { get; }
-
-        //private SourceList<Mod> _sourceList { get; set; }
 
         private Mod _selectedMod;
         public Mod SelectedMod
         {
             get => _selectedMod;
             set => this.RaiseAndSetIfChanged(ref _selectedMod, value);
-            
         }
 
         private bool _isClassicViewVisible = true;
@@ -57,19 +55,20 @@ namespace ToucanUI.ViewModels
             set => this.RaiseAndSetIfChanged(ref _isGridViewVisible, value);
         }
 
-        //Parent ViewModel for communication
-        public MainWindowViewModel MainViewModel { get; }
+        // COMMANDS
+        public ReactiveCommand<Mod, Unit> DownloadModCommand { get; }
+        public ReactiveCommand<Unit, Unit> ToggleViewCommand { get; }
 
-        // MODLIST VIEWMODEL CONSTRUCTOR
+
+        // CONSTRUCTOR
         public ModlistViewModel(MainWindowViewModel mainViewModel)
         {
-            //Added this so MainViewModel acts as the communicator between sidepanel and modlist
             MainViewModel = mainViewModel;
 
-            DownloadMod = ReactiveCommand.Create<Mod>(mod => DownloadModAsync(mod));
+            DownloadModCommand = ReactiveCommand.Create<Mod>(mod => DownloadModAsync(mod), mainViewModel.WhenAnyValue(x => x.CanDownloadMod)); // Set whether the button is enabled or not
             ToggleViewCommand = ReactiveCommand.Create(SwitchView);
 
-            LoadMods(true);
+            LoadMods(false);
 
             //This is the filter that is applied to the sourcelist
             var observableSearchFilter = this.WhenAnyValue(viewModel => viewModel.SearchText).Select(SearchName);
@@ -92,6 +91,7 @@ namespace ToucanUI.ViewModels
 
         }
 
+        // METHODS
         private Func<Mod, bool> SearchName(string name)
         {
             if (string.IsNullOrEmpty(name)) //If searchbar is empty, show all the mods
@@ -163,7 +163,6 @@ namespace ToucanUI.ViewModels
             }
         }
 
-
         // Function to download a mod asynchronously
         public async Task DownloadModAsync(Mod mod)
         {
@@ -181,12 +180,11 @@ namespace ToucanUI.ViewModels
             mod.IsInstalled = true;
         }
 
+        // Function to check if a mod is selected
         public bool IsSelected(Mod mod)
         {
             return mod == SelectedMod;
         }
-
-
 
     }
 }

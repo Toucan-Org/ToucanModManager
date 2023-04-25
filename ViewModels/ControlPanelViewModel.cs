@@ -23,17 +23,11 @@ namespace ToucanUI.ViewModels
 {
     public class ControlPanelViewModel : ViewModelBase
     {
-        
+        // VIEWMODELS        
         public MainWindowViewModel MainViewModel { get; }
 
+        // VARIABLES
         public ReadOnlyObservableCollection<Mod> filteredList;
-
-        public ControlPanelViewModel(MainWindowViewModel mainViewModel)
-        {
-            MainViewModel = mainViewModel;
-
-        }
-        
         private bool _filterInstalled = false;
 
         public bool FilterInstalled
@@ -55,5 +49,13 @@ namespace ToucanUI.ViewModels
             }
 
         }
+
+        // CONSTRUCTOR
+        public ControlPanelViewModel(MainWindowViewModel mainViewModel)
+        {
+            MainViewModel = mainViewModel;
+
+        }
+        
     }
 }

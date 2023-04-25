@@ -36,7 +36,6 @@
     <converters:ProgressToStatusConverter x:Key="ProgressToStatusConverter"/>
     <converters:BitmapAssetValueConverter x:Key="BitmapAssetValueConverter"/>
     <converters:ProgressToBooleanConverter x:Key="ProgressToBooleanConverter"/>
-    <converters:MultiplierConverter x:Key="MultiplierConverter"/>
     
     <!-- FONTS -->
     <FontFamily x:Key="Orbitron">/Assets/Fonts/Orbitron-Regular.ttf#Orbitron</FontFamily>
