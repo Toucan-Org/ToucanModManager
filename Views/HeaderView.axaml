@@ -7,27 +7,70 @@
              Background="Transparent">
 
   <Panel>
-    <Border CornerRadius="5" BoxShadow="inset 0 -30 2 2 #191919">
-      <Border.Background>
-        <LinearGradientBrush StartPoint="50%,55%" EndPoint="50%,0%">
-          <GradientStop Color="#252525" Offset="0.0"/>
-          <GradientStop Color="#67411D" Offset="1.0"/>
-        </LinearGradientBrush>
-      </Border.Background>
+
+      <Grid RowDefinitions="Auto, Auto">
+        <Border CornerRadius="5" BoxShadow="inset 0 -5 5 2 #191919">
+          <Border.Background>
+            <LinearGradientBrush StartPoint="50%,40%" EndPoint="50%,0%">
+              <GradientStop Color="#252525" Offset="0.0"/>
+              <GradientStop Color="#67411D" Offset="1.0"/>
+            </LinearGradientBrush>
+          </Border.Background>
+
+          <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto">
+
+
+            <Image Source="/Assets/tmm_logo.png" Width="90" Height="90" Grid.Row="0"
+                   Grid.Column="0" HorizontalAlignment="Left"
+                   ToolTip.Tip="Toucan Mod Manager"/>
+
+            <!-- LAUNCH BUTTON -->
+            <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="Auto, Auto"
+                  Grid.Row="0" Grid.Column="3" Margin="0 5 20 10">
+
+              <Button x:Name="LaunchButton" FontSize="26" Width="220"
+                Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Background="#FF5722"
+                Foreground="#800F0E" FontFamily="{StaticResource Orbitron}"
+                FontWeight="SemiBold" Margin="0 10">
+                <TextBlock Text="LAUNCH" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+              </Button>
+
+              <TextBlock Text="Time Played" FontFamily="{StaticResource Orbitron}" TextWrapping="Wrap"
+                         FontSize="12" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center"/>
+
+
+              <StackPanel Orientation="Horizontal"
+                          HorizontalAlignment="Center"
+                          Grid.Row="1"
+                          Grid.Column="1">
+                
+                <TextBlock Text="12" Foreground="DarkGray" FontSize="12"
+                           FontFamily="{StaticResource Orbitron}"/>
+                <TextBlock Text="H " Foreground="DarkGray" FontSize="12"
+                           FontWeight="Bold" Padding="4 0 5 0"/>
+                
+                <TextBlock Text="34" Foreground="DarkGray" FontSize="12"
+                           FontFamily="{StaticResource Orbitron}"/>
+                <TextBlock Text="M " Foreground="DarkGray" FontSize="12"
+                           FontWeight="Bold" Padding="4 0 5 0"/>
+                
+                <TextBlock Text="56" Foreground="DarkGray" FontSize="12"
+                           FontFamily="{StaticResource Orbitron}"/>
+                <TextBlock Text="S" Foreground="DarkGray" FontSize="12"
+                           FontWeight="Bold" Padding="4 0 5 0"/>
+              </StackPanel>
 
 
 
-      <Grid RowDefinitions="*, Auto, Auto, *" ColumnDefinitions="Auto, Auto, *, Auto">
-        <Image Source="/Assets/tmm_logo.png" Width="110" Grid.Row="1" Grid.RowSpan="2"
-               Grid.Column="0" Margin="0 0 50 0"/>
+            </Grid>
 
-        <!-- TITLE/VERSION -->
-        <TextBlock Text="TMM" FontSize="26"
-                   Foreground="White" Grid.Row="1" Grid.RowSpan="2" VerticalAlignment="Center"
-                   Grid.Column="1" FontFamily="{StaticResource Orbitron}" Margin="-50 0 0 0"/>
-        
+          </Grid>
+        </Border>
+
+
+
         <!-- FILE/EDIT/HELP MENU -->
-        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0">
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0">
           <Menu>
 
             <MenuItem Header="File" Foreground="DarkGray">
@@ -74,24 +117,19 @@
 
           <Menu>
             <MenuItem Header="Help" Foreground="DarkGray">
-              <MenuItem Header="GitHub Page" 
+              <MenuItem Header="GitHub Page"
                         Command="{Binding MainViewModel.FooterVM.OpenGitHubCommand}"/>
               <Separator />
               <MenuItem Header="Check for update" />
             </MenuItem>
+
           </Menu>
+
         </StackPanel>
-
         
-        <!-- LAUNCH BUTTON -->
-
-        <Button x:Name="LaunchButton" Content="LAUNCH" FontSize="30"
-                Grid.Row="1" Grid.RowSpan="2" Grid.Column="3" Margin="30"
-                Background="#FF5722" Foreground="#800F0E" FontFamily="{StaticResource Orbitron}"
-                FontWeight="SemiBold"/>
 
       </Grid>
-    </Border>
+
   </Panel>
 
 </UserControl>

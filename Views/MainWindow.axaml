@@ -29,11 +29,11 @@
             BackgroundSource="Digger"
             TintColor="Black"
             TintOpacity="1"
-            MaterialOpacity="0.65"/>
+            MaterialOpacity="0.75"/>
       </ExperimentalAcrylicBorder.Material>
     </ExperimentalAcrylicBorder>
 
-    <Grid x:Name="MainGrid" RowDefinitions="Auto, Auto, *, Auto" ColumnDefinitions="2*, Auto" Background="#202020">
+    <Grid x:Name="MainGrid" RowDefinitions="Auto, Auto, *, Auto" ColumnDefinitions="2*, Auto" >
 
       <!-- Header -->
       <views:HeaderView x:Name="HeaderViewControl" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
@@ -49,7 +49,7 @@
 
       <!-- Side Panel -->
       <views:SidePanelView x:Name="SidePanelViewControl" Grid.Row="2" Grid.Column="1"
-                           DataContext="{Binding SidePanelVM}" Margin="10 10 10 20"/>
+                           DataContext="{Binding SidePanelVM}" Margin="10"/>
       
       <views:FooterView x:Name="FooterViewControl" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
                         DataContext="{Binding FooterVM}" Margin="10"/>
