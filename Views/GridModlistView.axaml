@@ -14,23 +14,36 @@
       <DataGridTemplateColumn Width="40" Header="Status">
         <DataGridTemplateColumn.CellTemplate>
           <DataTemplate>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-              <Button Background="Transparent"
+            <Grid RowDefinitions="*" ColumnDefinitions="*">
+              <Button Background="Transparent" Grid.Row="0" Grid.Column="0"
+                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                       Command="{Binding DataContext.DownloadModCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                       Width="25" Height="25"
                       CommandParameter="{Binding}"
                       IsEnabled="{Binding Progress, Converter={StaticResource ProgressToBooleanConverter}}"
                       IsVisible="{Binding Progress, Converter={StaticResource ProgressToBooleanConverter}}">
-                <Image Source="{DynamicResource DownloadIcon}" Width="25" Height="25"
+                
+                <Image Source="{DynamicResource DownloadIcon}" Width="25" Height="25" Grid.Row="0" Grid.Column="0"
+                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                        IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Download}"/>
               </Button>
 
               <Image Source="{DynamicResource DownloadingIcon}" Width="25" Height="25" Classes="rotating"
+                     Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                      IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloading}"/>
-
+              
+              <Button Background="Transparent" Width="25" Height="25" Classes="cancelButton" ToolTip.Tip="Cancel Download"
+                      IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloading}"
+                      Command="{Binding DataContext.CancelDownloadModCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                      CommandParameter="{Binding}" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <TextBlock Text="X" FontSize="12" FontWeight="Bold"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"/>
+              </Button>
+              
               <Image Source="{DynamicResource DownloadedIcon}" Width="25" Height="25"
+                     Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                      IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloaded}"/>
-            </StackPanel>
+            </Grid>
           </DataTemplate>
         </DataGridTemplateColumn.CellTemplate>
       </DataGridTemplateColumn>

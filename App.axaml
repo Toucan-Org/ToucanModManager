@@ -27,6 +27,15 @@
       </Style.Animations>
     </Style>
 
+    <Style Selector="Button.cancelButton">
+      <Setter Property="Opacity" Value="0" />
+    </Style>
+    <Style Selector="Button.cancelButton:pointerover">
+      <Setter Property="Opacity" Value="0.5" />
+    </Style>
+
+
+
   </Application.Styles>
 
   <Application.Resources>

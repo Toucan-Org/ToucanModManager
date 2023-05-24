@@ -23,7 +23,7 @@ namespace ToucanUI.ViewModels
         public MainWindowViewModel MainViewModel { get; }
 
         // COMMANDS
-        public ICommand OpenGitHubCommand { get; }
+        public ICommand OpenWebsiteCommand { get; }
         public ICommand CloseSidePanelCommand { get; }
 
         // VARIABLES
@@ -40,10 +40,19 @@ namespace ToucanUI.ViewModels
         {
             MainViewModel = mainViewModel;
 
-            OpenGitHubCommand = ReactiveCommand.Create(() =>
+            OpenWebsiteCommand = ReactiveCommand.Create(() =>
             {
-                // Navigate to your GitHub page
-                Process.Start(new ProcessStartInfo("https://github.com/KSP2-Toucan/ToucanModManager") { UseShellExecute = true });
+                try
+                {
+                    // Navigate to mod website
+                    Process.Start(new ProcessStartInfo(mainViewModel.SelectedMod.Website) { UseShellExecute = true });
+                }
+                catch(System.InvalidOperationException)
+                {
+                    Debug.WriteLine("No Website was found in SelectedMod!");
+                }
+                
+                
             });
 
             CloseSidePanelCommand = ReactiveCommand.Create(() =>

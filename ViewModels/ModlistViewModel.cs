@@ -57,8 +57,17 @@ namespace ToucanUI.ViewModels
             set => this.RaiseAndSetIfChanged(ref _isGridViewVisible, value);
         }
 
+        private bool _isFetchingData;
+        public bool IsFetchingData
+        {
+            get => _isFetchingData;
+            set => this.RaiseAndSetIfChanged(ref _isFetchingData, value);
+        }
+
+
         // COMMANDS
         public ReactiveCommand<Mod, Unit> DownloadModCommand { get; }
+        public ReactiveCommand<Mod, Unit> CancelDownloadModCommand { get; }
         public ReactiveCommand<Unit, Unit> ToggleViewCommand { get; }
 
 
@@ -68,6 +77,7 @@ namespace ToucanUI.ViewModels
             MainViewModel = mainViewModel;
 
             DownloadModCommand = ReactiveCommand.Create<Mod>(mod => DownloadModAsync(mod), mainViewModel.WhenAnyValue(x => x.CanDownloadMod)); // Set whether the button is enabled or not
+            CancelDownloadModCommand = ReactiveCommand.Create<Mod>(CancelDownload);
             ToggleViewCommand = ReactiveCommand.Create(SwitchView);
 
             ModList = new ObservableCollection<Mod>();
@@ -146,7 +156,7 @@ namespace ToucanUI.ViewModels
             }
         }
 
-
+        // Switch between Classic modlist view or DataGrid view
         public void SwitchView()
         {
             IsClassicViewVisible = !IsClassicViewVisible;
@@ -154,11 +164,21 @@ namespace ToucanUI.ViewModels
 
         }
 
+        public void CancelDownload(Mod mod)
+        {
+            if (mod != null)
+            {
+                Debug.WriteLine("Cancel");
+                mod.IsCanceled = true;
+            }
+        }
+
         // Load the mod list from the API
         private async Task LoadMods(bool useDummyData = false)
         {
+            IsFetchingData = true;
             var mods = await api.GetMods(useDummyData);
-
+            
             // Update ModList on the UI thread
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -171,6 +191,8 @@ namespace ToucanUI.ViewModels
                     Debug.WriteLine("Game: " + mod.Game);
                 }
             });
+
+            IsFetchingData = false;
         }
 
 
@@ -179,9 +201,16 @@ namespace ToucanUI.ViewModels
         {
             mod.IsInstalled = false;
             mod.Progress = 0;
+            mod.IsCanceled = false;
 
             while (mod.Progress <= 100)
             {
+                if (mod.IsCanceled)
+                {
+                    mod.Progress = 0;
+                    return;
+                }
+
                 // Dummy code to simulate downloading
                 await Task.Delay(100);
                 mod.Progress += 2;

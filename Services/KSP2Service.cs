@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace ToucanUI.Services
 {
@@ -8,20 +9,31 @@ namespace ToucanUI.Services
     {
         public (string path, string version) DetectGameVersion(string path="")
         {
-            string[] searchDirectories;
+            List<string> searchDirectories = new List<string>();
 
             if (string.IsNullOrEmpty(path))
             {
-                // Scan common install directories
-                searchDirectories = new string[] {
-                Path.Combine("C:", "Program Files (x86)", "Steam", "steamapps", "common", "Kerbal Space Program 2"),
-                Path.Combine("C:", "Program Files", "Steam", "steamapps", "common", "Kerbal Space Program 2"),
-                Path.Combine("C:", "Program Files", "Epic Games", "Kerbal Space Program 2")
-                };
+                // Get all available drive letters
+                DriveInfo[] allDrives = DriveInfo.GetDrives();
+
+                foreach (DriveInfo drive in allDrives)
+                {
+                    // Steam
+                    searchDirectories.Add(Path.Combine(drive.Name, "Program Files (x86)", "Steam", "steamapps", "common", "Kerbal Space Program 2"));
+                    searchDirectories.Add(Path.Combine(drive.Name, "Program Files", "Steam", "steamapps", "common", "Kerbal Space Program 2"));
+                    searchDirectories.Add(Path.Combine(drive.Name, "Steam", "steamapps", "common", "Kerbal Space Program 2"));
+
+                    // Epic Games
+                    searchDirectories.Add(Path.Combine(drive.Name, "Program Files", "Epic Games", "Kerbal Space Program 2"));
+                    searchDirectories.Add(Path.Combine(drive.Name, "Epic Games", "Kerbal Space Program 2"));
+
+                    // Generic
+                    searchDirectories.Add(Path.Combine(drive.Name, "Games", "Kerbal Space Program 2"));
+                }
             }
             else
             {
-                searchDirectories = new string[] { path };
+                searchDirectories = new List<string> { path };
             }
 
 
@@ -37,7 +49,7 @@ namespace ToucanUI.Services
             return (ksp2ExePath, versionInfo.ProductVersion);
         }
 
-        private string FindKSP2Exe(string[] searchDirectories)
+        private string FindKSP2Exe(List<string> searchDirectories)
         {
             string fileName = "KSP2_x64.exe";
 

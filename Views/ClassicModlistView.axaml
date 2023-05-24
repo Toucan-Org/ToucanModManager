@@ -43,6 +43,7 @@
             <!-- PLACEHOLDER FOR MOD ICON -->
             <Ellipse Width="45" Height="45" Fill="White" Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Margin="5"></Ellipse>
 
+
             <TextBlock Text="{Binding Name}" FontWeight="Bold"
                   Grid.Row="1" Grid.Column="2" Margin="15 5 10 5"/>
             <TextBlock Text="{Binding Author}" FontStyle="Italic" Foreground="Gray"
@@ -63,7 +64,7 @@
             <!-- DOWNLOAD BUTTON/ICON -->
             <Button Background="Transparent" Grid.Row="1" Grid.RowSpan="2" Grid.Column="6" Margin="5"
                 Command="{Binding DataContext.DownloadModCommand, ElementName=ModListBox}" Width="50" Height="50"
-                CommandParameter="{Binding}"
+                CommandParameter="{Binding}" ToolTip.Tip="Download and Install"
                 IsEnabled="{Binding Progress, Converter={StaticResource ProgressToBooleanConverter}}"
                 IsVisible="{Binding Progress, Converter={StaticResource ProgressToBooleanConverter}}">
               <Panel>
@@ -80,13 +81,29 @@
               <Image Source="{DynamicResource DownloadingIcon}" Width="50" Height="50" Classes="rotating"
                    IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloading}"/>
 
+              <Button Background="Transparent" Width="50" Height="50" Classes="cancelButton" ToolTip.Tip="Cancel Download"
+                      IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloading}"
+                      Command="{Binding DataContext.CancelDownloadModCommand, ElementName=ModListBox}"
+                      CommandParameter="{Binding}">
+                <TextBlock Text="X" FontSize="18" FontWeight="Bold"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"/>
+              </Button>
+
+
+
               <Image Source="{DynamicResource DownloadedIcon}" Width="50" Height="50"
                    IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloaded}"/>
 
             </Panel>
 
+
+            <!--<Button Content="Cancel" Grid.Row="4" Grid.RowSpan="2" Grid.Column="6" Background="Transparent" VerticalAlignment="Top"
+                    IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloading}"
+                    Command="{Binding DataContext.CancelDownloadModCommand, ElementName=ModListBox}"
+                    CommandParameter="{Binding}"/>-->
+
             <!-- SELECTED ICON -->
-            <Panel Grid.Row="1" Grid.RowSpan="2" Grid.Column="7" Margin="10">
+            <Panel Grid.Row="1" Grid.RowSpan="2" Grid.Column="7" Margin="5">
               <!-- This works quite well, does not require converters or behind-code -->
               <Image Width="50"
                   Classes.opened="{Binding $parent[ListBoxItem].IsSelected}"
@@ -110,5 +127,5 @@
     </ListBox.ItemTemplate>
 
   </ListBox>
-  
+
 </UserControl>
