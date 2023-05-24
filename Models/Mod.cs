@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -30,11 +31,25 @@ namespace ToucanUI.Models
         public string SourceCode { get; set; }
         public string Url { get; set; }
         public List<Version> Versions { get; set; }
+
+        public Version LatestVersion => GetLatestVersion();
         public object ModVersion { get; private set; }
         public object GameVersion { get; private set; }
 
         public bool IsSelected { get; set; }
-        public bool IsInstalled { get; set; }
+
+        private bool _isInstalled;
+
+        public bool IsInstalled
+        {
+            get => _isInstalled;
+            set
+            {
+                _isInstalled = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool IsCanceled { get; set; }
 
         //THESE ARE PLACEHOLDERS FOR THE UI
         private int _progress;
@@ -89,18 +104,24 @@ namespace ToucanUI.Models
                     DownloadPath = versionJson.GetProperty("download_path").GetString(),
                     Changelog = versionJson.GetProperty("changelog").GetString(),
                     Downloads = versionJson.GetProperty("downloads").GetInt32(),
+                    DownloadSize = "123Mb",//PLACEHOLDER CURRENTLY
                     Created = versionJson.GetProperty("created").GetDateTimeOffset()
                 };
                 Versions.Add(version);
             }
 
             // Get the latest version
-            var latestVersion = Versions.OrderByDescending(v => v.Created).FirstOrDefault();
+            var latestVersion = LatestVersion;
             if (latestVersion != null)
             {
                 ModVersion = latestVersion.FriendlyVersion;
                 GameVersion = latestVersion.GameVersion;
             }
+        }
+
+        private Version GetLatestVersion()
+        {
+            return Versions.OrderByDescending(v => v.Created).FirstOrDefault();
         }
 
     }
@@ -114,6 +135,8 @@ namespace ToucanUI.Models
         public string? DownloadPath { get; internal set; }
         public string? Changelog { get; internal set; }
         public int Downloads { get; internal set; }
+
+        public string DownloadSize { get; internal set; }
         public DateTimeOffset Created { get; internal set; }
 
         public Version(JsonElement versionJson)
