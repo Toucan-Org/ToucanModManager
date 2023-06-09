@@ -9,10 +9,5 @@
 
   <!-- Add Styles Here -->
   <Style>
-    <Style.Resources>
-      <svg:SvgImage x:Key="DownloadIconWhite" Source="Assets/Icons/Download-Icon-White@2x.svg" />
-      <svg:SvgImage x:Key="DownloadingIconWhite" Source="Assets/Icons/Downloading-Icon-White@2x.svg" />
-      <svg:SvgImage x:Key="DownloadedIconWhite" Source="Assets/Icons/Downloaded-Icon-White@2x.svg" />
-    </Style.Resources>
   </Style>
 </Styles>

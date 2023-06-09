@@ -1,9 +1,4 @@
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
-using ReactiveUI;
-using System.Reactive;
 using ToucanUI.ViewModels;
 
 namespace ToucanUI.Views
@@ -13,6 +8,8 @@ namespace ToucanUI.Views
         public MainWindow()
         {
             InitializeComponent();
+            this.MinWidth = 1000;
+            this.MinHeight = 600;
         }
 
         public MainWindow(MainWindowViewModel viewModel) : this()

@@ -8,20 +8,26 @@
              x:Class="ToucanUI.Views.SidePanelView"
              Background="Transparent">  
 	
-	<Border IsVisible="{Binding SidePanelVisible}" Background="#181818"
+	<Border IsVisible="{Binding SidePanelVisible}" Background="#90181818"
           CornerRadius="15" Width="550">
 			<Grid RowDefinitions="Auto, Auto, Auto, *, Auto, Auto" 
             ColumnDefinitions="*,*,*,*" Margin="10">
 
 				
 				<Button Grid.Row="0" Grid.Column="3" HorizontalAlignment="Right" Content="X"
-                FontSize="24" Background="Transparent" Margin="5" Command="{Binding CloseSidePanelCommand}"/>
+                FontSize="24" Background="Transparent" Margin="5" Command="{Binding CloseSidePanelCommand}">
 
-				<!-- THIS IS HOW YOU REFERENCE THE SELECTED MOD DETAILS-->
-				<TextBlock Text="{Binding MainViewModel.SelectedMod.Name}" FontWeight="SemiBold" FontSize="26"
+          <Button.Content>
+            <Image Source="{DynamicResource CloseIcon-White}" Width="40" Height="40"/>
+          </Button.Content>
+
+        </Button>
+
+        <!-- MOD NAME AND AUTHORS -->
+				<TextBlock Text="{Binding MainViewModel.SelectedMod.ModObject.Name}" FontWeight="SemiBold" FontSize="26"
 				    Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Margin="15 10 35 0" TextWrapping="WrapWithOverflow"/>
 
-				<TextBlock Text= "{Binding MainViewModel.SelectedMod.Author}" FontWeight="Regular" Grid.Row="1"
+				<TextBlock Text= "{Binding MainViewModel.SelectedMod.ModObject.Author}" FontWeight="Regular" Grid.Row="1"
                    Grid.Column="0" Grid.ColumnSpan="4" Margin="15 5 15 10" Foreground="DarkGray"/>
 
         <Rectangle Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Height="1" Fill="Gray" Margin="15 5 15 0"/>
@@ -35,47 +41,47 @@
 
                 <!-- Description -->
                 <TextBlock Text="Description" Grid.Row="0" Grid.Column="0" Foreground="DarkGray"/>
-                <TextBox Text="{Binding MainViewModel.SelectedMod.Description}" Grid.Row="1" Grid.Column="0" IsHitTestVisible="False" Padding="10"
+                <TextBox Text="{Binding MainViewModel.SelectedMod.ModObject.Description}" Grid.Row="1" Grid.Column="0" IsHitTestVisible="False" Padding="10"
                          Grid.ColumnSpan="4" TextWrapping="Wrap" IsReadOnly="True" Background="#202020" BorderBrush="#181818" Margin="0 10 0 0"/>
 
                 <!-- Game Version -->
                 <TextBlock Text="Game Version" Grid.Row="2" Grid.Column="0" Foreground="DarkGray" Margin="0 30 0 10"/>
-                <TextBox Text="{Binding MainViewModel.SelectedMod.GameVersion}" Grid.Row="3" Grid.Column="0" IsHitTestVisible="False" Padding="10"
+                <TextBox Text="{Binding MainViewModel.SelectedMod.ModObject.SelectedVersion.GameVersion}" Grid.Row="3" Grid.Column="0" IsHitTestVisible="False" Padding="10"
                          Grid.ColumnSpan="2" TextWrapping="Wrap" IsReadOnly="True" Background="#202020" BorderBrush="#181818" Margin="0 0 10 0"/>
 
                 <!-- Mod Version -->
                 <TextBlock Text="Mod Version" Grid.Row="2" Grid.Column="2" Foreground="DarkGray" Margin="10 30 0 10"/>
-                <TextBox Text="{Binding MainViewModel.SelectedMod.ModVersion}" Grid.Row="3" Grid.Column="2" IsHitTestVisible="False" Padding="10"
+                <TextBox Text="{Binding MainViewModel.SelectedMod.ModObject.SelectedVersion.FriendlyVersion}" Grid.Row="3" Grid.Column="2" IsHitTestVisible="False" Padding="10"
                          Grid.ColumnSpan="2" TextWrapping="Wrap" IsReadOnly="True" Background="#202020" BorderBrush="#181818" Margin="10 0 0 0"/>
 
                 <!-- Downloads -->
                 <TextBlock Text="Downloads" Grid.Row="4" Grid.Column="0" Foreground="DarkGray" Margin="0 30 0 10"/>
-                <TextBox Text="{Binding MainViewModel.SelectedMod.Downloads}" Grid.Row="5" Grid.Column="0" IsHitTestVisible="False" Padding="10"
+                <TextBox Text="{Binding MainViewModel.SelectedMod.ModObject.SelectedVersion.Downloads}" Grid.Row="5" Grid.Column="0" IsHitTestVisible="False" Padding="10"
                          Grid.ColumnSpan="2" TextWrapping="Wrap" IsReadOnly="True" Background="#202020" BorderBrush="#181818" Margin="0 0 10 0"/>
 
                 <!-- Download Size (WIP) -->
                 <TextBlock Text="Download Size" Grid.Row="4" Grid.Column="2" Foreground="DarkGray" Margin="10 30 0 10"/>
-                <TextBox Text="{Binding MainViewModel.SelectedMod.LatestVersion.DownloadSize}" Grid.Row="5" Grid.Column="2" IsHitTestVisible="False" Padding="10"
+                <TextBox Text="{Binding MainViewModel.SelectedMod.ModObject.SelectedVersion.DownloadSizeDisplay}" Grid.Row="5" Grid.Column="2" IsHitTestVisible="False" Padding="10"
                          Grid.ColumnSpan="2" TextWrapping="Wrap" IsReadOnly="True" Background="#202020" BorderBrush="#181818" Margin="10 0 0 0"/>
 
                 <!-- Followers -->
                 <TextBlock Text="Followers" Grid.Row="6" Grid.Column="0" Foreground="DarkGray" Margin="0 30 0 10"/>
-                <TextBox Text="{Binding MainViewModel.SelectedMod.Followers}" Grid.Row="7" Grid.Column="0" IsHitTestVisible="False" Padding="10"
+                <TextBox Text="{Binding MainViewModel.SelectedMod.ModObject.Followers}" Grid.Row="7" Grid.Column="0" IsHitTestVisible="False" Padding="10"
                          Grid.ColumnSpan="2" TextWrapping="Wrap" IsReadOnly="True" Background="#202020" BorderBrush="#181818" Margin="0 0 10 0"/>
 
                 <!-- License -->
                 <TextBlock Text="License" Grid.Row="6" Grid.Column="2" Foreground="DarkGray" Margin="10 30 0 10"/>
-                <TextBox Text="{Binding MainViewModel.SelectedMod.License}" Grid.Row="7" Grid.Column="2" IsHitTestVisible="False" Padding="10"
+                <TextBox Text="{Binding MainViewModel.SelectedMod.ModObject.License}" Grid.Row="7" Grid.Column="2" IsHitTestVisible="False" Padding="10"
                          Grid.ColumnSpan="2" TextWrapping="Wrap" IsReadOnly="True" Background="#202020" BorderBrush="#181818" Margin="10 0 0 0"/>
 
                 <!-- Website -->
                 <TextBlock Text="Website" Grid.Row="8" Grid.Column="0" Foreground="DarkGray" Margin="0 30 0 10"/>
-                <TextBox Text="{Binding MainViewModel.SelectedMod.Website}" Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="4" Padding="10"
+                <TextBox Text="{Binding MainViewModel.SelectedMod.ModObject.Website}" Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="4" Padding="10"
                          TextWrapping="Wrap" IsReadOnly="True" Background="#202020" BorderBrush="#181818" Margin="0"/>
 
                 <!-- Donations -->
                 <TextBlock Text="Donations" Grid.Row="10" Grid.Column="0" Foreground="DarkGray" Margin="0 30 0 10"/>
-                <TextBox Text="{Binding MainViewModel.SelectedMod.Donations}" Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="4" Padding="10"
+                <TextBox Text="{Binding MainViewModel.SelectedMod.ModObject.Donations}" Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="4" Padding="10"
                          TextWrapping="Wrap" IsReadOnly="True" Background="#202020" BorderBrush="#181818" Margin="0"/>
                
               </Grid>
@@ -84,17 +90,27 @@
           
           <!-- VERSIONS SUBMENU -->
           <TabItem Header="Versions" FontSize="18">
-              <DataGrid Items="{Binding MainViewModel.SelectedMod.Versions}" AutoGenerateColumns="False"
-                        IsReadOnly="True" CanUserSortColumns="True" Margin="0 10 0 0">
+              <DataGrid Items="{Binding MainViewModel.SelectedMod.ModObject.Versions}" AutoGenerateColumns="False" SelectionMode="Single"
+                        IsReadOnly="True" CanUserSortColumns="True" Margin="10" Background="Transparent" AlternatingRowBackground="#80303030"
+                        IsEnabled="{Binding MainViewModel.SelectedMod.IsModifiable}">
                 <DataGrid.Columns>
-                  <DataGridTextColumn Header="Friendly Version" Binding="{Binding FriendlyVersion}" />
+                  <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <RadioButton IsChecked="{Binding IsSelectedVersion}" HorizontalAlignment="Center"/>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+
+                  <DataGridTextColumn Header="Mod Version" Binding="{Binding FriendlyVersion}" />
                   <DataGridTextColumn Header="Game Version" Binding="{Binding GameVersion}" />
                   <DataGridTextColumn Header="Downloads" Binding="{Binding Downloads}" />
-                  <DataGridTextColumn Header="Download Size" Binding="{Binding DownloadSize}" />
+                  <DataGridTextColumn Header="Download Size" Binding="{Binding DownloadSizeDisplay}" />
                   <DataGridTextColumn Header="Changelog" Binding="{Binding Changelog}" />
                   <DataGridTextColumn Header="Created" Binding="{Binding Created}" />
                 </DataGrid.Columns>
               </DataGrid>
+
           </TabItem>
 
 
@@ -102,33 +118,41 @@
         </TabControl>
 
 				<!-- BUTTONS -->
-        <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Margin="25 0 0 0"
+        <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Margin="25 10 0 0"
               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
               RowDefinitions="Auto, Auto" ColumnDefinitions="*, *, *, *">
           
-          <!-- Update Button -->
+          <!-- Open Website Button -->
           <Button Grid.Row="0" Grid.Column="0" Width="60" Height="60"
                   ToolTip.Tip="Open Website"
                   Background="Transparent" Command="{Binding OpenWebsiteCommand}">
             <Button.Content>
-              <Image Source="{DynamicResource GitHubIcon-White}" Width="50" Height="50"/>
+              <Image Source="{DynamicResource OpenWebsiteIcon-White}" Width="60" Height="60"/>
             </Button.Content>
           </Button>
 
-          <Button Grid.Row="0" Grid.Column="1" IsVisible="{Binding MainViewModel.SelectedMod.IsInstalled}">
-            <TextBlock TextWrapping="Wrap">Update Placeholder</TextBlock>
+          <!-- Update Button -->
+          <Button Grid.Row="0" Grid.Column="1" IsVisible="{Binding MainViewModel.SelectedMod.IsInstalled}"
+                  Width="60" Height="60" Background="Transparent">
+            <Button.Content>
+              <Image Source="{DynamicResource UpdateIcon-White}" Width="70" Height="70"/>
+            </Button.Content>
           </Button>
 
-          <Button Grid.Row="0" Grid.Column="2" IsVisible="{Binding MainViewModel.SelectedMod.IsInstalled}">
-            <TextBlock TextWrapping="Wrap">Uninstall Placeholder</TextBlock>
+          <!-- Uninstall Button -->
+          <Button Grid.Row="0" Grid.Column="2" IsVisible="{Binding MainViewModel.SelectedMod.IsInstalled}"
+                  Width="60" Height="60" Background="Transparent">
+            <Button.Content>
+              <Image Source="{DynamicResource UninstallIcon-White}" Width="60" Height="60"/>
+            </Button.Content>
           </Button>
 
-          <Grid Grid.Row="0" Grid.Column="3">
+          <Grid Grid.Row="0" Grid.Column="3" Width="60" Height="60">
             <!-- Download Buttons and Icons -->
             <Button Background="Transparent" Width="60" Height="60"
                     Command="{Binding MainViewModel.ModlistVM.DownloadModCommand}"
                     CommandParameter="{Binding MainViewModel.SelectedMod}"
-                    ToolTip.Tip="Download and Install"
+                    ToolTip.Tip="{Binding MainViewModel.SelectedMod.ModObject.SelectedVersion.FriendlyVersion, StringFormat='Install {0}'}"
                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                     IsEnabled="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToBooleanConverter}}"
                     IsVisible="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToBooleanConverter}}">
@@ -151,12 +175,14 @@
                     Command="{Binding MainViewModel.ModlistVM.CancelDownloadModCommand}"
                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                     CommandParameter="{Binding MainViewModel.SelectedMod}">
-              <TextBlock Text="X" FontSize="18" FontWeight="Bold"
-                         VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+              <Button.Content>
+                <Image Source="{DynamicResource CloseIcon-White}" Width="40" Height="40"/>
+              </Button.Content>
             </Button>
 
             <Image Source="{DynamicResource DownloadedIcon}" Width="60" Height="60"
-                   ToolTip.Tip="Installed"
+                   ToolTip.Tip="{Binding MainViewModel.SelectedMod.ModObject.SelectedVersion.FriendlyVersion, StringFormat='Installed {0}'}"
                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                    IsVisible="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloaded}"/>
 

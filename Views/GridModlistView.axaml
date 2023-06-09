@@ -5,13 +5,13 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ToucanUI.Views.GridModlistView">
 
-  <DataGrid CornerRadius="5" Items="{Binding Mods}" Background="#181818"
+  <DataGrid CornerRadius="5" Items="{Binding Mods}" Background="Transparent"
             SelectedItem="{Binding MainViewModel.SelectedMod}" AutoGenerateColumns="False"
             Margin="10" IsReadOnly="False" CanUserReorderColumns="True" CanUserResizeColumns="True"
-            CanUserSortColumns="True">
+            CanUserSortColumns="True" AreRowDetailsFrozen="True">
     <DataGrid.Columns>
       <!-- Custom column for download/downloading/downloaded icons -->
-      <DataGridTemplateColumn Width="40" Header="Status">
+      <DataGridTemplateColumn Width="40" Header="Status" CanUserResize="False">
         <DataGridTemplateColumn.CellTemplate>
           <DataTemplate>
             <Grid RowDefinitions="*" ColumnDefinitions="*">
@@ -36,8 +36,9 @@
                       IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloading}"
                       Command="{Binding DataContext.CancelDownloadModCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                       CommandParameter="{Binding}" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <TextBlock Text="X" FontSize="12" FontWeight="Bold"
-                           VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <Button.Content>
+                  <Image Source="{DynamicResource CloseIcon-White}" Width="20" Height="20"/>
+                </Button.Content>
               </Button>
               
               <Image Source="{DynamicResource DownloadedIcon}" Width="25" Height="25"
@@ -48,14 +49,23 @@
         </DataGridTemplateColumn.CellTemplate>
       </DataGridTemplateColumn>
       <!-- Other columns -->
-      <DataGridCheckBoxColumn Header="Selected" Binding="{Binding IsSelected}" Width="100" />
-      <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="250" IsReadOnly="True"/>
-      <DataGridTextColumn Header="Author" Binding="{Binding Author}" Width="250" IsReadOnly="True"/>
-      <DataGridTextColumn Header="Game Version" Binding="{Binding GameVersion}" IsReadOnly="True"/>
-      <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="500" IsReadOnly="True"/>
-      <DataGridTextColumn Header="Downloads" Binding="{Binding Downloads}" IsReadOnly="True"/>
-      <DataGridTextColumn Header="Followers" Binding="{Binding Followers}" IsReadOnly="True"/>
-      <DataGridTextColumn Header="License" Binding="{Binding License}" IsReadOnly="True"/>
+      <DataGridTemplateColumn CanUserResize="False">
+        <DataGridTemplateColumn.CellTemplate>
+          <DataTemplate>
+            <CheckBox IsChecked="{Binding IsSelectedBulk}" HorizontalAlignment="Center"/>
+          </DataTemplate>
+        </DataGridTemplateColumn.CellTemplate>
+      </DataGridTemplateColumn>
+
+      <DataGridTextColumn Header="Name" Binding="{Binding ModObject.Name}" Width="250" IsReadOnly="True"/>
+      <DataGridTextColumn Header="Author" Binding="{Binding ModObject.Author}" Width="200" IsReadOnly="True"/>
+      <DataGridTextColumn Header="Game Version" Binding="{Binding ModObject.SelectedVersion.GameVersion}" IsReadOnly="True"/>
+      <DataGridTextColumn Header="Mod Version" Binding="{Binding ModObject.SelectedVersion.FriendlyVersion}" IsReadOnly="True"/>      
+      <DataGridTextColumn Header="Description" Binding="{Binding ModObject.Description}" Width="500" IsReadOnly="True"/>
+      <DataGridTextColumn Header="Downloads" Binding="{Binding ModObject.Downloads}" IsReadOnly="True"/>
+      <DataGridTextColumn Header="Download Size" Binding="{Binding ModObject.SelectedVersion.DownloadSizeDisplay}" IsReadOnly="True"/>
+      <DataGridTextColumn Header="Followers" Binding="{Binding ModObject.Followers}" IsReadOnly="True"/>
+      <DataGridTextColumn Header="License" Binding="{Binding ModObject.License}" IsReadOnly="True"/>
     </DataGrid.Columns>
   </DataGrid>
 </UserControl>

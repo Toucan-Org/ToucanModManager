@@ -1,7 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using System;
-using ToucanUI.ViewModels;
 
 namespace ToucanUI
 {

@@ -1,35 +1,28 @@
-﻿using Avalonia.FreeDesktop.DBusIme;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Platform;
-using DynamicData;
-using DynamicData.Binding;
-using ReactiveUI;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using ReactiveUI;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reactive;
-using System.Reactive.Linq;
-using System.Text.Json;
-using System.Threading.Tasks;
 using ToucanUI.Models;
-using ToucanUI.Services;
+
 
 namespace ToucanUI.ViewModels
 {
     public class ControlPanelViewModel : ViewModelBase
     {
-        // VIEWMODELS        
+        // =====================
+        // VIEW MODELS
+        // =====================    
         public MainWindowViewModel MainViewModel { get; }
 
-        // VARIABLES
-        public ReadOnlyObservableCollection<Mod> filteredList;
-        private bool _filterInstalled = false;
 
+
+        // =====================
+        // VARIABLES
+        // =====================
+
+        // List to be used when filtering mods
+        public ReadOnlyObservableCollection<Mod> filteredList;
+
+        // Is installed filter
+        private bool _filterInstalled = false;
         public bool FilterInstalled
         {
             get => _filterInstalled;
@@ -39,6 +32,8 @@ namespace ToucanUI.ViewModels
             }
 
         }
+
+        // Is compatible version filter
         private bool _filterVersion = false;
         public bool FilterVersion
         {
@@ -50,12 +45,14 @@ namespace ToucanUI.ViewModels
 
         }
 
+        // =====================
         // CONSTRUCTOR
+        // =====================
         public ControlPanelViewModel(MainWindowViewModel mainViewModel)
         {
             MainViewModel = mainViewModel;
 
         }
-        
+
     }
 }

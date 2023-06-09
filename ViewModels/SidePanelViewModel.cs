@@ -1,32 +1,32 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Platform;
-using ReactiveUI;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using ReactiveUI;
 using System.Diagnostics;
-using System.IO;
-using System.Reactive;
-using System.Text.Json;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using ToucanUI.Models;
-using ToucanUI.Services;
-using ToucanUI.Views;
+
 
 namespace ToucanUI.ViewModels
 {
     public class SidePanelViewModel : ViewModelBase
     {
-        // VIEWMODELS
+        // =====================
+        // VIEW MODELS
+        // =====================
         public MainWindowViewModel MainViewModel { get; }
 
+
+
+        // =====================
         // COMMANDS
+        // =====================
         public ICommand OpenWebsiteCommand { get; }
         public ICommand CloseSidePanelCommand { get; }
 
+
+
+        // =====================
         // VARIABLES
+        // =====================
+
+        // Tracks if the side panel should be visible or not
         private bool _sidePanelVisible = false;
         public bool SidePanelVisible
         {
@@ -35,8 +35,10 @@ namespace ToucanUI.ViewModels
         }
 
 
+        // =====================
         // CONSTRUCTOR
-        public SidePanelViewModel(MainWindowViewModel mainViewModel) 
+        // =====================
+        public SidePanelViewModel(MainWindowViewModel mainViewModel)
         {
             MainViewModel = mainViewModel;
 
@@ -45,14 +47,14 @@ namespace ToucanUI.ViewModels
                 try
                 {
                     // Navigate to mod website
-                    Process.Start(new ProcessStartInfo(mainViewModel.SelectedMod.Website) { UseShellExecute = true });
+                    Process.Start(new ProcessStartInfo(mainViewModel.SelectedMod.ModObject.Website) { UseShellExecute = true });
                 }
-                catch(System.InvalidOperationException)
+                catch (System.InvalidOperationException)
                 {
                     Debug.WriteLine("No Website was found in SelectedMod!");
                 }
-                
-                
+
+
             });
 
             CloseSidePanelCommand = ReactiveCommand.Create(() =>
@@ -60,10 +62,10 @@ namespace ToucanUI.ViewModels
                 //This de-selects a selected mod from the listbox
                 MainViewModel.SelectedMod = null;
                 SidePanelVisible = false;
-               
+
             });
 
         }
-       
+
     }
 }

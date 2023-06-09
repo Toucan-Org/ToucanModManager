@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:ToucanUI"
              xmlns:converters="using:ToucanUI.Converters"
+             xmlns:views="using:ToucanUI.Views"
              x:Class="ToucanUI.App">
 
   <Application.DataTemplates>
@@ -34,8 +35,6 @@
       <Setter Property="Opacity" Value="0.5" />
     </Style>
 
-
-
   </Application.Styles>
 
   <Application.Resources>
@@ -45,6 +44,8 @@
     <converters:ProgressToStatusConverter x:Key="ProgressToStatusConverter"/>
     <converters:BitmapAssetValueConverter x:Key="BitmapAssetValueConverter"/>
     <converters:ProgressToBooleanConverter x:Key="ProgressToBooleanConverter"/>
+    <converters:CountToBooleanConverter x:Key="CountToBooleanConverter"/>
+    <converters:BooleanOrConverter x:Key="BooleanOrConverter"/>
     
     <!-- FONTS -->
     <FontFamily x:Key="Orbitron">/Assets/Fonts/Orbitron-Regular.ttf#Orbitron</FontFamily>
@@ -87,12 +88,48 @@
     </x:Arguments>
   </Bitmap>
 
-	  <!-- Close icons created by Pixel perfect - Flaticon -->
-  <Bitmap x:Key="CloseButton">
+  <Bitmap x:Key="OpenWebsiteIcon-White">
     <x:Arguments>
-      <x:String>Assets/Icons/CloseButton.png</x:String>
+      <x:String>Assets/Icons/OpenWebsite-Icon-White.png</x:String>
     </x:Arguments>
   </Bitmap>
+
+  <Bitmap x:Key="UpdateIcon-White">
+    <x:Arguments>
+      <x:String>Assets/Icons/Update-Icon-White.png</x:String>
+    </x:Arguments>
+  </Bitmap>
+
+  <Bitmap x:Key="CloseIcon-White">
+    <x:Arguments>
+      <x:String>Assets/Icons/Close-Icon-White.png</x:String>
+    </x:Arguments>
+  </Bitmap>
+
+  <Bitmap x:Key="RefreshIcon-White">
+    <x:Arguments>
+      <x:String>Assets/Icons/Refresh-Icon-White.png</x:String>
+    </x:Arguments>
+  </Bitmap>
+
+  <Bitmap x:Key="ToggleView-Grid-White">
+    <x:Arguments>
+      <x:String>Assets/Icons/ToggleView-Grid-White.png</x:String>
+    </x:Arguments>
+  </Bitmap>
+
+  <Bitmap x:Key="ToggleView-List-White">
+    <x:Arguments>
+      <x:String>Assets/Icons/ToggleView-List-White.png</x:String>
+    </x:Arguments>
+  </Bitmap>
+
+  <Bitmap x:Key="UninstallIcon-White">
+    <x:Arguments>
+      <x:String>Assets/Icons/Uninstall-Icon-White.png</x:String>
+    </x:Arguments>
+  </Bitmap>
+
   </Application.Resources>
 
 </Application>

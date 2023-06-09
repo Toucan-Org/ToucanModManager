@@ -1,18 +1,20 @@
-﻿using System;
+﻿using ReactiveUI;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 // The Mod Object, which is used to store the data from the Spacedock API. This can be improved greatly
 
 namespace ToucanUI.Models
 {
-    public class Mod : INotifyPropertyChanged
+    public class Mod : ReactiveObject
     {
-        private bool _isSelected;
+
+        // =====================
+        // MOD VARIABLES
+        // =====================
+
         public string Name { get; set; }
         public int Id { get; set; }
         public string Game { get; set; }
@@ -30,51 +32,33 @@ namespace ToucanUI.Models
         public string Donations { get; set; }
         public string SourceCode { get; set; }
         public string Url { get; set; }
+
+
+
+        // =====================
+        // VERSION VARIABLES
+        // =====================
+
+        // List of all versions
         public List<Version> Versions { get; set; }
 
-        public Version LatestVersion => GetLatestVersion();
-        public object ModVersion { get; private set; }
-        public object GameVersion { get; private set; }
+        // Latest version (keeping these to be used for easy comparison if mod is up to date or not)
+        public Version LatestVersion;
 
-        public bool IsSelected { get; set; }
-
-        private bool _isInstalled;
-
-        public bool IsInstalled
+        // Currently selected version 
+        private Version _selectedVersion;
+        public Version SelectedVersion
         {
-            get => _isInstalled;
-            set
-            {
-                _isInstalled = value;
-                OnPropertyChanged();
-            }
-        }
-        public bool IsCanceled { get; set; }
-
-        //THESE ARE PLACEHOLDERS FOR THE UI
-        private int _progress;
-        public int Progress
-        {
-            get => _progress;
-            set
-            {
-                _progress = value;
-                OnPropertyChanged();
-            }
+            get => _selectedVersion;
+            set => this.RaiseAndSetIfChanged(ref _selectedVersion, value);
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
+        // =====================
+        // MOD CONSTRUCTOR
+        // =====================
         public Mod(JsonElement modJson)
         {
-            IsSelected = false;
-            IsInstalled = false;
-            Progress = 0;
             Name = modJson.GetProperty("name").GetString();
             Id = modJson.GetProperty("id").GetInt32();
             Game = modJson.GetProperty("game").GetString();
@@ -86,7 +70,6 @@ namespace ToucanUI.Models
             DefaultVersionId = modJson.GetProperty("default_version_id").GetInt32();
             SharedAuthors = JsonSerializer.Deserialize<List<string>>(modJson.GetProperty("shared_authors").ToString());
             Background = modJson.GetProperty("background").GetString();
-            BgOffsetY = modJson.GetProperty("bg_offset_y").GetInt32();
             License = modJson.GetProperty("license").GetString();
             Website = modJson.GetProperty("website").GetString();
             Donations = modJson.GetProperty("donations").GetString();
@@ -94,54 +77,74 @@ namespace ToucanUI.Models
             Url = modJson.GetProperty("url").GetString();
             Versions = new List<Version>();
 
+            // Create version objects for each version
             var versionJsonArray = modJson.GetProperty("versions").EnumerateArray();
             foreach (var versionJson in versionJsonArray)
             {
-                var version = new Version(versionJson)
+                var versionID = versionJson.GetProperty("id").GetInt32();
+                var version = new Version(versionJson, this)
                 {
+                    VersionID = versionID,
                     FriendlyVersion = versionJson.GetProperty("friendly_version").GetString(),
                     GameVersion = versionJson.GetProperty("game_version").GetString(),
-                    DownloadPath = versionJson.GetProperty("download_path").GetString(),
                     Changelog = versionJson.GetProperty("changelog").GetString(),
+                    DownloadPath = "https://spacedock.info" + versionJson.GetProperty("download_path").GetString(),
                     Downloads = versionJson.GetProperty("downloads").GetInt32(),
-                    DownloadSize = "123Mb",//PLACEHOLDER CURRENTLY
-                    Created = versionJson.GetProperty("created").GetDateTimeOffset()
+                    Created = versionJson.GetProperty("created").GetDateTimeOffset(),
+                    IsSelectedVersion = false
                 };
+
+                // Add version to list of versions
                 Versions.Add(version);
             }
 
-            // Get the latest version
-            var latestVersion = LatestVersion;
-            if (latestVersion != null)
-            {
-                ModVersion = latestVersion.FriendlyVersion;
-                GameVersion = latestVersion.GameVersion;
-            }
+            // Get the latest version and set it as default
+            LatestVersion = GetLatestVersion();
+            SelectedVersion = LatestVersion;
+            SelectedVersion.IsSelectedVersion = true;
+
+            // Only grab the download size for the latest version (speeds up loading)
+            Task.Run(() => LatestVersion.GetDownloadSizeAsync());
+
         }
 
+        // ===============
+        // METHODS
+        // ===============
+
+        // Method to get the latest version
         private Version GetLatestVersion()
         {
             return Versions.OrderByDescending(v => v.Created).FirstOrDefault();
         }
 
-    }
-
-    public class Version
-    {
-        public string VersionNumber { get; set; }
-        public string GameVersion { get; set; }
-        public JsonElement VersionJson { get; }
-        public string? FriendlyVersion { get; internal set; }
-        public string? DownloadPath { get; internal set; }
-        public string? Changelog { get; internal set; }
-        public int Downloads { get; internal set; }
-
-        public string DownloadSize { get; internal set; }
-        public DateTimeOffset Created { get; internal set; }
-
-        public Version(JsonElement versionJson)
+        // Method to select only one version
+        public void OnVersionSelected(Version selectedVersion)
         {
-            VersionJson = versionJson;
+
+            // Deselect other versions
+            foreach (var version in Versions)
+            {
+                if (version != selectedVersion)
+                {
+                    version.IsSelectedVersion = false;
+                }
+            }
+
+            // Update the SelectedVersion property
+            SelectedVersion = selectedVersion;
+            SelectedVersion.IsSelectedVersion = true;
         }
+
+
+        // Method to get the download size of all versions of a mod
+        public async Task InitializeDownloadSizesAsync()
+        {
+            var downloadTasks = Versions.Select(version => version.GetDownloadSizeAsync());
+            await Task.WhenAll(downloadTasks);
+
+        }
+
     }
+
 }

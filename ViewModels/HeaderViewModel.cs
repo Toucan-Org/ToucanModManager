@@ -1,15 +1,15 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Themes.Fluent;
-using MessageBox.Avalonia;
 using MessageBox.Avalonia.DTO;
 using MessageBox.Avalonia.Enums;
 using MessageBox.Avalonia.Models;
 using ReactiveUI;
+using System;
 using System.Diagnostics;
-using System.Linq;
+using System.Net.Http;
 using System.Reactive;
+using System.Text.Json;
 using System.Threading.Tasks;
 using ToucanUI.Services;
 
@@ -17,46 +17,189 @@ namespace ToucanUI.ViewModels
 {
     public class HeaderViewModel : ViewModelBase
     {
-        // VIEWMODELS
+        // =====================
+        // VIEW MODELS
+        // =====================
         public MainWindowViewModel MainViewModel { get; }
 
+
+
+        // =====================
+        // VARIABLES
+        // =====================
+
+
+
+        // =====================
         // SERVICES
+        // =====================
         private readonly KSP2Service _ksp2Service;
         private readonly ConfigurationManager _configManager;
 
-        // FILE - Commands
+        // =====================
+        // COMMANDS
+        // =====================
+
+        // File
+        public ReactiveCommand<Unit, Unit> LaunchCommand { get; }
+        public ReactiveCommand<Unit, Unit> RefreshModlistCommand { get; }
         public ReactiveCommand<Unit, Unit> ExitCommand { get; }
 
-        // EDIT - Commands
+
+        // Edit
         public ReactiveCommand<Unit, Unit> ScanKSP2InstallLocationsCommand { get; }
         public ReactiveCommand<Unit, Unit> SetGameInstallPathCommand { get; }
         public ReactiveCommand<Unit, Unit> ClearConfigFileCommand { get; }
         public ReactiveCommand<Unit, Unit> ViewConfigFileCommand { get; }
 
+        // View
 
-        // VIEW - Commands
 
-        // HELP - Commands
+        // Help
+        public ReactiveCommand<Unit, Unit> ToucanUpdateCheckCommand { get; }
 
+
+        // =====================
         // CONSTRUCTOR
+        // =====================
         public HeaderViewModel(MainWindowViewModel mainViewModel)
         {
             MainViewModel = mainViewModel;
 
-            //Services
+            // Services
             _ksp2Service = new KSP2Service();
             _configManager = new ConfigurationManager();
 
-            //Commands
+            UpdateTimePlayed(_configManager.GetTimePlayed());
+
+            // Commands
+
+            ToucanUpdateCheckCommand = ReactiveCommand.Create(IsUpdateAvailable);
             ScanKSP2InstallLocationsCommand = ReactiveCommand.Create(ScanKSP2InstallLocations);
             SetGameInstallPathCommand = ReactiveCommand.Create(SetGameInstallPath);
             ClearConfigFileCommand = ReactiveCommand.Create(ClearConfigFile);
             ViewConfigFileCommand = ReactiveCommand.Create(ViewConfigFile);
 
+            LaunchCommand = ReactiveCommand.Create(LaunchApplication);
+            RefreshModlistCommand = ReactiveCommand.Create(RefreshModlist);
             ExitCommand = ReactiveCommand.Create(ExitApplication);
         }
 
-        // FILE - Methods
+
+
+        // =====================
+        // METHODS
+        // =====================
+
+        // Check if an update is available on Github for Toucan Mod Manager
+        public async void IsUpdateAvailable()
+        {
+            var latestReleaseUrl = $"{MainViewModel.FooterVM.ToucanWebsite}/releases/latest";
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0");
+                    var response = await client.GetAsync(latestReleaseUrl);
+                    response.EnsureSuccessStatusCode();
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    var releaseJson = JsonDocument.Parse(responseContent);
+
+                    var latestReleaseTagName = releaseJson.RootElement.GetProperty("tag_name").GetString();
+
+                    Debug.WriteLine(releaseJson);
+
+                    if (!string.Equals(latestReleaseTagName, MainViewModel.FooterVM.ToucanVersion, StringComparison.OrdinalIgnoreCase))
+                    {
+                        Debug.WriteLine($"Update {latestReleaseTagName} available! (Currently on {MainViewModel.FooterVM.ToucanVersion}");
+                    }
+
+                }
+            }
+            catch (HttpRequestException)
+            {
+                // Error connecting to GitHub or retrieving the release information
+                Debug.WriteLine("Something went wrong retrieving Toucan Update Information!");
+            }
+
+        }
+
+
+        // Method to update the time played values
+        private void UpdateTimePlayed(int timePlayed)
+        {
+            Debug.WriteLine($"Time played: {timePlayed}");
+
+            // Calculate hours, minutes, and seconds from the stored seconds
+            int totalSeconds = timePlayed;
+            int hours = totalSeconds / 3600;
+            int minutes = (totalSeconds % 3600) / 60;
+            int seconds = totalSeconds % 60;
+
+            this.MainViewModel.FooterVM.Hours = hours.ToString();
+            Debug.WriteLine($"Hours: {MainViewModel.FooterVM.Hours}");
+
+            this.MainViewModel.FooterVM.Minutes = minutes.ToString();
+            Debug.WriteLine($"Minutes: {MainViewModel.FooterVM.Minutes}");
+
+            this.MainViewModel.FooterVM.Seconds = seconds.ToString();
+            Debug.WriteLine($"Seconds: {MainViewModel.FooterVM.Seconds}");
+        }
+
+
+
+        // File
+        private async void LaunchApplication()
+        {
+            try
+            {
+                string gamePath = _configManager.GetGamePath();
+                Debug.WriteLine($"Launching Application at {gamePath}");
+                DateTime launchTime = DateTime.Now;
+
+                // Launch the application 
+                Process process = Process.Start(gamePath);
+
+                // Disable most of the UI
+                MainViewModel.ValidGameFound = false;
+
+                // Run the process on a separate thread asynchronously
+                await Task.Run(() =>
+                {
+                    // Wait for the application to exit
+                    process.WaitForExit();
+                });
+
+                // Calculate time played
+                TimeSpan timePlayed = DateTime.Now - launchTime;
+                int timePlayedSeconds = (int)timePlayed.TotalSeconds;
+                Debug.WriteLine($"Time played: {timePlayedSeconds}");
+
+                
+
+                // Store the "Time played" in the config
+                _configManager.SetTimePlayed(timePlayedSeconds);
+
+                // Update the UI
+                UpdateTimePlayed(_configManager.GetTimePlayed());
+
+                MainViewModel.ValidGameFound = true;
+            }
+
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+
+        }
+
+        private async void RefreshModlist()
+        {
+            MainViewModel.SelectedMod = null;
+            MainViewModel.SidePanelVM.SidePanelVisible = false;
+            await MainViewModel.ModlistVM.FetchMods(MainViewModel.ModlistVM.Category);
+        }
+
         private async void ExitApplication()
         {
             var messageBoxStandardWindow = MessageBox.Avalonia.MessageBoxManager.GetMessageBoxStandardWindow(
@@ -80,7 +223,7 @@ namespace ToucanUI.ViewModels
             }
         }
 
-        // EDIT - Methods
+        // Edit
         public async void ScanKSP2InstallLocations()
         {
             (string path, string version) = _ksp2Service.DetectGameVersion();
@@ -139,7 +282,7 @@ namespace ToucanUI.ViewModels
             // A dialog to ask if the user is sure they want to delete
             Debug.WriteLine("Clearing config file...");
 
-            await ShowConfirmClearConfigMessageBox();            
+            await ShowConfirmClearConfigMessageBox();
 
         }
 
@@ -149,13 +292,17 @@ namespace ToucanUI.ViewModels
             await ShowViewConfigFileMessageBox();
         }
 
-        // VIEW - Methods
+        // View
 
 
-        // HELP - Methods
+        // Help
 
 
+        // =====================
         // DIALOG BOXES
+        // =====================
+
+        // Dialog to confirm the user wants to clear the config file
         private async Task ShowConfirmClearConfigMessageBox()
         {
             var messageBoxStandardWindow = MessageBox.Avalonia.MessageBoxManager.GetMessageBoxStandardWindow(
@@ -173,18 +320,21 @@ namespace ToucanUI.ViewModels
             if (result == ButtonResult.Yes)
             {
                 _configManager.ClearConfig();
+                UpdateTimePlayed(0);
 
-                // Set the CanDownloadMod to false
-                MainViewModel.CanDownloadMod = false;
+                // Set the ValidGameFound to false
+                MainViewModel.ValidGameFound = false;
             }
         }
 
+        // Dialog to show the user the game version and path
         private async Task ShowViewConfigFileMessageBox()
         {
             var configManager = new ConfigurationManager();
             string contentMessage;
             string gamePath = configManager.GetGamePath();
             string gameVersion = configManager.GetGameVersion();
+            int timePlayed = configManager.GetTimePlayed();
 
             if (gamePath == "" || gameVersion == "")
             {
@@ -193,7 +343,7 @@ namespace ToucanUI.ViewModels
 
             else
             {
-                contentMessage = $"**Game Path:** {gamePath}\r\n\r\n" + $"**Game Version:** {gameVersion}";
+                contentMessage = $"**Game Path:** {gamePath}\r\n\r\n" + $"**Game Version:** {gameVersion}\r\n\r\n" + $"**Time Played:** {timePlayed}";
             }
 
             var messageBoxMarkdownWindow = MessageBox.Avalonia.MessageBoxManager.GetMessageBoxCustomWindow(
@@ -214,6 +364,7 @@ namespace ToucanUI.ViewModels
             await messageBoxMarkdownWindow.Show();
         }
 
+        // Dialog to show found game version and path
         private async Task ShowSuccessMessageBox(string version, string path)
         {
             var messageBoxMarkdownWindow = MessageBox.Avalonia.MessageBoxManager.GetMessageBoxCustomWindow(
@@ -242,11 +393,12 @@ namespace ToucanUI.ViewModels
                 _configManager.SaveConfig(path, version);
 
                 // Update the UI
-                MainViewModel.CanDownloadMod = true;
+                MainViewModel.ValidGameFound = true;
 
             }
         }
 
+        // Dialog to show error message
         private async Task ShowErrorMessageBox()
         {
             var messageBoxStandardWindow = MessageBox.Avalonia.MessageBoxManager.GetMessageBoxStandardWindow(
