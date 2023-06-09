@@ -20,17 +20,17 @@ namespace ToucanUI.Converters
                 {
                     if (progress == 0)
                     {
-                        return "Status: Not Installed";
+                        return "Not Installed";
                     }
                     if (progress < 100)
                     {
-                        return "Status: Installing...";
+                        return "Installing...";
                     }
-                    return "Status: Installed";
+                    return "Installed";
                 }
             }
 
-            return "Status: Not Installed";
+            return "Not Installed";
         }
 
 

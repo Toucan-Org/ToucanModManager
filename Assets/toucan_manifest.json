@@ -1,0 +1,10 @@
+{
+  "name": "Toucan Mod Manager",
+  "version": "1.0.0-pre release",
+  "description": "A mod manager for KSP2",
+  "authors": [ "BadgerOnRoids", "Eekk2", "Loki_Lokster" ],
+  "website": "https://github.com/KSP2-Toucan/ToucanModManager",
+  "license": "MIT License",
+  "platforms": [ "Windows", "macOS", "Linux" ],
+  "releaseNotes": "Version 1.0.0:\n- Initial release\n-"
+}

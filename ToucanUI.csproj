@@ -10,7 +10,6 @@
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
     <AvaloniaResource Include="Assets\Icons\**" />
-    <EmbeddedResource Include="Assets\output.json" />
 
     <Content Include="Assets\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -18,16 +17,30 @@
   </ItemGroup>
 
   <ItemGroup>
-    <AvaloniaResource Remove="Assets\Icons\CloseButton.png" />
+    <AvaloniaResource Remove="Assets\Icons\Close-Icon-White.png" />
+    <AvaloniaResource Remove="Assets\Icons\OpenWebsite-Icon-White.png" />
+    <AvaloniaResource Remove="Assets\Icons\Refresh-Icon-White.png" />
+    <AvaloniaResource Remove="Assets\Icons\ToggleView-Grid-White.png" />
+    <AvaloniaResource Remove="Assets\Icons\ToggleView-List-White.png" />
+    <AvaloniaResource Remove="Assets\Icons\Uninstall-Icon-White.png" />
+    <AvaloniaResource Remove="Assets\Icons\Update-Icon-White.png" />
+    <AvaloniaResource Remove="Assets\toucan_manifest.json" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Assets\Fonts\Orbitron-Regular.ttf" />
     <None Remove="Assets\Fonts\ShareTechMono-Regular.ttf" />
-    <None Remove="Assets\Icons\CloseButton.png" />
+    <None Remove="Assets\Icons\Close-Icon-White.png" />
+    <None Remove="Assets\Icons\OpenWebsite-Icon-White.png" />
+    <None Remove="Assets\Icons\Refresh-Icon-White.png" />
+    <None Remove="Assets\Icons\ToggleView-Grid-White.png" />
+    <None Remove="Assets\Icons\ToggleView-List-White.png" />
+    <None Remove="Assets\Icons\Uninstall-Icon-White.png" />
+    <None Remove="Assets\Icons\Update-Icon-White.png" />
     <None Remove="Assets\output.json" />
     <None Remove="Assets\tmm_icon.ico" />
     <None Remove="Assets\tmm_logo.png" />
+    <None Remove="Assets\toucan_manifest.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,7 +53,6 @@
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="0.10.19" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.19" />
-    <PackageReference Include="Avalonia.Svg.Skia" Version="0.10.18" />
     <PackageReference Include="ini-parser" Version="2.5.2" />
     <PackageReference Include="Markdown.Avalonia" Version="0.10.14" />
     <PackageReference Include="MessageBox.Avalonia" Version="2.1.0" />

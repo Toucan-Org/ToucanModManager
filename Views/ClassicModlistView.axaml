@@ -2,8 +2,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ToucanUI.Views.ClassicModlistView">
+  
 
   <ListBox Name="ModListBox" Items="{Binding Mods}" SelectionMode="Single" Background="Transparent"
 			     SelectedItem="{Binding MainViewModel.SelectedMod}" Padding="10">
@@ -34,92 +38,95 @@
     <ListBox.ItemTemplate>
       <DataTemplate>
         <Border Background="#202020" CornerRadius="15" Padding="5">
-          <Grid RowDefinitions="*, Auto, Auto, *, Auto"
-              ColumnDefinitions="Auto, Auto, 2*, *, *, 2*, Auto, Auto" Margin="10">
-
+          <Grid RowDefinitions="*, Auto" Margin="5"
+                ColumnDefinitions="Auto, 2*, 2*, *, Auto, Auto">
+            
             <!-- CHECKBOX -->
-            <CheckBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" Margin="5"></CheckBox>
-
-            <!-- PLACEHOLDER FOR MOD ICON -->
-            <Ellipse Width="45" Height="45" Fill="White" Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Margin="5"></Ellipse>
+            <CheckBox Grid.Row="0" Grid.Column="0" Margin="10 5"
+                      IsChecked="{Binding IsSelectedBulk, Mode=TwoWay}"/>
 
 
-            <TextBlock Text="{Binding Name}" FontWeight="Bold"
-                  Grid.Row="1" Grid.Column="2" Margin="15 5 10 5"/>
-            <TextBlock Text="{Binding Author}" FontStyle="Italic" Foreground="Gray"
-                  Grid.Row="2" Grid.Column="2" Margin="15 5 10 5"/>
+            <!-- NAME AND AUTHOR -->
+            <StackPanel Grid.Row="0" Grid.Column="1" MinWidth="100"
+                        VerticalAlignment="Center" HorizontalAlignment="Left">
+              
+              <TextBlock Text="{Binding ModObject.Name}" FontWeight="Bold" Margin="10 5"/>
+              <TextBlock Text="{Binding ModObject.Author}" FontStyle="Italic" Foreground="Gray" Margin="10 5"/>
+            </StackPanel>
+            
+            <!-- MOD DETAILS -->
+            <StackPanel Grid.Row="0" Grid.Column="2"
+                        Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+              <StackPanel>
+                <TextBlock Text="Game Version" FontSize="10" Margin="10 5"/>
+                <TextBlock Text="{Binding ModObject.SelectedVersion.GameVersion}" Foreground="Gray"
+                           Margin="10 5"/>
+              </StackPanel>
 
-            <TextBlock Text="Game Version" FontSize="10"
-                  Grid.Row="1" Grid.Column="3" Margin="15 5 0 15"/>
-            <TextBlock Text="{Binding GameVersion}" Foreground="Gray"
-                  Grid.Row="2" Grid.Column="3" Margin="15 0 0 15"/>
+              <StackPanel>
+                <TextBlock Text="Mod Version" FontSize="10" Margin="10 5"/>
+                <TextBlock Text="{Binding ModObject.SelectedVersion.FriendlyVersion}" Foreground="Gray"
+                           Margin="10 5"/>
+              </StackPanel>
 
+              <StackPanel>
+                <TextBlock Text="Download Size" FontSize="10" Margin="10 5"/>
+                <TextBlock Text="{Binding ModObject.SelectedVersion.DownloadSizeDisplay}" Foreground="Gray"
+                           Margin="10 5"/>
+              </StackPanel>
 
-
-            <TextBlock Text="Mod Version" FontSize="10"
-                  Grid.Row="1" Grid.Column="4" Margin="15 5 0 15"/>
-            <TextBlock Text="{Binding ModVersion}" Foreground="Gray"
-                  Grid.Row="2" Grid.Column="4" Margin="15 0 0 15"/>
-
-            <!-- DOWNLOAD BUTTON/ICON -->
-            <Button Background="Transparent" Grid.Row="1" Grid.RowSpan="2" Grid.Column="6" Margin="5"
-                Command="{Binding DataContext.DownloadModCommand, ElementName=ModListBox}" Width="50" Height="50"
-                CommandParameter="{Binding}" ToolTip.Tip="Download and Install"
-                IsEnabled="{Binding Progress, Converter={StaticResource ProgressToBooleanConverter}}"
-                IsVisible="{Binding Progress, Converter={StaticResource ProgressToBooleanConverter}}">
-              <Panel>
-
+              <StackPanel>
+                <TextBlock Text="Downloads" FontSize="10" Margin="10 5"/>
+                <TextBlock Text="{Binding ModObject.Downloads}" Foreground="Gray"
+                           Margin="10 5"/>
+              </StackPanel>
+              
+            </StackPanel>
+            
+            <!-- DOWNLOAD ICONS -->
+            <StackPanel Grid.Row="0" Grid.Column="4" Margin="5">
+              <Button Background="Transparent" Width="50" Height="50"
+                      Command="{Binding DataContext.DownloadModCommand, ElementName=ModListBox}"
+                      CommandParameter="{Binding}" ToolTip.Tip="Download and Install"
+                      IsEnabled="{Binding Progress, Converter={StaticResource ProgressToBooleanConverter}}"
+                      IsVisible="{Binding Progress, Converter={StaticResource ProgressToBooleanConverter}}">
                 <Image Source="{DynamicResource DownloadIcon}" Width="50" Height="50"
                      IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Download}"/>
-              </Panel>
-
-            </Button>
-
-            <!-- DOWNLOADING/DOWNLOADED ICONS -->
-            <Panel Grid.Row="1" Grid.RowSpan="2" Grid.Column="6" Margin="5">
-
-              <Image Source="{DynamicResource DownloadingIcon}" Width="50" Height="50" Classes="rotating"
-                   IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloading}"/>
-
-              <Button Background="Transparent" Width="50" Height="50" Classes="cancelButton" ToolTip.Tip="Cancel Download"
-                      IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloading}"
-                      Command="{Binding DataContext.CancelDownloadModCommand, ElementName=ModListBox}"
-                      CommandParameter="{Binding}">
-                <TextBlock Text="X" FontSize="18" FontWeight="Bold"
-                           VerticalAlignment="Center" HorizontalAlignment="Center"/>
               </Button>
-
-
-
-              <Image Source="{DynamicResource DownloadedIcon}" Width="50" Height="50"
+              
+              
+              <Panel Grid.Row="0" Grid.Column="4" >
+                <Image Source="{DynamicResource DownloadingIcon}" Width="50" Height="50" Classes="rotating"
+                   IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloading}"/>
+                <!-- CANCEL BUTTON -->
+                <Button Background="Transparent" Width="50" Height="50" Classes="cancelButton" ToolTip.Tip="Cancel Download"
+                        IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloading}"
+                        Command="{Binding DataContext.CancelDownloadModCommand, ElementName=ModListBox}"
+                        CommandParameter="{Binding}">
+                  <Button.Content>
+                    <Image Source="{DynamicResource CloseIcon-White}" Width="40" Height="40"/>
+                  </Button.Content>
+                </Button>
+                
+                <Image Source="{DynamicResource DownloadedIcon}" Width="50" Height="50"
                    IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloaded}"/>
-
-            </Panel>
-
-
-            <!--<Button Content="Cancel" Grid.Row="4" Grid.RowSpan="2" Grid.Column="6" Background="Transparent" VerticalAlignment="Top"
-                    IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloading}"
-                    Command="{Binding DataContext.CancelDownloadModCommand, ElementName=ModListBox}"
-                    CommandParameter="{Binding}"/>-->
-
+              </Panel>
+            </StackPanel>
+            
             <!-- SELECTED ICON -->
-            <Panel Grid.Row="1" Grid.RowSpan="2" Grid.Column="7" Margin="5">
-              <!-- This works quite well, does not require converters or behind-code -->
-              <Image Width="50"
+            <StackPanel Grid.Row="0" Grid.Column="5" Margin="5">
+              <Image Width="50" Height="50"
                   Classes.opened="{Binding $parent[ListBoxItem].IsSelected}"
                   Classes.notOpened="{Binding !$parent[ListBoxItem].IsSelected}" />
-
-            </Panel>
-
-            <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="8">
-              <TextBlock Text="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}}" FontSize="12"
-                    Foreground="Gray" Margin="5 10 0 5"/>
-
-              <ProgressBar Margin="5" Value="{Binding Progress}"
-                      Foreground="{Binding Progress, Converter={StaticResource ProgressToBrushConverter}}"/>
-
-
             </StackPanel>
+
+
+              <ProgressBar Margin="5" Value="{Binding Progress}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4"
+                      Foreground="{Binding Progress, Converter={StaticResource ProgressToBrushConverter}}"/>
+              
+              <TextBlock Text="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}}" FontSize="12"
+                         Foreground="Gray" Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="2" Margin="5"/>
+
 
           </Grid>
         </Border>

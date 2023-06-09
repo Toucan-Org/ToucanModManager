@@ -1,10 +1,10 @@
-﻿using Avalonia.Data.Converters;
-using Avalonia;
-using System.Globalization;
-using System.Reflection;
-using System;
+﻿using Avalonia;
+using Avalonia.Data.Converters;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using System;
+using System.Globalization;
+using System.Reflection;
 
 // COPIED FROM https://docs.avaloniaui.net/docs/controls/image#swappable-image-button
 
