@@ -1,13 +1,17 @@
-﻿using System;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Collections.Generic;
+using System.IO;
 
 namespace ToucanUI.Services
 {
     public class KSP2Service
     {
-        public (string path, string version) DetectGameVersion(string path="")
+        // =====================
+        // METHODS
+        // =====================
+
+        // Method to detect current game version and path for KSP2
+        public (string path, string version) DetectGameVersion(string path = "")
         {
             List<string> searchDirectories = new List<string>();
 
@@ -49,6 +53,7 @@ namespace ToucanUI.Services
             return (ksp2ExePath, versionInfo.ProductVersion);
         }
 
+        // Method to find KSP2_x64.exe
         private string FindKSP2Exe(List<string> searchDirectories)
         {
             string fileName = "KSP2_x64.exe";

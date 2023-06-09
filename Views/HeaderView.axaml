@@ -3,70 +3,45 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="200"
-             x:Class="ToucanUI.Views.HeaderView"
-             Background="Transparent">
+             x:Class="ToucanUI.Views.HeaderView">
 
   <Panel>
 
       <Grid RowDefinitions="Auto, Auto">
-        <Border CornerRadius="5" BoxShadow="inset 0 -5 5 2 #191919">
-          <Border.Background>
-            <LinearGradientBrush StartPoint="50%,40%" EndPoint="50%,0%">
-              <GradientStop Color="#252525" Offset="0.0"/>
-              <GradientStop Color="#67411D" Offset="1.0"/>
-            </LinearGradientBrush>
-          </Border.Background>
-
           <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto">
 
 
-            <Image Source="/Assets/tmm_logo.png" Width="90" Height="90" Grid.Row="0"
+            <Image Source="/Assets/tmm_logo.png" Width="75" Height="75" Grid.Row="0"
                    Grid.Column="0" HorizontalAlignment="Left"
                    ToolTip.Tip="Toucan Mod Manager"/>
 
             <!-- LAUNCH BUTTON -->
-            <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="Auto, Auto"
-                  Grid.Row="0" Grid.Column="3" Margin="0 5 20 10">
 
-              <Button x:Name="LaunchButton" FontSize="26" Width="220"
-                Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Background="#FF5722"
-                Foreground="#800F0E" FontFamily="{StaticResource Orbitron}"
-                FontWeight="SemiBold" Margin="0 10">
-                <TextBlock Text="LAUNCH" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-              </Button>
-
-              <TextBlock Text="Time Played" FontFamily="{StaticResource Orbitron}" TextWrapping="Wrap"
-                         FontSize="12" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center"/>
-
-
-              <StackPanel Orientation="Horizontal"
-                          HorizontalAlignment="Center"
-                          Grid.Row="1"
-                          Grid.Column="1">
-                
-                <TextBlock Text="12" Foreground="DarkGray" FontSize="12"
-                           FontFamily="{StaticResource Orbitron}"/>
-                <TextBlock Text="H " Foreground="DarkGray" FontSize="12"
-                           FontWeight="Bold" Padding="4 0 5 0"/>
-                
-                <TextBlock Text="34" Foreground="DarkGray" FontSize="12"
-                           FontFamily="{StaticResource Orbitron}"/>
-                <TextBlock Text="M " Foreground="DarkGray" FontSize="12"
-                           FontWeight="Bold" Padding="4 0 5 0"/>
-                
-                <TextBlock Text="56" Foreground="DarkGray" FontSize="12"
-                           FontFamily="{StaticResource Orbitron}"/>
-                <TextBlock Text="S" Foreground="DarkGray" FontSize="12"
-                           FontWeight="Bold" Padding="4 0 5 0"/>
-              </StackPanel>
-
-
-
-            </Grid>
+            <Button x:Name="LaunchButton" FontSize="26" Width="220" Height="60"
+              Grid.Row="0" Grid.RowSpan="2" Grid.Column="3"
+              Foreground="#800F0E" FontFamily="{StaticResource Orbitron}"
+              FontWeight="SemiBold" Margin="20" Command="{Binding LaunchCommand}"
+              IsEnabled="{Binding MainViewModel.ValidGameFound}" Cursor="Hand">
+              <TextBlock Text="// LAUNCH //" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+              <Button.Styles>
+                <Style>
+                  <Style.Resources>
+                    <SolidColorBrush x:Key="ButtonBorderBrush">Transparent</SolidColorBrush>
+                    <SolidColorBrush x:Key="ButtonBackground">#C66000</SolidColorBrush>
+                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver">#ff7b00</SolidColorBrush>
+                    <SolidColorBrush x:Key="ButtonBackgroundPressed">#FF0000</SolidColorBrush>
+                  </Style.Resources>
+                </Style>
+                <Style Selector="Button:pressed">
+                  <Setter Property="RenderTransform" Value="scale(0.8)" />
+                </Style>
+                <Style Selector="Button:pointerover">
+                  <Setter Property="RenderTransform" Value="scale(1.1)" />
+                </Style>
+              </Button.Styles>
+            </Button>
 
           </Grid>
-        </Border>
-
 
 
         <!-- FILE/EDIT/HELP MENU -->
@@ -74,17 +49,15 @@
           <Menu>
 
             <MenuItem Header="File" Foreground="DarkGray">
-              <MenuItem Header="Install">
-                <MenuItem Header="Local" />
-                <MenuItem Header="Github" />
-                <MenuItem Header="Spacedock" />
-                <MenuItem Header="Toucan" />
+
+              <MenuItem Header="Offline Mode" >
               </MenuItem>
-              <Separator />
-              <MenuItem Header="New Profile" />
-              <MenuItem Header="Open Profile" />
-              <MenuItem Header="Save Profile" />
-              <Separator />
+
+              <MenuItem Header="Refresh Modlist"
+                        Command="{Binding RefreshModlistCommand}"/>
+
+              <Separator></Separator>
+
               <MenuItem Header="Exit"
                         Command="{Binding ExitCommand}"/>
             </MenuItem>
@@ -92,15 +65,15 @@
 
           <Menu>
             <MenuItem Header="Edit" Foreground="DarkGray">
-              <MenuItem Header="Set Game Directory..."
+              <MenuItem Header="Set Game Directory"
                         Command="{Binding SetGameInstallPathCommand}"/>
-              <MenuItem Header="Scan KSP2 Install Locations..."
+              <MenuItem Header="Scan KSP2 Install Locations"
                         Command="{Binding ScanKSP2InstallLocationsCommand}" />
 
               <Separator />
-              <MenuItem Header="View Config File..."
+              <MenuItem Header="View Config File"
                         Command="{Binding ViewConfigFileCommand}" />
-              <MenuItem Header="Clear Config File..."
+              <MenuItem Header="Clear Config File"
                         Command="{Binding ClearConfigFileCommand}"/>
             </MenuItem>
           </Menu>
@@ -120,7 +93,8 @@
               <MenuItem Header="GitHub Page"
                         Command="{Binding MainViewModel.FooterVM.OpenGitHubCommand}"/>
               <Separator />
-              <MenuItem Header="Check for update" />
+              <MenuItem Header="Check for update"
+                        Command="{Binding ToucanUpdateCheckCommand}"/>
             </MenuItem>
 
           </Menu>

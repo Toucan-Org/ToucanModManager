@@ -1,54 +1,120 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using ToucanUI.Models;
-using System.Diagnostics;
-using System.Text.Json;
-using Avalonia.Platform;
-using Avalonia;
-using System.IO;
 
-// THIS IS JUST TEMPORARY, WE CAN FIX IT UP LATER
-// THE ACTUAL API IS NOT FULLY WORKING BUT DUMMY DATA DOES, CANT BE BOTHERED TO FIX IF WE ARE REWRITING THIS ANYWAY
+// This API is being used temporarily, until we get our own database and API up and running which will greatly simplify things
 
 namespace ToucanUI.Services
 {
     public class SpacedockAPI
     {
-        private const string BASE_URL = "https://spacedock.info/api/browse?&game_id=22407";
+        // =====================
+        // VARIABLES
+        // =====================
+        private const string BROWSE_URL = "https://spacedock.info/api/browse";
+        private const string MOD_URL = "https://spacedock.info/api/mod";
+        private const string GAME_ID = "&game_id=22407";
         private readonly HttpClient _client;
 
-        public SpacedockAPI()
+        public enum Category
         {
-            _client = new HttpClient();
+            All,
+            Top,
+            New,
+            Featured
         }
 
-        public async Task<List<Mod>> GetMods(bool useDummyData = false)
+        // =====================
+        // CONSTRUCTOR
+        // =====================
+        public SpacedockAPI()
         {
-            var mods = new List<Mod>();
+            _client = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
+        }
 
 
-            if (useDummyData)
+        // =====================
+        // METHODS
+        // =====================
+
+        // Returns a single Mod from spacedock API
+        public async Task<Mod> GetMod(string id)
+        {
+            Mod mod = null;
+
+            try
             {
-                Debug.WriteLine("Using dummy data");
-                // Load data from file
-                var assembly = typeof(SpacedockAPI).Assembly;
-                var resource = assembly.GetManifestResourceStream("ToucanUI.Assets.output.json");
-                var jsonString = new StreamReader(resource).ReadToEnd();
+                // Request mod data from the API using the provided id
+                var url = $"{MOD_URL}/{id}?{GAME_ID}";
+                Debug.WriteLine($"Requesting mod data from {url}");
+                var response = await _client.GetAsync(url);
+                Debug.WriteLine($"Response status code: {response.StatusCode}");
 
-                var jsonDocument = JsonDocument.Parse(jsonString);
-                var data = jsonDocument.RootElement;
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
 
-                mods = ParseModData(data);
+                    // Parse the JSON data
+                    var jsonDocument = JsonDocument.Parse(jsonString);
+                    var data = jsonDocument.RootElement;
+
+                    // Create a Mod object from the JSON data
+                    mod = new Mod(data);
+                }
+                else
+                {
+                    Debug.WriteLine($"Error retrieving mod data: {response.ReasonPhrase}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error retrieving mod data: {ex.Message}");
             }
 
-            else
-            {
-                Debug.WriteLine("Getting mod data");
+            return mod;
+        }
 
+
+        // Returns a list of Mods from spacedock API
+        public async Task<List<Mod>> GetMods(Category category = Category.All)
+        {
+            string categoryString;
+
+            switch (category)
+            {
+                case Category.All:
+                    categoryString = "";
+                    break;
+
+                case Category.Top:
+                    categoryString = "/top";
+                    break;
+
+                case Category.New:
+                    categoryString = "/new";
+                    break;
+
+                case Category.Featured:
+                    categoryString = "/featured";
+                    break;
+
+                default:
+                    categoryString = "";
+                    break;
+            }
+
+            var mods = new List<Mod>();
+            Debug.WriteLine($"Fetching mod data for category {category}");
+
+            try
+            {
                 // Request mod data from the first URL
-                var url = $"{BASE_URL}&page=1";
+                var url = $"{BROWSE_URL}{categoryString}?{GAME_ID}";
                 Debug.WriteLine($"Requesting mod data from {url}");
                 var response = await _client.GetAsync(url);
                 Debug.WriteLine($"Response status code: {response.StatusCode}");
@@ -58,18 +124,18 @@ namespace ToucanUI.Services
                 var jsonDocument = JsonDocument.Parse(jsonString);
                 var data = jsonDocument.RootElement;
 
-                // Get the totalPages
-                int totalPages = data.GetProperty("pages").GetInt32();
-
-                // Now iterate through all the pages
-                for (int currentPage = 1; currentPage <= totalPages; currentPage++)
+                if (category == Category.All)
                 {
-                    // If it's not the first page, fetch the data
-                    if (currentPage != 1)
+                    // Get the totalPages
+                    int totalPages = data.GetProperty("pages").GetInt32();
+
+                    // Now iterate through all the pages
+                    for (int currentPage = 1; currentPage <= totalPages; currentPage++)
                     {
+
                         // Request mod data from the URL
-                        url = $"{BASE_URL}&page={currentPage}";
-                        Debug.WriteLine($"Requesting mod data from {url}");
+                        url = $"{BROWSE_URL}{categoryString}?{GAME_ID}&page={currentPage}";
+                        Debug.WriteLine($"Requesting mod data from {url} on page {currentPage}");
                         response = await _client.GetAsync(url);
                         Debug.WriteLine($"Response status code: {response.StatusCode}");
                         jsonString = await response.Content.ReadAsStringAsync();
@@ -77,38 +143,90 @@ namespace ToucanUI.Services
                         // Parse the JSON data
                         jsonDocument = JsonDocument.Parse(jsonString);
                         data = jsonDocument.RootElement;
+
+
+                        // Parse the mod data
+                        var modData = ParseModData(data);
+                        mods.AddRange(modData);
+
+                        Debug.WriteLine($"Finished retrieving {modData.Count} mods from page {currentPage}");
                     }
-
-                    // Parse the mod data
-                    var pageMods = ParseModData(data);
-                    mods.AddRange(pageMods);
-
-                    Debug.WriteLine($"Finished retrieving {pageMods.Count} mods from page {currentPage}");
                 }
+
+                else
+                {
+                    var modData = ParseModData(data);
+                    mods.AddRange(modData);
+                }
+
+
+
+                Debug.WriteLine($"{mods.Count} mods retrieved!");
+
+                mods = mods.OrderBy(mod => mod.Name).ToList();
             }
 
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error retrieving mod data: {ex.Message}");
+            }
 
             return mods;
 
         }
 
+        // Method to ping Spacedock.info to see if it's online
+        public async Task<bool> PingSpacedock()
+        {
+            try
+            {
+                var response = await _client.GetAsync("https://spacedock.info/");
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error pinging Spacedock: {ex.Message}");
+                return false;
+            }
+        }
+
+        // Method to parse the mod data from the JSON data
         public List<Mod> ParseModData(JsonElement data)
         {
             var mods = new List<Mod>();
 
-            foreach (var item in data.GetProperty("result").EnumerateArray())
+            if (data.ValueKind == JsonValueKind.Array)
             {
-                try
+                // Mods are directly within the JSON array
+                foreach (var item in data.EnumerateArray())
                 {
-                    var mod = new Mod(item);
-                    mods.Add(mod);
+                    try
+                    {
+                        var mod = new Mod(item);
+                        mods.Add(mod);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Error: {ex}");
+                    }
                 }
-                catch (Exception ex)
+            }
+            else if (data.ValueKind == JsonValueKind.Object)
+            {
+                // Mods are within the "results" property
+                var results = data.GetProperty("result");
+                foreach (var item in results.EnumerateArray())
                 {
-                    Debug.WriteLine($"Error: {ex}");
+                    try
+                    {
+                        var mod = new Mod(item);
+                        mods.Add(mod);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Error: {ex}");
+                    }
                 }
-
-                Debug.WriteLine($"Retrieved {mods.Count} mods so far");
             }
 
             return mods;

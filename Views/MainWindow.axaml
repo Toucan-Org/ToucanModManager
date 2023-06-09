@@ -12,7 +12,8 @@
         Title="Toucan Mod Manager"
         TransparencyLevelHint="AcrylicBlur"
         Background="Transparent"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        ExtendClientAreaToDecorationsHint="True">
 
 
   <Design.DataContext>
@@ -21,40 +22,49 @@
     <vm:MainWindowViewModel/>
   </Design.DataContext>
 
+  
   <Panel>
+    <Grid>
+      <ExperimentalAcrylicBorder IsHitTestVisible="False">
+        <ExperimentalAcrylicBorder.Material>
+          <ExperimentalAcrylicMaterial
+              BackgroundSource="Digger"
+              TintColor="Black"
+              TintOpacity="1"
+              MaterialOpacity="0.5"/>
+        </ExperimentalAcrylicBorder.Material>
+      </ExperimentalAcrylicBorder>
 
-    <ExperimentalAcrylicBorder IsHitTestVisible="False">
-      <ExperimentalAcrylicBorder.Material>
-        <ExperimentalAcrylicMaterial
-            BackgroundSource="Digger"
-            TintColor="Black"
-            TintOpacity="1"
-            MaterialOpacity="0.75"/>
-      </ExperimentalAcrylicBorder.Material>
-    </ExperimentalAcrylicBorder>
+      <Border CornerRadius="5" BoxShadow="inset 0 -5 5 2 #191919" IsHitTestVisible="False">
+        <Border.Background>
+          <LinearGradientBrush StartPoint="50%,40%" EndPoint="50%,0%">
+            <GradientStop Color="Transparent" Offset="0.55"/>
+            <GradientStop Color="#67411D" Offset="1.0"/>
+          </LinearGradientBrush>
+        </Border.Background>
+      </Border>
+    </Grid>
 
-    <Grid x:Name="MainGrid" RowDefinitions="Auto, Auto, *, Auto" ColumnDefinitions="2*, Auto" >
-
+    <Grid x:Name="MainGrid" RowDefinitions="20, Auto, Auto, *, Auto" ColumnDefinitions="2*, Auto" Margin="5">
       <!-- Header -->
-      <views:HeaderView x:Name="HeaderViewControl" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
-                        DataContext="{Binding HeaderVM}"/>
+      <views:HeaderView x:Name="HeaderViewControl" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+                          DataContext="{Binding HeaderVM}"/>
 
       <!-- Control Panel -->
-      <views:ControlPanelView x:Name="ControlPanelViewControl" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
-                              DataContext="{Binding ControlPanelVM}" Margin="10"/>
+      <views:ControlPanelView x:Name="ControlPanelViewControl" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
+                              DataContext="{Binding ControlPanelVM}" Margin="5"/>
 
       <!-- Content -->
-      <views:ModlistView x:Name="ModlistViewControl" Grid.Row="2" Grid.Column="0"
-                         DataContext="{Binding ModlistVM}" Margin="10"/>
+      <views:ModlistView x:Name="ModlistViewControl" Grid.Row="3" Grid.Column="0"
+                          DataContext="{Binding ModlistVM}" Margin="5"/>
 
       <!-- Side Panel -->
-      <views:SidePanelView x:Name="SidePanelViewControl" Grid.Row="2" Grid.Column="1"
-                           DataContext="{Binding SidePanelVM}" Margin="10"/>
-      
-      <views:FooterView x:Name="FooterViewControl" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
-                        DataContext="{Binding FooterVM}" Margin="10"/>
-      
+      <views:SidePanelView x:Name="SidePanelViewControl" Grid.Row="3" Grid.Column="1"
+                            DataContext="{Binding SidePanelVM}" Margin="5"/>
 
+      <views:FooterView x:Name="FooterViewControl" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+                        DataContext="{Binding FooterVM}" Margin="5"/>
     </Grid>
   </Panel>
+
 </Window>

@@ -8,20 +8,116 @@
              Background="Transparent">
 
 
-  <Border CornerRadius="15" Background="#181818">
-    
-    <Grid>
-      <StackPanel Orientation="Horizontal" IsVisible="{Binding IsFetchingData}" Margin="10"
-                  HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Image Source="{DynamicResource DownloadingIcon}" Width="40" Height="40" Classes="rotating"/>
-        <TextBlock x:Name="FetchingMessage" FontSize="16"
-                   Text="Fetching mod data from SpaceDock..."
-                   VerticalAlignment="Center" HorizontalAlignment="Center"/>
+  <Border CornerRadius="15" Background="#90181818">
+
+    <Grid x:Name="ParentGrid">
+
+      <!-- Fetching Data Panel -->
+      <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
+                  Margin="10" ZIndex="100">
+        <StackPanel Orientation="Horizontal" Margin="10">
+          <StackPanel.IsVisible>
+            <MultiBinding Converter="{StaticResource BooleanOrConverter}">
+              <Binding Path="IsFetchingData"/>
+              <Binding Path="IsFetchFailed"/>
+            </MultiBinding>
+          </StackPanel.IsVisible>
+          <Image Source="{DynamicResource DownloadingIcon}" Width="50" Height="50" Classes="rotating"
+                 IsVisible="{Binding IsFetchingData}"/>
+          <Image Source="{DynamicResource CloseIcon-White}" Width="50" Height="50"
+                 IsVisible="{Binding IsFetchFailed}"/>
+          <TextBlock x:Name="FetchingMessage" FontSize="16"
+                     Text="{Binding FetchingMessage}" FontFamily="{StaticResource Orbitron}"
+                     VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </StackPanel
+        >
+        <Button Content="Retry" IsVisible="{Binding IsFetchFailed}" Margin="10"
+                BorderBrush="DarkGray" BorderThickness="0.5" Background="#252525"
+                HorizontalAlignment="Center" Width="150" HorizontalContentAlignment="Center"
+                Command="{Binding MainViewModel.HeaderVM.RefreshModlist}"/>
+
+        <Button Content="Offline Mode" IsVisible="{Binding IsFetchFailed}" Margin="10"
+                BorderBrush="DarkGray" BorderThickness="0.5" Background="#252525"
+                HorizontalAlignment="Center" Width="150" HorizontalContentAlignment="Center"/>
       </StackPanel>
-      
+
+
+
+
+      <!-- Classic and Grid views -->
       <views:ClassicModlistView x:Name="ClassicViewControl" IsVisible="{Binding IsClassicViewVisible}" />
       <views:GridModlistView x:Name="GridViewControl" IsVisible="{Binding IsGridViewVisible}" />
+
+
+
+
+      <Border Margin="15" Padding="10" Background="#191919" CornerRadius="10"
+              BorderBrush="DarkGray" BorderThickness="0.2"
+              IsVisible="{Binding SelectedBulkModsReadOnly.Count, Converter={StaticResource CountToBooleanConverter}}"
+              VerticalAlignment="Bottom" HorizontalAlignment="Center" ZIndex="100">
+        <!-- Existing overlay grid for bulk action buttons -->
+        <Panel>
+
+          <!-- Initial Bulk Action Panel -->
+          <StackPanel IsVisible="{Binding !IsBulkActionInProgress}">
+            <TextBlock HorizontalAlignment="Center" Margin="0 5 0 15"
+                        FontSize="12" Foreground="DarkGray">
+              <TextBlock.Text>
+                <MultiBinding StringFormat="{}{0} mods selected">
+                  <Binding Path="SelectedBulkModsReadOnly.Count" />
+                </MultiBinding>
+              </TextBlock.Text>
+            </TextBlock>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+              <Button Content="Install" Background="#252525" Margin="5 0"
+                      BorderBrush="White" BorderThickness="1" Width="80"
+                      HorizontalContentAlignment="Center"
+                      Command="{Binding InstallSelectedModsCommand}"/>
+              <Button Content="Update" Background="#252525" Margin="5 0"
+                      BorderBrush="White" BorderThickness="1" Width="80"
+                      HorizontalContentAlignment="Center"/>
+              <Button Content="Uninstall" Background="#252525" Margin="5 0"
+                      BorderBrush="White" BorderThickness="1" Width="80"
+                      HorizontalContentAlignment="Center"/>
+            </StackPanel>
+            <TextBlock HorizontalAlignment="Center">...</TextBlock>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+              <Button Content="Select All" FontSize="9" Width="80"
+                      HorizontalContentAlignment="Center" Command="{Binding SelectAllModsCommand}"
+                      Background="#252525" Foreground="DarkGray" Margin="5"/>
+              <Button Content="Unselect All" FontSize="9" Width="80"
+                      HorizontalContentAlignment="Center" Command="{Binding UnselectAllModsCommand}"
+                      Background="#252525" Foreground="DarkGray" Margin="5"/>
+            </StackPanel>
+          </StackPanel>
+
+          <!-- Bulk action in progress grid with a higher ZIndex value -->
+
+          <StackPanel IsVisible="{Binding IsBulkActionInProgress}" VerticalAlignment="Bottom" HorizontalAlignment="Center" ZIndex="200" Margin="15">
+            <TextBlock Text="{Binding BulkActionMessage}" HorizontalAlignment="Center" Margin="0 5"
+                        FontSize="12" Foreground="DarkGray"/>
+            
+            <TextBlock Text="{Binding CurrentBulkActionMod.ModObject.Name}" HorizontalAlignment="Center" Margin="0 5"
+                       FontSize="9"/>
+
+            <TextBlock HorizontalAlignment="Center">...</TextBlock>
+            
+            <StackPanel Orientation="Horizontal" Margin="5">
+              <Button Content="Skip" FontSize="9" Width="80"
+                      HorizontalContentAlignment="Center" Command="{Binding SkipBulkActionCommand}"
+                      Background="#252525" Foreground="DarkGray" Margin="5"/>
+              <Button Content="Cancel" FontSize="9" Width="80"
+                      HorizontalContentAlignment="Center" Command="{Binding CancelBulkActionCommand}"
+                      Background="#252525" Foreground="DarkGray" Margin="5"/>
+            </StackPanel>
+
+          </StackPanel>
+
+        </Panel>
+      </Border>
       
     </Grid>
   </Border>
+  
 </UserControl>

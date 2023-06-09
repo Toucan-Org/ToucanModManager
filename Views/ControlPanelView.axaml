@@ -5,30 +5,103 @@
              xmlns:views="clr-namespace:ToucanUI.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ToucanUI.Views.ControlPanelView">
+
+
+  <!-- Styles used to show/hide Grid and List view images on single toggle button -->
+  <UserControl.Styles>
+    <Style Selector="ToggleButton:not(:checked) ContentControl > Grid Image.listIcon">
+      <Setter Property="IsVisible" Value="True"/>
+    </Style>
+    <Style Selector="ToggleButton:not(:checked) ContentControl > Grid Image.gridIcon">
+      <Setter Property="IsVisible" Value="False"/>
+    </Style>
+    <Style Selector="ToggleButton:checked ContentControl > Grid Image.listIcon">
+      <Setter Property="IsVisible" Value="False"/>
+    </Style>
+    <Style Selector="ToggleButton:checked ContentControl > Grid Image.gridIcon">
+      <Setter Property="IsVisible" Value="True"/>
+    </Style>
+
+    <Style Selector="ToggleButton:checked  ContentPresenter">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+
+  </UserControl.Styles>
   
-  <Grid RowDefinitions="Auto" ColumnDefinitions="Auto, Auto, Auto, Auto, *">
+  
+  <Grid RowDefinitions="Auto" ColumnDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto" Margin="5">
     
     <!-- Search Bar -->
-    <TextBox Text="{Binding MainViewModel.ModlistVM.SearchText, Mode=TwoWay}" Grid.Column="0" Watermark="Search..." Width="350"  />
+    <TextBox Text="{Binding MainViewModel.ModlistVM.SearchText, Mode=TwoWay}" Grid.Column="0" Watermark="Search..." Width="350"
+             HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+
+    <!-- Category List (CURRENTLY NOT WORKING DUE TO BUG IN SPACEDOCK API, FIX INCOMING) -->
+    <!--<ComboBox Grid.Column="2" Margin="10 0 0 0"
+              Width="125" AutoScrollToSelectedItem="True" PlaceholderText="Category"
+              SelectedItem="{Binding MainViewModel.ModlistVM.Category}">
+          <ComboBoxItem IsSelected="True">All</ComboBoxItem>
+          <ComboBoxItem>Featured</ComboBoxItem>
+          <ComboBoxItem>Top</ComboBoxItem>
+          <ComboBoxItem>New</ComboBoxItem>
+      </ComboBox>-->
+
 
     <!-- Filters Button -->
-	  <ComboBox Grid.Column="2" Margin="10,0" SelectedIndex="0">
-		  <ComboBoxItem>Filters</ComboBoxItem>
-		  <ComboBoxItem>
-			  <StackPanel>
-				  <CheckBox IsThreeState="False" IsChecked="{Binding FilterInstalled}">Is Installed</CheckBox>
-				  <CheckBox IsThreeState="False" IsChecked="{Binding FilterVersion}">Is Compatible</CheckBox>
-				  <CheckBox IsThreeState="False" IsChecked="False">Is Bookmarked</CheckBox>
-			  </StackPanel>
-		  </ComboBoxItem>
-	  </ComboBox>
+    <Menu Grid.Column="3" Margin="10,0" BorderBrush="White" CornerRadius="5" BorderThickness="0.7"
+          Cursor="Hand">
+      <MenuItem Header="Filters">
+        <StackPanel>
+          <CheckBox Content="Installed Mods" IsChecked="{Binding FilterInstalled}" Margin="10 5" />
+        </StackPanel>
+        <StackPanel>
+          <CheckBox Content="Compatible Mods" IsChecked="{Binding FilterVersion}" Margin="10 5" />
+        </StackPanel>
 
-    <!-- Profiles Button -->
-    <Button Grid.Column="3" Content="Profiles" Margin="10,0" />
+
+      </MenuItem>
+    </Menu>
+
+
+    <!-- Refresh Button -->
+    <Button Grid.Column="5" Margin="10 0" Background="Transparent" Cursor="Hand"
+            Command="{Binding MainViewModel.HeaderVM.RefreshModlistCommand}"
+            IsEnabled="{Binding !MainViewModel.ModlistVM.IsFetchingData}"
+            ToolTip.Tip="Refresh Modlist" Width="50" Height="40">
+      <Button.Content>
+        <Image Source="{DynamicResource RefreshIcon-White}" Width="40" Height="40"/>
+      </Button.Content>
+
+    </Button>
+    
+    
 
     <!-- Classic/Grid View Toggle Button -->
-    <ToggleButton Grid.Column="4" Content="Toggle View"
-                  Command="{Binding DataContext.ModlistVM.ToggleViewCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=views:MainWindow}}" />
+    <ToggleButton Grid.Column="6" Height="40" Width="50" Background="Transparent" Cursor="Hand"
+                  Command="{Binding DataContext.ModlistVM.ToggleViewCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=views:MainWindow}}">
+      <ToggleButton.Content>
+        <ContentControl>
+          <Grid>
+            <Image Source="{DynamicResource ToggleView-Grid-White}" Width="40" Height="40" Classes="listIcon"
+                   ToolTip.Tip="Switch to Grid View"/>
+            <Image Source="{DynamicResource ToggleView-List-White}" Width="40" Height="40" Classes="gridIcon"
+                   ToolTip.Tip="Switch to List View"/>
+          </Grid>
+        </ContentControl>
+      </ToggleButton.Content>
+    </ToggleButton>
+
+    <!-- Update All Button -->
+    <Button Grid.Column="7" Margin="10 0" Background="Transparent" Cursor="Hand"
+            ToolTip.Tip="Update All" Width="50" Height="40">
+      <Button.Content>
+        <Image Source="{DynamicResource UpdateIcon-White}" Width="45" Height="45"/>
+      </Button.Content>
+
+    </Button>
+
+
 
 
   </Grid>
