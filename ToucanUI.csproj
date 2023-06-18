@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,6 +26,10 @@
     <AvaloniaResource Remove="Assets\Icons\Uninstall-Icon-White.png" />
     <AvaloniaResource Remove="Assets\Icons\Update-Icon-White.png" />
     <AvaloniaResource Remove="Assets\toucan_manifest.json" />
+    <AvaloniaXaml Remove="Installed\**" />
+    <Compile Remove="Installed\**" />
+    <EmbeddedResource Remove="Installed\**" />
+    <None Remove="Installed\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -56,6 +61,7 @@
     <PackageReference Include="ini-parser" Version="2.5.2" />
     <PackageReference Include="Markdown.Avalonia" Version="0.10.14" />
     <PackageReference Include="MessageBox.Avalonia" Version="2.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="XamlNameReferenceGenerator" Version="1.6.1" />
     
     <!-- Added these ones -->

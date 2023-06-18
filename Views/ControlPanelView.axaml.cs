@@ -8,4 +8,6 @@ public partial class ControlPanelView : UserControl
     {
         InitializeComponent();
     }
+
+
 }

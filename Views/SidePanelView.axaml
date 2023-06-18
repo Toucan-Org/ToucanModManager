@@ -46,22 +46,22 @@
 
                 <!-- Game Version -->
                 <TextBlock Text="Game Version" Grid.Row="2" Grid.Column="0" Foreground="DarkGray" Margin="0 30 0 10"/>
-                <TextBox Text="{Binding MainViewModel.SelectedMod.ModObject.SelectedVersion.GameVersion}" Grid.Row="3" Grid.Column="0" IsHitTestVisible="False" Padding="10"
+                <TextBox Text="{Binding MainViewModel.SelectedMod.SelectedVersionViewModel.VersionObject.GameVersion}" Grid.Row="3" Grid.Column="0" IsHitTestVisible="False" Padding="10"
                          Grid.ColumnSpan="2" TextWrapping="Wrap" IsReadOnly="True" Background="#202020" BorderBrush="#181818" Margin="0 0 10 0"/>
 
                 <!-- Mod Version -->
                 <TextBlock Text="Mod Version" Grid.Row="2" Grid.Column="2" Foreground="DarkGray" Margin="10 30 0 10"/>
-                <TextBox Text="{Binding MainViewModel.SelectedMod.ModObject.SelectedVersion.FriendlyVersion}" Grid.Row="3" Grid.Column="2" IsHitTestVisible="False" Padding="10"
+                <TextBox Text="{Binding MainViewModel.SelectedMod.SelectedVersionViewModel.VersionObject.FriendlyVersion}" Grid.Row="3" Grid.Column="2" IsHitTestVisible="False" Padding="10"
                          Grid.ColumnSpan="2" TextWrapping="Wrap" IsReadOnly="True" Background="#202020" BorderBrush="#181818" Margin="10 0 0 0"/>
 
                 <!-- Downloads -->
                 <TextBlock Text="Downloads" Grid.Row="4" Grid.Column="0" Foreground="DarkGray" Margin="0 30 0 10"/>
-                <TextBox Text="{Binding MainViewModel.SelectedMod.ModObject.SelectedVersion.Downloads}" Grid.Row="5" Grid.Column="0" IsHitTestVisible="False" Padding="10"
+                <TextBox Text="{Binding MainViewModel.SelectedMod.SelectedVersionViewModel.VersionObject.Downloads}" Grid.Row="5" Grid.Column="0" IsHitTestVisible="False" Padding="10"
                          Grid.ColumnSpan="2" TextWrapping="Wrap" IsReadOnly="True" Background="#202020" BorderBrush="#181818" Margin="0 0 10 0"/>
 
-                <!-- Download Size (WIP) -->
+                <!-- Download Size -->
                 <TextBlock Text="Download Size" Grid.Row="4" Grid.Column="2" Foreground="DarkGray" Margin="10 30 0 10"/>
-                <TextBox Text="{Binding MainViewModel.SelectedMod.ModObject.SelectedVersion.DownloadSizeDisplay}" Grid.Row="5" Grid.Column="2" IsHitTestVisible="False" Padding="10"
+                <TextBox Text="{Binding MainViewModel.SelectedMod.SelectedVersionViewModel.DownloadSizeDisplay}" Grid.Row="5" Grid.Column="2" IsHitTestVisible="False" Padding="10"
                          Grid.ColumnSpan="2" TextWrapping="Wrap" IsReadOnly="True" Background="#202020" BorderBrush="#181818" Margin="10 0 0 0"/>
 
                 <!-- Followers -->
@@ -90,24 +90,24 @@
           
           <!-- VERSIONS SUBMENU -->
           <TabItem Header="Versions" FontSize="18">
-              <DataGrid Items="{Binding MainViewModel.SelectedMod.ModObject.Versions}" AutoGenerateColumns="False" SelectionMode="Single"
+              <DataGrid Items="{Binding MainViewModel.SelectedMod.VersionViewModels, Mode=OneWay}" AutoGenerateColumns="False" SelectionMode="Single"
                         IsReadOnly="True" CanUserSortColumns="True" Margin="10" Background="Transparent" AlternatingRowBackground="#80303030"
                         IsEnabled="{Binding MainViewModel.SelectedMod.IsModifiable}">
                 <DataGrid.Columns>
                   <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
                       <DataTemplate>
-                        <RadioButton IsChecked="{Binding IsSelectedVersion}" HorizontalAlignment="Center"/>
+                        <RadioButton IsChecked="{Binding IsSelected}" GroupName="VersionGroup" HorizontalAlignment="Center"/>
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                   </DataGridTemplateColumn>
 
-                  <DataGridTextColumn Header="Mod Version" Binding="{Binding FriendlyVersion}" />
-                  <DataGridTextColumn Header="Game Version" Binding="{Binding GameVersion}" />
-                  <DataGridTextColumn Header="Downloads" Binding="{Binding Downloads}" />
+                  <DataGridTextColumn Header="Mod Version" Binding="{Binding VersionObject.FriendlyVersion}" />
+                  <DataGridTextColumn Header="Game Version" Binding="{Binding VersionObject.GameVersion}" />
+                  <DataGridTextColumn Header="Downloads" Binding="{Binding VersionObject.Downloads}" />
                   <DataGridTextColumn Header="Download Size" Binding="{Binding DownloadSizeDisplay}" />
-                  <DataGridTextColumn Header="Changelog" Binding="{Binding Changelog}" />
-                  <DataGridTextColumn Header="Created" Binding="{Binding Created}" />
+                  <DataGridTextColumn Header="Changelog" Binding="{Binding VersionObject.Changelog}" />
+                  <DataGridTextColumn Header="Created" Binding="{Binding VersionObject.Created}" />
                 </DataGrid.Columns>
               </DataGrid>
 
@@ -121,7 +121,7 @@
         <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Margin="25 10 0 0"
               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
               RowDefinitions="Auto, Auto" ColumnDefinitions="*, *, *, *">
-          
+
           <!-- Open Website Button -->
           <Button Grid.Row="0" Grid.Column="0" Width="60" Height="60"
                   ToolTip.Tip="Open Website"
@@ -132,16 +132,19 @@
           </Button>
 
           <!-- Update Button -->
-          <Button Grid.Row="0" Grid.Column="1" IsVisible="{Binding MainViewModel.SelectedMod.IsInstalled}"
-                  Width="60" Height="60" Background="Transparent">
+          <Button Grid.Row="0" Grid.Column="1" IsVisible="{Binding MainViewModel.SelectedMod.ModState, Converter={StaticResource ModStateToVisibilityConverter}}"
+                  Width="60" Height="60" Background="Transparent" IsEnabled="{Binding MainViewModel.SelectedMod.IsUpdateAvailable}"
+                  Command="{Binding MainViewModel.ModlistVM.UpdateModCommand}" CommandParameter="{Binding MainViewModel.SelectedMod}"
+                  ToolTip.Tip="Update Mod">
             <Button.Content>
               <Image Source="{DynamicResource UpdateIcon-White}" Width="70" Height="70"/>
             </Button.Content>
           </Button>
 
           <!-- Uninstall Button -->
-          <Button Grid.Row="0" Grid.Column="2" IsVisible="{Binding MainViewModel.SelectedMod.IsInstalled}"
-                  Width="60" Height="60" Background="Transparent">
+          <Button Grid.Row="0" Grid.Column="2" IsVisible="{Binding MainViewModel.SelectedMod.ModState, Converter={StaticResource ModStateToVisibilityConverter}}"
+                  Width="60" Height="60" Background="Transparent" Command="{Binding MainViewModel.ModlistVM.UninstallModCommand}" CommandParameter="{Binding MainViewModel.SelectedMod}"
+                  ToolTip.Tip="Uninstall Mod">
             <Button.Content>
               <Image Source="{DynamicResource UninstallIcon-White}" Width="60" Height="60"/>
             </Button.Content>
@@ -157,48 +160,68 @@
                     IsEnabled="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToBooleanConverter}}"
                     IsVisible="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToBooleanConverter}}">
 
-              
               <Button.Content>
-                <Image Source="{DynamicResource DownloadIcon}" Width="60" Height="60"
-                        IsVisible="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Download}"/>
+                <Image Source="{DynamicResource DownloadIcon}" Width="60" Height="60">
+                  <Image.IsVisible>
+                    <MultiBinding Converter="{StaticResource ProgressToStatusConverter}" ConverterParameter="Download">
+                      <Binding Path="MainViewModel.SelectedMod.Progress" />
+                      <Binding Path="MainViewModel.SelectedMod.ModState" />
+                    </MultiBinding>
+                  </Image.IsVisible>
+                </Image>
               </Button.Content>
 
             </Button>
-            
+
             <!-- Downloading/Downloaded Icons -->
             <Image Source="{DynamicResource DownloadingIcon}" Width="60" Height="60" Classes="rotating"
-                   HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                   IsVisible="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloading}"/>
+                   HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+              <Image.IsVisible>
+                <MultiBinding Converter="{StaticResource ProgressToStatusConverter}" ConverterParameter="Downloading">
+                  <Binding Path="MainViewModel.SelectedMod.Progress" />
+                  <Binding Path="MainViewModel.SelectedMod.ModState" />
+                </MultiBinding>
+              </Image.IsVisible>
+            </Image>
 
             <Button Background="Transparent" Width="60" Height="60" Classes="cancelButton" ToolTip.Tip="Cancel Download"
-                    IsVisible="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloading}"
-                    Command="{Binding MainViewModel.ModlistVM.CancelDownloadModCommand}"
                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                    Command="{Binding MainViewModel.ModlistVM.CancelDownloadModCommand}"
                     CommandParameter="{Binding MainViewModel.SelectedMod}">
 
+              <Button.IsVisible>
+                <MultiBinding Converter="{StaticResource ProgressToStatusConverter}" ConverterParameter="Downloading">
+                  <Binding Path="MainViewModel.SelectedMod.Progress" />
+                  <Binding Path="MainViewModel.SelectedMod.ModState" />
+                </MultiBinding>
+              </Button.IsVisible>
               <Button.Content>
                 <Image Source="{DynamicResource CloseIcon-White}" Width="40" Height="40"/>
               </Button.Content>
             </Button>
 
-            <Image Source="{DynamicResource DownloadedIcon}" Width="60" Height="60"
+            <Image Source="{DynamicResource DownloadedIcon}" Width="60" Height="70"
                    ToolTip.Tip="{Binding MainViewModel.SelectedMod.ModObject.SelectedVersion.FriendlyVersion, StringFormat='Installed {0}'}"
-                   HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                   IsVisible="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloaded}"/>
-
+                   HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+              <Image.IsVisible>
+                <MultiBinding Converter="{StaticResource ProgressToStatusConverter}" ConverterParameter="Downloaded">
+                  <Binding Path="MainViewModel.SelectedMod.Progress" />
+                  <Binding Path="MainViewModel.SelectedMod.ModState" />
+                </MultiBinding>
+              </Image.IsVisible>
+            </Image>
           </Grid>
-
 
         </Grid>
 
-
         <!-- Progress Bar -->
         <ProgressBar Value="{Binding MainViewModel.SelectedMod.Progress}" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="4"
-                     Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                     Foreground="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToBrushConverter}}"/>
+                      Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                      Foreground="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToBrushConverter}}"/>
 
 
-      </Grid>
+
+        </Grid>
 	</Border>
 	
 </UserControl>

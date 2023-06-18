@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
-using ToucanUI.Models;
 
 // This API is being used temporarily, until we get our own database and API up and running which will greatly simplify things
 
@@ -43,7 +43,7 @@ namespace ToucanUI.Services
         // =====================
 
         // Returns a single Mod from spacedock API
-        public async Task<Mod> GetMod(string id)
+        public async Task<Mod> GetMod(int id)
         {
             Mod mod = null;
 
@@ -60,11 +60,11 @@ namespace ToucanUI.Services
                     var jsonString = await response.Content.ReadAsStringAsync();
 
                     // Parse the JSON data
-                    var jsonDocument = JsonDocument.Parse(jsonString);
-                    var data = jsonDocument.RootElement;
+                    //var jsonDocument = JsonDocument.Parse(jsonString);
+                    //var data = jsonDocument.RootElement;
 
                     // Create a Mod object from the JSON data
-                    mod = new Mod(data);
+                    mod = Mod.FromJson(jsonString);
                 }
                 else
                 {
@@ -140,22 +140,17 @@ namespace ToucanUI.Services
                         Debug.WriteLine($"Response status code: {response.StatusCode}");
                         jsonString = await response.Content.ReadAsStringAsync();
 
-                        // Parse the JSON data
-                        jsonDocument = JsonDocument.Parse(jsonString);
-                        data = jsonDocument.RootElement;
-
-
                         // Parse the mod data
-                        var modData = ParseModData(data);
+                        var modData = ParseModData(jsonString);
                         mods.AddRange(modData);
 
-                        Debug.WriteLine($"Finished retrieving {modData.Count} mods from page {currentPage}");
+                        //Debug.WriteLine($"Finished retrieving {modData.Count} mods from page {currentPage}");
                     }
                 }
 
                 else
                 {
-                    var modData = ParseModData(data);
+                    var modData = ParseModData(jsonString);
                     mods.AddRange(modData);
                 }
 
@@ -190,19 +185,34 @@ namespace ToucanUI.Services
             }
         }
 
-        // Method to parse the mod data from the JSON data
-        public List<Mod> ParseModData(JsonElement data)
+        public List<Mod> ParseModData(string jsonString)
         {
             var mods = new List<Mod>();
 
-            if (data.ValueKind == JsonValueKind.Array)
+            try
             {
-                // Mods are directly within the JSON array
-                foreach (var item in data.EnumerateArray())
+                var json = JObject.Parse(jsonString);
+                JToken dataArray;
+
+                if (json["result"] != null) // If the "results" property exists
+                {
+                    dataArray = json["result"];
+                }
+                else if (json.Type == JTokenType.Array) // If the JSON data is directly an array
+                {
+                    dataArray = JArray.Parse(jsonString);
+                }
+                else // If the JSON data is neither an array nor has a "results" property
+                {
+                    Debug.WriteLine($"Unexpected JSON data format: {jsonString}");
+                    return mods;
+                }
+
+                foreach (var item in dataArray)
                 {
                     try
                     {
-                        var mod = new Mod(item);
+                        var mod = Mod.FromJson(item.ToString());
                         mods.Add(mod);
                     }
                     catch (Exception ex)
@@ -211,26 +221,15 @@ namespace ToucanUI.Services
                     }
                 }
             }
-            else if (data.ValueKind == JsonValueKind.Object)
+            catch (Exception ex)
             {
-                // Mods are within the "results" property
-                var results = data.GetProperty("result");
-                foreach (var item in results.EnumerateArray())
-                {
-                    try
-                    {
-                        var mod = new Mod(item);
-                        mods.Add(mod);
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine($"Error: {ex}");
-                    }
-                }
+                Debug.WriteLine($"Error parsing mod data: {ex.Message}");
             }
 
             return mods;
         }
+
+
 
     }
 }

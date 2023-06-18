@@ -15,39 +15,60 @@
         <DataGridTemplateColumn.CellTemplate>
           <DataTemplate>
             <Grid RowDefinitions="*" ColumnDefinitions="*">
-              <Button Background="Transparent" Grid.Row="0" Grid.Column="0"
-                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+              <Button Background="Transparent" Width="40" Height="40"
                       Command="{Binding DataContext.DownloadModCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                      Width="25" Height="25"
-                      CommandParameter="{Binding}"
+                      CommandParameter="{Binding}" ToolTip.Tip="Download and Install"
                       IsEnabled="{Binding Progress, Converter={StaticResource ProgressToBooleanConverter}}"
                       IsVisible="{Binding Progress, Converter={StaticResource ProgressToBooleanConverter}}">
-                
-                <Image Source="{DynamicResource DownloadIcon}" Width="25" Height="25" Grid.Row="0" Grid.Column="0"
-                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                       IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Download}"/>
+                <Image Source="{DynamicResource DownloadIcon}" Width="40" Height="40">
+                  <Image.IsVisible>
+                    <MultiBinding Converter="{StaticResource ProgressToStatusConverter}" ConverterParameter="Download">
+                      <Binding Path="Progress" />
+                      <Binding Path="ModState" />
+                    </MultiBinding>
+                  </Image.IsVisible>
+                </Image>
               </Button>
 
-              <Image Source="{DynamicResource DownloadingIcon}" Width="25" Height="25" Classes="rotating"
-                     Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                     IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloading}"/>
-              
-              <Button Background="Transparent" Width="25" Height="25" Classes="cancelButton" ToolTip.Tip="Cancel Download"
-                      IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloading}"
-                      Command="{Binding DataContext.CancelDownloadModCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                      CommandParameter="{Binding}" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+              <Image Source="{DynamicResource DownloadingIcon}" Width="40" Height="40" Classes="rotating">
+                <Image.IsVisible>
+                  <MultiBinding Converter="{StaticResource ProgressToStatusConverter}" ConverterParameter="Downloading">
+                    <Binding Path="Progress" />
+                    <Binding Path="ModState" />
+                  </MultiBinding>
+                </Image.IsVisible>
+              </Image>
+
+              <Button Background="Transparent" Width="40" Height="40" Classes="cancelButton" ToolTip.Tip="Cancel Download"
+                      Command="{Binding DataContext.CancelDownloadModCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}">
+                <Button.IsVisible>
+                  <MultiBinding Converter="{StaticResource ProgressToStatusConverter}" ConverterParameter="Downloading">
+                    <Binding Path="Progress" />
+                    <Binding Path="ModState" />
+                  </MultiBinding>
+                </Button.IsVisible>
+                <Button.CommandParameter>
+                  <Binding />
+                </Button.CommandParameter>
                 <Button.Content>
-                  <Image Source="{DynamicResource CloseIcon-White}" Width="20" Height="20"/>
+                  <Image Source="{DynamicResource CloseIcon-White}" Width="40" Height="40" />
                 </Button.Content>
               </Button>
-              
-              <Image Source="{DynamicResource DownloadedIcon}" Width="25" Height="25"
-                     Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                     IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloaded}"/>
+
+              <Image Source="{DynamicResource DownloadedIcon}" Width="40" Height="40">
+                <Image.IsVisible>
+                  <MultiBinding Converter="{StaticResource ProgressToStatusConverter}" ConverterParameter="Downloaded">
+                    <Binding Path="Progress" />
+                    <Binding Path="ModState" />
+                  </MultiBinding>
+                </Image.IsVisible>
+              </Image>
             </Grid>
           </DataTemplate>
         </DataGridTemplateColumn.CellTemplate>
       </DataGridTemplateColumn>
+
+
       <!-- Other columns -->
       <DataGridTemplateColumn CanUserResize="False">
         <DataGridTemplateColumn.CellTemplate>
@@ -59,11 +80,12 @@
 
       <DataGridTextColumn Header="Name" Binding="{Binding ModObject.Name}" Width="250" IsReadOnly="True"/>
       <DataGridTextColumn Header="Author" Binding="{Binding ModObject.Author}" Width="200" IsReadOnly="True"/>
-      <DataGridTextColumn Header="Game Version" Binding="{Binding ModObject.SelectedVersion.GameVersion}" IsReadOnly="True"/>
-      <DataGridTextColumn Header="Mod Version" Binding="{Binding ModObject.SelectedVersion.FriendlyVersion}" IsReadOnly="True"/>      
+      <DataGridTextColumn Header="Game Version" Binding="{Binding SelectedVersionViewModel.VersionObject.GameVersion}" IsReadOnly="True"/>
+      <DataGridTextColumn Header="Mod Version" Binding="{Binding SelectedVersionViewModel.VersionObject.FriendlyVersion}" IsReadOnly="True"/>      
       <DataGridTextColumn Header="Description" Binding="{Binding ModObject.Description}" Width="500" IsReadOnly="True"/>
       <DataGridTextColumn Header="Downloads" Binding="{Binding ModObject.Downloads}" IsReadOnly="True"/>
-      <DataGridTextColumn Header="Download Size" Binding="{Binding ModObject.SelectedVersion.DownloadSizeDisplay}" IsReadOnly="True"/>
+      <DataGridTextColumn Header="Download Size" Binding="{Binding SelectedVersionViewModel.DownloadSizeDisplay}"
+                          SortMemberPath="SelectedVersionViewModel.DownloadSize" IsReadOnly="True"/>
       <DataGridTextColumn Header="Followers" Binding="{Binding ModObject.Followers}" IsReadOnly="True"/>
       <DataGridTextColumn Header="License" Binding="{Binding ModObject.License}" IsReadOnly="True"/>
     </DataGrid.Columns>

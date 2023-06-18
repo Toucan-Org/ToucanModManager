@@ -1,6 +1,5 @@
 ﻿using ReactiveUI;
 using System.Collections.ObjectModel;
-using ToucanUI.Models;
 
 
 namespace ToucanUI.ViewModels
@@ -41,6 +40,18 @@ namespace ToucanUI.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref _filterVersion, value);
+            }
+
+        }
+
+        // Is update available version filter
+        private bool _filterUpdateAvailable = false;
+        public bool FilterUpdateAvailable
+        {
+            get => _filterUpdateAvailable;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _filterUpdateAvailable, value);
             }
 
         }
