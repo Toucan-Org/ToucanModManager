@@ -79,7 +79,12 @@ namespace ToucanUI.Services
             IniData data = parser.ReadFile(_configFilePath);
 
             // Read the existing time played value from the config
-            int existingTimePlayed = int.Parse(data["Game"]["TimePlayed"]);
+            int existingTimePlayed;
+            if (!int.TryParse(data["Game"]["TimePlayed"], out existingTimePlayed))
+            {
+                // Set a default value (e.g., 0) if the parsing fails
+                existingTimePlayed = 0;
+            }
 
             // Add the new time played value to the existing value
             int updatedTimePlayed = existingTimePlayed + timePlayedSeconds;
@@ -90,6 +95,7 @@ namespace ToucanUI.Services
             // Save the updated config back to the file
             parser.WriteFile(_configFilePath, data);
         }
+
 
         // Used to save current settings to Config
         public void SaveConfig(string gamePath, string gameVersion)

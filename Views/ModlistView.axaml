@@ -17,38 +17,57 @@
                   Margin="10" ZIndex="100">
         <StackPanel Orientation="Horizontal" Margin="10">
           <StackPanel.IsVisible>
-            <MultiBinding Converter="{StaticResource BooleanOrConverter}">
-              <Binding Path="IsFetchingData"/>
-              <Binding Path="IsFetchFailed"/>
-            </MultiBinding>
+            <Binding Path="FetchState" Converter="{StaticResource EnumToVisibilityConverter}" ConverterParameter="Fetching,Failed,Offline" />
           </StackPanel.IsVisible>
+
+
           <Image Source="{DynamicResource DownloadingIcon}" Width="50" Height="50" Classes="rotating"
-                 IsVisible="{Binding IsFetchingData}"/>
+                 IsVisible="{Binding FetchState, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Fetching}" />
+          
           <Image Source="{DynamicResource CloseIcon-White}" Width="50" Height="50"
-                 IsVisible="{Binding IsFetchFailed}"/>
+                 IsVisible="{Binding FetchState, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Failed}" />
+          
           <TextBlock x:Name="FetchingMessage" FontSize="16"
                      Text="{Binding FetchingMessage}" FontFamily="{StaticResource Orbitron}"
                      VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        </StackPanel
-        >
-        <Button Content="Retry" IsVisible="{Binding IsFetchFailed}" Margin="10"
+        </StackPanel>
+        
+        <Button Content="Retry" Margin="10"
                 BorderBrush="DarkGray" BorderThickness="0.5" Background="#252525"
                 HorizontalAlignment="Center" Width="150" HorizontalContentAlignment="Center"
-                Command="{Binding MainViewModel.HeaderVM.RefreshModlist}"/>
+                Command="{Binding MainViewModel.HeaderVM.RefreshModlist}"
+                IsVisible="{Binding FetchState, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Failed}" />
 
-        <Button Content="Offline Mode" IsVisible="{Binding IsFetchFailed}" Margin="10"
+        <Button Content="Offline Mode" Margin="10"
                 BorderBrush="DarkGray" BorderThickness="0.5" Background="#252525"
-                HorizontalAlignment="Center" Width="150" HorizontalContentAlignment="Center"/>
+                HorizontalAlignment="Center" Width="150" HorizontalContentAlignment="Center"
+                Command="{Binding MainViewModel.ModlistVM.LoadOfflineModsCommand}"
+                IsVisible="{Binding FetchState, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Failed}" />
       </StackPanel>
 
 
 
 
       <!-- Classic and Grid views -->
-      <views:ClassicModlistView x:Name="ClassicViewControl" IsVisible="{Binding IsClassicViewVisible}" />
-      <views:GridModlistView x:Name="GridViewControl" IsVisible="{Binding IsGridViewVisible}" />
+      <!--<views:ClassicModlistView x:Name="ClassicViewControl" IsVisible="{Binding IsClassicViewVisible}" />
+      <views:GridModlistView x:Name="GridViewControl" IsVisible="{Binding IsGridViewVisible}" />-->
+      <views:ClassicModlistView x:Name="ClassicViewControl">
+        <views:ClassicModlistView.IsVisible>
+          <MultiBinding Converter="{StaticResource MultiEnumToVisibilityConverter}" ConverterParameter="Classic">
+            <Binding Path="FetchState" />
+            <Binding Path="ViewState" />
+          </MultiBinding>
+        </views:ClassicModlistView.IsVisible>
+      </views:ClassicModlistView>
 
-
+      <views:GridModlistView x:Name="GridViewControl">
+        <views:GridModlistView.IsVisible>
+          <MultiBinding Converter="{StaticResource MultiEnumToVisibilityConverter}" ConverterParameter="Grid">
+            <Binding Path="FetchState" />
+            <Binding Path="ViewState" />
+          </MultiBinding>
+        </views:GridModlistView.IsVisible>
+      </views:GridModlistView>
 
 
       <Border Margin="15" Padding="10" Background="#191919" CornerRadius="10"
@@ -76,10 +95,12 @@
                       Command="{Binding InstallSelectedModsCommand}"/>
               <Button Content="Update" Background="#252525" Margin="5 0"
                       BorderBrush="White" BorderThickness="1" Width="80"
-                      HorizontalContentAlignment="Center"/>
+                      HorizontalContentAlignment="Center"
+                      Command="{Binding UpdateSelectedModsCommand}"/>
               <Button Content="Uninstall" Background="#252525" Margin="5 0"
                       BorderBrush="White" BorderThickness="1" Width="80"
-                      HorizontalContentAlignment="Center"/>
+                      HorizontalContentAlignment="Center"
+                      Command="{Binding UninstallSelectedModsCommand}"/>
             </StackPanel>
             <TextBlock HorizontalAlignment="Center">...</TextBlock>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

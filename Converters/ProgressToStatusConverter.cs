@@ -1,60 +1,41 @@
-﻿using Avalonia.Data.Converters;
+﻿using Avalonia;
+using Avalonia.Data.Converters;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
-
-// This class is used to convert the progress of a mod download to a status string for the ProgressBar
+using ToucanUI.Models.KSP2;
 
 namespace ToucanUI.Converters
 {
-    public class ProgressToStatusConverter : IValueConverter
+    public class ProgressToStatusConverter : IMultiValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(IList<object> values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is int progress)
+            if (values[0] is int progress && values[1] is ModViewModel.ModStateEnum modState)
             {
                 if (parameter is string iconName)
                 {
-                    return GetIconVisibility(progress, iconName);
-                }
-                else
-                {
-                    if (progress == 0)
-                    {
-                        return "Not Installed";
-                    }
-                    if (progress < 100)
-                    {
-                        return "Installing...";
-                    }
-                    return "Installed";
+                    return GetIconVisibility(progress, modState, iconName);
                 }
             }
 
-            return "Not Installed";
+            return AvaloniaProperty.UnsetValue;
         }
 
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-
-        //This function then tells the UI what Icon should currently be visible
-        private bool GetIconVisibility(int progress, string iconName)
+        private bool GetIconVisibility(int progress, ModViewModel.ModStateEnum modState, string iconName)
         {
             switch (iconName)
             {
                 case "Download":
-                    return progress == 0;
+                    return progress == 0 && modState == ModViewModel.ModStateEnum.NotInstalled;
                 case "Downloading":
-                    return progress > 0 && progress < 100;
+                    return modState == ModViewModel.ModStateEnum.Downloading;
                 case "Downloaded":
-                    return progress >= 100;
+                    return progress >= 100 && modState == ModViewModel.ModStateEnum.Installed;
 
                 default:
                     return false;
             }
         }
-
     }
 }
