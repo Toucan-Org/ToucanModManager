@@ -7,19 +7,19 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ToucanUI.Models.KSP2;
 using ToucanUI.Services;
 
 namespace ToucanUI.ViewModels
 {
     public class ModlistViewModel : ViewModelBase
     {
+
         // =====================
         // VIEW MODELS
         // =====================
@@ -32,6 +32,7 @@ namespace ToucanUI.ViewModels
         // =====================
         SpacedockAPI api = new SpacedockAPI();
         private readonly ConfigurationManager _configManager;
+        InstallManager installer = new InstallManager();
 
 
 
@@ -71,29 +72,32 @@ namespace ToucanUI.ViewModels
         public SourceList<ModViewModel> SelectedBulkMods { get; set; }
         public ReadOnlyObservableCollection<ModViewModel> SelectedBulkModsReadOnly { get; private set; }
 
-
-        // Tracks if Classic view should be visible
-        private bool _isClassicViewVisible = true;
-        public bool IsClassicViewVisible
+        public enum FetchStateEnum
         {
-            get => _isClassicViewVisible;
-            set => this.RaiseAndSetIfChanged(ref _isClassicViewVisible, value);
+            Fetching,
+            Failed,
+            Offline,
+            Success
         }
 
-        // Tracks if Grid view should be visible
-        private bool _isGridViewVisible = false;
-        public bool IsGridViewVisible
+        private FetchStateEnum _fetchState;
+        public FetchStateEnum FetchState
         {
-            get => _isGridViewVisible;
-            set => this.RaiseAndSetIfChanged(ref _isGridViewVisible, value);
+            get => _fetchState;
+            set => this.RaiseAndSetIfChanged(ref _fetchState, value);
         }
 
-        // Tracks if data is being fetched from the API
-        private bool _isFetchingData;
-        public bool IsFetchingData
+        public enum ViewStateEnum
         {
-            get => _isFetchingData;
-            set => this.RaiseAndSetIfChanged(ref _isFetchingData, value);
+            Grid,
+            Classic
+        }
+
+        private ViewStateEnum _viewState;
+        public ViewStateEnum ViewState
+        {
+            get => _viewState;
+            set => this.RaiseAndSetIfChanged(ref _viewState, value);
         }
 
         // Sets the fetching message
@@ -103,15 +107,6 @@ namespace ToucanUI.ViewModels
             get => _fetchingMessage;
             set => this.RaiseAndSetIfChanged(ref _fetchingMessage, value);
         }
-
-        // Tracks if data fetch failed (in order to display error messages)
-        private bool _isFetchFailed;
-        public bool IsFetchFailed
-        {
-            get => _isFetchFailed;
-            set => this.RaiseAndSetIfChanged(ref _isFetchFailed, value);
-        }
-
 
         // Static fetch phrases list
         private static readonly List<string> _fetchPhrases = new List<string>()
@@ -149,9 +144,6 @@ namespace ToucanUI.ViewModels
             }
         }
 
-        // Flag for skipping bulk actions
-        private bool _skipCurrentMod = false;
-
         // Progress message for the bulk action panel
         private string _bulkActionMessage;
         public string BulkActionMessage
@@ -176,8 +168,6 @@ namespace ToucanUI.ViewModels
             set => this.RaiseAndSetIfChanged(ref _bulkActionProgressCount, value);
         }
 
-        public CancellationTokenSource BulkActionCancellationTokenSource { get; set; }
-
         private ModViewModel _currentBulkActionMod;
         public ModViewModel CurrentBulkActionMod
         {
@@ -193,13 +183,20 @@ namespace ToucanUI.ViewModels
         // =====================
         public ReactiveCommand<ModViewModel, Unit> DownloadModCommand { get; }
         public ReactiveCommand<ModViewModel, Unit> CancelDownloadModCommand { get; }
+        public ReactiveCommand<ModViewModel, Unit> UninstallModCommand { get; }
+        public ReactiveCommand<ModViewModel, Unit> UpdateModCommand { get; }
+        public ReactiveCommand<Unit, Unit> UpdateAllCommand { get; }
         public ReactiveCommand<Unit, Unit> ToggleViewCommand { get; }
         public ReactiveCommand<Unit, Unit> SelectAllModsCommand { get; }
         public ReactiveCommand<Unit, Unit> UnselectAllModsCommand { get; }
         public ReactiveCommand<Unit, Unit> InstallSelectedModsCommand { get; }
+        public ReactiveCommand<Unit, Unit> UpdateSelectedModsCommand { get; }
+        public ReactiveCommand<Unit, Unit> UninstallSelectedModsCommand { get; }
 
         public ReactiveCommand<Unit, Unit> SkipBulkActionCommand { get; }
         public ReactiveCommand<Unit, Unit> CancelBulkActionCommand { get; }
+
+        public ReactiveCommand<Unit, Unit> LoadOfflineModsCommand { get; }
 
 
 
@@ -209,17 +206,26 @@ namespace ToucanUI.ViewModels
         // =====================
         public ModlistViewModel(MainWindowViewModel mainViewModel)
         {
+
             MainViewModel = mainViewModel;
+            ViewState = ViewStateEnum.Classic;
 
             DownloadModCommand = ReactiveCommand.Create<ModViewModel>(mod => DownloadModAsync(mod), mainViewModel.WhenAnyValue(x => x.ValidGameFound));
-            CancelDownloadModCommand = ReactiveCommand.Create<ModViewModel>(CancelDownload);
+            CancelDownloadModCommand = ReactiveCommand.Create<ModViewModel>(CancelSingleDownload);
+            UninstallModCommand = ReactiveCommand.Create<ModViewModel>(mod => UninstallModAndSetState(mod));
+            UpdateModCommand = ReactiveCommand.Create<ModViewModel>(mod => UpdateMod(mod));
+            UpdateAllCommand = ReactiveCommand.Create(UpdateAllInstalledMods);
             ToggleViewCommand = ReactiveCommand.Create(SwitchView);
             SelectAllModsCommand = ReactiveCommand.Create(SelectAllMods);
             UnselectAllModsCommand = ReactiveCommand.Create(UnselectAllMods);
 
-            InstallSelectedModsCommand = ReactiveCommand.Create(InstallSelectedMods);
+            InstallSelectedModsCommand = ReactiveCommand.Create(BulkInstallSelectedMods);
+            UpdateSelectedModsCommand = ReactiveCommand.Create(BulkUpdateSelectedMods);
+            UninstallSelectedModsCommand = ReactiveCommand.Create(BulkUninstallSelectedMods);
             SkipBulkActionCommand = ReactiveCommand.Create(SkipBulkAction);
-            CancelBulkActionCommand = ReactiveCommand.Create(() => CancelBulkAction(BulkActionCancellationTokenSource));
+            CancelBulkActionCommand = ReactiveCommand.Create(() => CancelBulkAction());
+
+            LoadOfflineModsCommand = ReactiveCommand.CreateFromTask(LoadOfflineMods);
 
 
             ModList = new ObservableCollection<ModViewModel>();
@@ -240,6 +246,7 @@ namespace ToucanUI.ViewModels
             var observableSearchFilter = this.WhenAnyValue(viewModel => viewModel.SearchText).Select(SearchName);
             var InstalledFilter = this.WhenAnyValue(x => x.MainViewModel.ControlPanelVM.FilterInstalled).Select(SetInstalledFilter);
             var VersionFilter = this.WhenAnyValue(x => x.MainViewModel.ControlPanelVM.FilterVersion).Select(SetVersionFilter);
+            var UpdateAvailableFilter = this.WhenAnyValue(x => x.MainViewModel.ControlPanelVM.FilterUpdateAvailable).Select(SetUpdateAvailableFilter);
 
             var modListChangeSet = ModList.ToObservableChangeSet();
 
@@ -248,6 +255,7 @@ namespace ToucanUI.ViewModels
                 .Filter(observableSearchFilter)
                 .Filter(InstalledFilter)
                 .Filter(VersionFilter)
+                .Filter(UpdateAvailableFilter)
                 .AsObservableList();
 
             _sourceList.Connect()
@@ -281,7 +289,7 @@ namespace ToucanUI.ViewModels
         {
             if (isOn)
             {
-                return Mod => Mod.IsInstalled;
+                return Mod => Mod.ModState == ModViewModel.ModStateEnum.Installed;
             }
             else
             {
@@ -295,7 +303,7 @@ namespace ToucanUI.ViewModels
             var configManager = new ConfigurationManager();
             if (isOn)
             {
-                return Mod => Mod.ModObject.LatestVersion.GameVersion.Equals(configManager.GetGameVersion());
+                return Mod => Mod.GetLatestVersion().GameVersion.Equals(configManager.GetGameVersion());
             }
             else
             {
@@ -303,11 +311,32 @@ namespace ToucanUI.ViewModels
             }
         }
 
+        // Set the IsUpdateAvailable filter on or off
+        private Func<ModViewModel, bool> SetUpdateAvailableFilter(bool isOn)
+        {
+            if (isOn)
+            {
+                return Mod => Mod.IsUpdateAvailable;
+            }
+            else
+            {
+                return Mod => true;
+            }
+        }
+
+
         // Switch between Classic modlist view or DataGrid view
         public void SwitchView()
         {
-            IsClassicViewVisible = !IsClassicViewVisible;
-            IsGridViewVisible = !IsGridViewVisible;
+            if(ViewState == ViewStateEnum.Classic)
+            {
+                ViewState = ViewStateEnum.Grid;
+            }
+
+            else
+            {
+                ViewState = ViewStateEnum.Classic;
+            }
 
         }
 
@@ -317,14 +346,11 @@ namespace ToucanUI.ViewModels
         // =====================
 
         // Cancel a download/install
-        public void CancelDownload(ModViewModel mod)
+        public void CancelSingleDownload(ModViewModel mod)
         {
-            if (mod != null)
-            {
-                mod.IsModifiable = true;
-                Debug.WriteLine($"Cancelled download {mod.ModObject.Name}");
-                mod.IsCanceled = true;
-            }
+            mod.CancellationTokenSource.Cancel();
+            mod.ModState = ModViewModel.ModStateEnum.NotInstalled;
+
         }
 
         // Load the mod list from the API
@@ -336,8 +362,7 @@ namespace ToucanUI.ViewModels
 
             // Set the fetching message
             FetchingMessage = _fetchPhrases[new Random().Next(0, _fetchPhrases.Count)];
-            IsFetchingData = true;
-            IsFetchFailed = false;
+            FetchState = FetchStateEnum.Fetching;
 
 
             // Get the modlist from the API
@@ -350,6 +375,15 @@ namespace ToucanUI.ViewModels
                 foreach (var mod in mods)
                 {
                     var modViewModel = new ModViewModel(mod);
+
+                    // If the mod is BepInEx then ignore it as it should already be installed (we dont need to show it to the user anymore)
+                    // This can be updated in future so we can show the user if they have the latest version of BepInEx installed
+                    if (mod.Id == 3255)
+                    {
+                        Debug.WriteLine($"Skipping {mod.Name} [{mod.Id}]");
+                        continue;
+                    }
+
                     ModList.Add(modViewModel);
                     Debug.WriteLine($"Added {mod.Name} [{mod.Id}]");
 
@@ -375,14 +409,22 @@ namespace ToucanUI.ViewModels
 
                         });
                 }
+                // Load the offline JSON list here
+                ObservableCollection<Mod> offlineMods = installer.ReadInstalledMods();
+
+                ObservableCollection<ModViewModel> offlineModViewModels = new ObservableCollection<ModViewModel>(offlineMods.Select(mod => new ModViewModel(mod)));
+
+                MarkInstalledMods(ModList, offlineModViewModels);
+
+
             });
 
             // If nothing was returned from the API, set the fetching message to an error
             if (ModList.Count < 1)
             {
-                
+
                 // Check if Spacedock.info is online
-                bool isSpacedockOnline = await api.PingSpacedock();
+                bool isSpacedockOnline = await api.PingSpacedock().ConfigureAwait(false);
 
                 if (!isSpacedockOnline)
                 {
@@ -393,8 +435,7 @@ namespace ToucanUI.ViewModels
                     FetchingMessage = "Something went wrong! Unable to fetch data.";
                 }
 
-                IsFetchFailed = true;
-                IsFetchingData = false;
+                FetchState = FetchStateEnum.Failed;
                 return;
             }
 
@@ -402,74 +443,194 @@ namespace ToucanUI.ViewModels
             else
             {
                 FetchingMessage = "";
-                IsFetchingData = false;
+                FetchState = FetchStateEnum.Success;
             }
 
 
         }
 
-        // Function to download a mod asynchronously
-        public async Task DownloadModAsync(ModViewModel mod, CancellationToken cancellationToken = default)
+
+        public void MarkInstalledMods(ObservableCollection<ModViewModel> onlineMods, ObservableCollection<ModViewModel> offlineModViewModels)
         {
+            // Iterate through the onlineMods and offlineModViewModels
+            foreach (var onlineMod in onlineMods)
+            {
+                var offlineMod = offlineModViewModels.FirstOrDefault(om => om.ModObject.Id == onlineMod.ModObject.Id);
+                if (offlineMod != null)
+                {
+                    // If a match is found, set the IsInstalled property to true
+                    onlineMod.ModState = ModViewModel.ModStateEnum.Installed;
+                    onlineMod.Progress = 100;
+                    onlineMod.IsModifiable = false;
+
+                    // Find the installed version in the offline mod
+                    var installedVersion = offlineMod.ModObject.Versions.FirstOrDefault(v => v.IsInstalled);
+
+                    // Set the SelectedVersionViewModel from the installed version
+                    if (installedVersion != null)
+                    {
+                        var selectedVersionViewModel = onlineMod.VersionViewModels
+                            .FirstOrDefault(vvm => vvm.VersionObject.VersionID == installedVersion.VersionID);
+
+                        if (selectedVersionViewModel != null)
+                        {
+                            onlineMod.SelectedVersionViewModel = selectedVersionViewModel;
+
+                            // Update the IsSelected field based on the IsInstalled field of the VersionObject
+                            selectedVersionViewModel.IsSelected = installedVersion.IsInstalled;
+                        }
+                    }
+
+                    // Compare the Created field of the LatestVersion with the installed SelectedVersion
+                    if (onlineMod.GetLatestVersion().Created > onlineMod.SelectedVersionViewModel.VersionObject.Created)
+                    {
+                        // Notify the user about the version mismatch
+                        Debug.WriteLine($"Mod {onlineMod.ModObject.Name} is not up to date. Installed version: {onlineMod.SelectedVersionViewModel.VersionObject.FriendlyVersion}, Latest version: {onlineMod.GetLatestVersion().FriendlyVersion}");
+                        onlineMod.IsUpdateAvailable = true;
+                    }
+                    else
+                    {
+                        onlineMod.IsUpdateAvailable = false;
+                    }
+                }
+            }
+        }
+
+
+        // Function to download a mod asynchronously
+        public Task DownloadModAsync(ModViewModel mod, Action onSuccess = null)
+        {
+            mod.ModState = ModViewModel.ModStateEnum.Downloading;
             mod.Progress = 0;
             mod.IsModifiable = false;
-            mod.IsCanceled = false;
-            mod.IsInstalled = false;
+
+            mod.CancellationTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = mod.CancellationTokenSource.Token;
+
+            var tcs = new TaskCompletionSource<bool>();
+
+            cancellationToken.Register(() =>
+            {
+
+                if (mod.ModState != ModViewModel.ModStateEnum.Installed)
+                {
+                    mod.Progress = 0;
+                }
+                mod.IsModifiable = true;
+                tcs.TrySetCanceled();
+            });
 
             try
             {
-                while (mod.Progress <= 100)
+                installer.DownloadMod(mod, tcs, cancellationToken);
+                tcs.Task.ContinueWith(t =>
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    if (mod.IsCanceled)
+                    if (t.IsCompletedSuccessfully)
                     {
-                        mod.Progress = 0;
-                        return;
+                        onSuccess?.Invoke();
                     }
-
-                    // Dummy code to simulate downloading
-                    await Task.Delay(100);
-                    mod.Progress += 2;
-                    Debug.WriteLine($"Mod {mod.ModObject.Name} at {mod.Progress}%");
-                }
-
-                mod.IsInstalled = true;
+                });
             }
-            catch (OperationCanceledException)
-            {
-                Debug.WriteLine($"Mod {mod.ModObject.Name} download canceled");
-                mod.IsCanceled = true;
-            }
+
             catch (Exception ex)
             {
-                Debug.WriteLine($"Mod {mod.ModObject.Name} download failed: {ex.Message}");
-                // Handle other exceptions, e.g., network errors, file I/O errors, etc.
+                Debug.WriteLine(ex);
             }
-            finally
-            {
-                if (mod.IsCanceled || !mod.IsInstalled)
-                {
-                    mod.Progress = 0;
-                    mod.IsModifiable = true;
-                }
-                
-            }
+
+            return tcs.Task;
         }
 
+        public async Task UpdateMod(ModViewModel mod)
+        {
+            if (!mod.IsUpdateAvailable)
+            {
+                return;
+            }
 
+            // Delete the current mod
+            UninstallModAndSetState(mod);
+
+            // Set the SelectedVersionViewModel to latest version
+            Models.KSP2.Version latestVersion = mod.GetLatestVersion();
+            if (latestVersion != null)
+            {
+                mod.SelectedVersionViewModel = mod.VersionViewModels.FirstOrDefault(v => v.VersionObject == latestVersion);
+            }
+
+            // Call the DownloadModAsync function to install the latest version
+            await DownloadModAsync(mod, () =>
+            {
+                // Update the SelectedVersionViewModel to the latest version after the download is successful
+                mod.SelectedVersionViewModel = mod.VersionViewModels.FirstOrDefault(v => v.VersionObject == latestVersion);
+                mod.SelectedVersionViewModel.IsSelected = true;
+                mod.IsUpdateAvailable = false;
+                mod.RaisePropertyChanged(nameof(mod.SelectedVersionViewModel));
+
+            });
+
+        }
+
+        public void UpdateAllInstalledMods()
+        {
+            // Create a new list to store the mods to be updated
+            List<ModViewModel> modsToUpdate = new List<ModViewModel>();
+
+            // Iterate through the ModList
+            for (int i = 0; i < ModList.Count; i++)
+            {
+                ModViewModel mod = ModList[i];
+
+                // Check if the mod is installed and an update is available
+                if (mod.ModState == ModViewModel.ModStateEnum.Installed && mod.IsUpdateAvailable)
+                {
+                    // Add the mod to the modsToUpdate list
+                    modsToUpdate.Add(mod);
+                }
+            }
+
+            // Update SelectedBulkMods with the modsToUpdate list
+            SelectedBulkMods.Clear();
+            foreach (ModViewModel mod in modsToUpdate)
+            {
+                SelectedBulkMods.Add(mod);
+            }
+
+            // Call the BulkUpdateSelectedMods function to update the selected mods
+            BulkUpdateSelectedMods();
+        }
+
+        private async Task LoadOfflineMods()
+        {
+            FetchState = FetchStateEnum.Offline;
+            FetchingMessage = "";
+
+            // Load the offline JSON list here
+            ObservableCollection<Mod> offlineMods = installer.ReadInstalledMods();
+
+            ObservableCollection<ModViewModel> offlineModViewModels = new ObservableCollection<ModViewModel>(offlineMods.Select(mod => new ModViewModel(mod)));
+
+            // Update the ModList on the UI thread
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                ModList.Clear();
+                foreach (var modViewModel in offlineModViewModels)
+                {
+                    modViewModel.ModState = ModViewModel.ModStateEnum.Installed;
+                    modViewModel.Progress = 100;
+                    modViewModel.IsModifiable = false;
+                    ModList.Add(modViewModel);
+                }
+            });
+        }
 
 
         // =====================
         // METHODS (Commands)
         // =====================
 
-        public async void InstallSelectedMods()
+        public async void BulkInstallSelectedMods()
         {
             IsBulkActionInProgress = true;
-
-            // Create a new CancellationTokenSource locally within the method
-            BulkActionCancellationTokenSource = new CancellationTokenSource();
 
             // Convert SelectedBulkMods.Items to a List<ModViewModel> to access elements by index
             List<ModViewModel> modList = SelectedBulkMods.Items.ToList();
@@ -484,7 +645,7 @@ namespace ToucanUI.ViewModels
                 BulkActionMessage = $"Installing mod {i + 1} of {modList.Count}";
 
                 // Check if the mod is already installed
-                if (mod.IsInstalled)
+                if (mod.ModState == ModViewModel.ModStateEnum.Installed)
                 {
                     // If it is, skip this mod and continue to the next one
                     continue;
@@ -493,21 +654,109 @@ namespace ToucanUI.ViewModels
                 // If the mod is not installed, call the DownloadModAsync function
                 try
                 {
-                    await DownloadModAsync(mod, BulkActionCancellationTokenSource.Token);
-
-                    // Check if the skip flag is set, and reset it to false for the next mod
-                    if (_skipCurrentMod)
-                    {
-                        _skipCurrentMod = false;
-                        continue;
-                    }
-
+                    await DownloadModAsync(mod);
                     BulkActionProgressCount++;
                 }
                 catch (OperationCanceledException)
                 {
-                    // Handle cancellation
-                    break;
+                    // If the user clicked "Cancel", break the loop
+                    if (mod.ModState == ModViewModel.ModStateEnum.Canceled)
+                    {
+                        break;
+                    }
+
+                    // If the user clicked "Skip", continue to the next mod
+                    if (mod.ModState == ModViewModel.ModStateEnum.Skipped)
+                    {
+                        mod.ModState = ModViewModel.ModStateEnum.NotInstalled;
+                        continue;
+                    }
+
+
+                }
+            }
+
+            // Reset the progress message and switch back to the first bulk action panel
+            BulkActionMessage = "";
+            IsBulkActionInProgress = false;
+            BulkActionProgressCount = 0;
+        }
+
+        public async void BulkUpdateSelectedMods()
+        {
+            IsBulkActionInProgress = true;
+
+            // Convert SelectedBulkMods.Items to a List<ModViewModel> to access elements by index
+            List<ModViewModel> modList = SelectedBulkMods.Items.ToList();
+
+            // Iterate through the modList
+            for (int i = 0; i < modList.Count; i++)
+            {
+                ModViewModel mod = modList[i];
+                CurrentBulkActionMod = mod;
+
+                // Update the progress message
+                BulkActionMessage = $"Updating mod {i + 1} of {modList.Count}";
+
+                // Check if the mod is installed
+                if (mod.ModState != ModViewModel.ModStateEnum.Installed)
+                {
+                    // If it is not installed, skip this mod and continue to the next one
+                    continue;
+                }
+
+                // If the mod is installed, call the UpdateMod function
+                try
+                {
+                    await UpdateMod(mod);
+                    BulkActionProgressCount++;
+                }
+                catch (Exception)
+                {
+                    // Handle any exceptions that occur during the update process
+                }
+            }
+
+            // Reset the progress message and switch back to the first bulk action panel
+            BulkActionMessage = "";
+            IsBulkActionInProgress = false;
+            BulkActionProgressCount = 0;
+            SelectedBulkMods.Clear();
+        }
+
+
+        public async void BulkUninstallSelectedMods()
+        {
+            IsBulkActionInProgress = true;
+
+            // Convert SelectedBulkMods.Items to a List<ModViewModel> to access elements by index
+            List<ModViewModel> modList = SelectedBulkMods.Items.ToList();
+
+            // Iterate through the modList
+            for (int i = 0; i < modList.Count; i++)
+            {
+                ModViewModel mod = modList[i];
+                CurrentBulkActionMod = mod;
+
+                // Update the progress message
+                BulkActionMessage = $"Uninstalling mod {i + 1} of {modList.Count}";
+
+                // Check if the mod is installed
+                if (mod.ModState != ModViewModel.ModStateEnum.Installed)
+                {
+                    // If it is not installed, skip this mod and continue to the next one
+                    continue;
+                }
+
+                // If the mod is installed, call the DeleteMod function
+                try
+                {
+                    UninstallModAndSetState(mod);
+                    BulkActionProgressCount++;
+                }
+                catch (Exception)
+                {
+                    // Handle any exceptions that occur during the uninstallation process
                 }
             }
 
@@ -518,21 +767,34 @@ namespace ToucanUI.ViewModels
         }
 
 
+
+
         public void SkipBulkAction()
         {
-            _skipCurrentMod = true;
+            if (CurrentBulkActionMod != null)
+            {
+                CurrentBulkActionMod.ModState = ModViewModel.ModStateEnum.Skipped;
+                CurrentBulkActionMod.CancellationTokenSource.Cancel();
 
-            CurrentBulkActionMod.IsCanceled = true;
-        
+
+            }
         }
 
-        public void CancelBulkAction(CancellationTokenSource cancellationTokenSource)
+
+        public void CancelBulkAction()
         {
-            cancellationTokenSource.Cancel();
+            foreach (var mod in SelectedBulkMods.Items)
+            {
+                // Check if CancellationTokenSource is not null before calling Cancel()
+                if (mod.CancellationTokenSource != null)
+                {
+                    CurrentBulkActionMod.ModState = ModViewModel.ModStateEnum.Canceled;
+                    mod.CancellationTokenSource.Cancel();
+                }
+            }
             SelectedBulkMods.Clear();
             UnselectAllMods();
         }
-
 
 
         private void SelectAllMods()
@@ -550,6 +812,20 @@ namespace ToucanUI.ViewModels
                 mod.IsSelectedBulk = false;
             }
         }
+
+        private void UninstallModAndSetState(ModViewModel mod)
+        {
+
+            bool isDeleted = installer.DeleteMod(mod);
+            if (isDeleted)
+            {
+                mod.ModState = ModViewModel.ModStateEnum.NotInstalled;
+                mod.Progress = 0;
+                mod.IsModifiable = true;
+                Debug.WriteLine("Mod deleted successfully");
+            }
+        }
+
 
 
     }

@@ -1,12 +1,15 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Threading;
 using MessageBox.Avalonia.DTO;
 using MessageBox.Avalonia.Models;
 using ReactiveUI;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
-using ToucanUI.Models;
+using ToucanUI.Models.KSP2;
 using ToucanUI.Services;
+using static ToucanUI.Services.InstallManager;
 
 namespace ToucanUI.ViewModels
 {
@@ -22,6 +25,12 @@ namespace ToucanUI.ViewModels
         public FooterViewModel FooterVM { get; }
 
 
+
+        // =====================
+        // SERVICES
+        // =====================
+        InstallManager installer;
+        ConfigurationManager configManager = new ConfigurationManager();
 
         // =====================
         // VARIABLES
@@ -46,31 +55,29 @@ namespace ToucanUI.ViewModels
                 if (SelectedMod != null)
                 {
                     SelectedMod.IsSelectedSidePanel = true;
-                    Task.Run(() => SelectedMod.ModObject.InitializeDownloadSizesAsync()); // If download sizes for versions haven't been fetched, retrieve them
+
+                    // If download sizes for versions haven't been fetched, retrieve them
+                    if (!SelectedMod.VersionViewModels.All(vm => vm.IsDownloadSizeFetched))
+                    {
+                        Task.Run(() => SelectedMod.InitializeDownloadSizesAsync());
+                    }
                 }
             }
         }
 
-        // Tracks whether the client is in Offline Mode or not
-        private bool _isOfflineMode;
-        public bool IsOfflineMode
-        {
-            get => _isOfflineMode;
-            set => this.RaiseAndSetIfChanged(ref _isOfflineMode, value);
-        }
 
         // Tracks if BepInEx mod has been installed or not
-        private bool _isBepinexInstalled;
-        public bool IsBepinexInstalled
+        private InstallManager.BepInExStatusEnum _bepInExState;
+        public InstallManager.BepInExStatusEnum BepInExState
         {
-            get => _isBepinexInstalled;
-            set => this.RaiseAndSetIfChanged(ref _isBepinexInstalled, value);
+            get => _bepInExState;
+            set => this.RaiseAndSetIfChanged(ref _bepInExState, value);
         }
 
         // Track selected mods for bulk actions (i.e Install/Update/Delete selected)
         public ObservableCollection<Mod> SelectedBulkMods { get; } = new ObservableCollection<Mod>();
 
-        // Keeps track of whether a user is allowed to download mods or not (if a valid game exe isn't found in the config)
+        // Keeps track of whether a user is allowed to download mods or not
         private bool _validGameFound;
         public bool ValidGameFound
         {
@@ -96,8 +103,7 @@ namespace ToucanUI.ViewModels
             ModlistVM = new ModlistViewModel(this);
             SidePanelVM = new SidePanelViewModel(this);
 
-
-            CheckGameInstallPath();
+            CheckValidGameFound();
         }
 
 
@@ -107,27 +113,74 @@ namespace ToucanUI.ViewModels
         // =====================
 
 
-        // Check the game install path from config
-        private void CheckGameInstallPath()
+        // Run at startup to check if KSP2 and BepInEx installed
+        private async void CheckValidGameFound()
         {
-            var configManager = new ConfigurationManager();
-            string gamePath = configManager.GetGamePath();
-            if (!string.IsNullOrEmpty(gamePath))
+            // If a valid game path is found
+            if (CheckGameInstallPath())
             {
-                Debug.WriteLine($"Config GamePath found: {gamePath}");
-                ValidGameFound = true;
+                installer = new InstallManager();
+
+                // Check if BepInEx is installed or not
+                BepInExState = await Dispatcher.UIThread.InvokeAsync(async () => await installer.CheckIfBepInEx());
+
+                switch (BepInExState)
+                {
+                    // If it's already installed, set ValidGameFound
+                    case BepInExStatusEnum.Installed:
+                        Debug.WriteLine("BepInEx is installed");
+                        ValidGameFound = true;
+                        break;
+
+                    // Else install it
+                    case BepInExStatusEnum.NotInstalled:
+                        Debug.WriteLine("BepInEx is not installed");
+                        bool bepInExInstalled = await installer.BepInExStatusBox(ModlistVM);
+                        if (bepInExInstalled)
+                        {
+                            BepInExState = BepInExStatusEnum.Installed;
+                            ValidGameFound = true;
+                        }
+                        else
+                        {
+                            ValidGameFound = false;
+                        }
+                        break;
+
+                    case BepInExStatusEnum.Error:
+                        Debug.WriteLine("Error checking BepInEx");
+                        ValidGameFound = false;
+                        break;
+
+                    default:
+                        Debug.WriteLine("Unexpected BepInEx status");
+                        ValidGameFound = false;
+                        break;
+                }
             }
 
             else
             {
-                // Display a warning asking user to scan for game install path
-                ShowNoGameFoundMessageBox();
-                ValidGameFound = false;
+               await ShowNoGameFoundMessageBox();
             }
         }
 
+
+        // Check the game install path from config
+        private bool CheckGameInstallPath()
+        {
+            string gamePath = configManager.GetGamePath();
+            if (!string.IsNullOrEmpty(gamePath))
+            {
+                Debug.WriteLine($"Config GamePath found: {gamePath}");
+                return true;
+            }
+
+            return false;
+        }
+
         // Run on startup to show if a game install path was not found
-        private async void ShowNoGameFoundMessageBox()
+        private async Task ShowNoGameFoundMessageBox()
         {
             // Set a time delay
             await Task.Delay(1000);
@@ -152,12 +205,14 @@ namespace ToucanUI.ViewModels
 
             if (result == "Scan Automatically")
             {
-                HeaderVM.ScanKSP2InstallLocations();
+                await HeaderVM.ScanKSP2InstallLocations();
             }
             else if (result == "Search Manually")
             {
-                HeaderVM.SetGameInstallPath();
+                await HeaderVM.SetGameInstallPath();
             }
+
+            CheckValidGameFound();
         }
 
 

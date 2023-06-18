@@ -45,7 +45,9 @@
     <converters:BitmapAssetValueConverter x:Key="BitmapAssetValueConverter"/>
     <converters:ProgressToBooleanConverter x:Key="ProgressToBooleanConverter"/>
     <converters:CountToBooleanConverter x:Key="CountToBooleanConverter"/>
-    <converters:BooleanOrConverter x:Key="BooleanOrConverter"/>
+    <converters:ModStateToVisibilityConverter x:Key="ModStateToVisibilityConverter"/>
+    <converters:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
+    <converters:MultiEnumToVisibilityConverter x:Key="MultiEnumToVisibilityConverter"/>
     
     <!-- FONTS -->
     <FontFamily x:Key="Orbitron">/Assets/Fonts/Orbitron-Regular.ttf#Orbitron</FontFamily>

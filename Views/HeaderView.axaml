@@ -20,7 +20,7 @@
             <Button x:Name="LaunchButton" FontSize="26" Width="220" Height="60"
               Grid.Row="0" Grid.RowSpan="2" Grid.Column="3"
               Foreground="#800F0E" FontFamily="{StaticResource Orbitron}"
-              FontWeight="SemiBold" Margin="20" Command="{Binding LaunchCommand}"
+              FontWeight="SemiBold" Margin="15 10" Command="{Binding LaunchCommand}"
               IsEnabled="{Binding MainViewModel.ValidGameFound}" Cursor="Hand">
               <TextBlock Text="// LAUNCH //" HorizontalAlignment="Center" VerticalAlignment="Center"/>
               <Button.Styles>
@@ -29,7 +29,7 @@
                     <SolidColorBrush x:Key="ButtonBorderBrush">Transparent</SolidColorBrush>
                     <SolidColorBrush x:Key="ButtonBackground">#C66000</SolidColorBrush>
                     <SolidColorBrush x:Key="ButtonBackgroundPointerOver">#ff7b00</SolidColorBrush>
-                    <SolidColorBrush x:Key="ButtonBackgroundPressed">#FF0000</SolidColorBrush>
+                    <SolidColorBrush x:Key="ButtonBackgroundPressed">#FFDD00</SolidColorBrush>
                   </Style.Resources>
                 </Style>
                 <Style Selector="Button:pressed">
@@ -50,11 +50,15 @@
 
             <MenuItem Header="File" Foreground="DarkGray">
 
-              <MenuItem Header="Offline Mode" >
+              <MenuItem Header="Offline Mode"
+                        Command="{Binding MainViewModel.ModlistVM.LoadOfflineModsCommand}">
               </MenuItem>
 
               <MenuItem Header="Refresh Modlist"
                         Command="{Binding RefreshModlistCommand}"/>
+
+              <MenuItem Header="Check for update"
+                        Command="{Binding ToucanUpdateCheckCommand}"/>
 
               <Separator></Separator>
 
@@ -82,9 +86,7 @@
             <MenuItem Header="View" Foreground="DarkGray">
               <MenuItem Header="Toggle List View"
                         Command="{Binding MainViewModel.ModlistVM.ToggleViewCommand}"/>
-              <Separator />
-              <MenuItem Header="Dark Mode" />
-              <MenuItem Header="Light Mode" />
+
             </MenuItem>
           </Menu>
 
@@ -92,9 +94,7 @@
             <MenuItem Header="Help" Foreground="DarkGray">
               <MenuItem Header="GitHub Page"
                         Command="{Binding MainViewModel.FooterVM.OpenGitHubCommand}"/>
-              <Separator />
-              <MenuItem Header="Check for update"
-                        Command="{Binding ToucanUpdateCheckCommand}"/>
+
             </MenuItem>
 
           </Menu>

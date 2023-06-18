@@ -58,74 +58,106 @@
             <StackPanel Grid.Row="0" Grid.Column="2"
                         Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
               <StackPanel>
-                <TextBlock Text="Game Version" FontSize="10" Margin="10 5"/>
-                <TextBlock Text="{Binding ModObject.SelectedVersion.GameVersion}" Foreground="Gray"
-                           Margin="10 5"/>
+                <TextBlock Text="Game Version" FontSize="10" Margin="20 5"/>
+                <TextBlock Text="{Binding SelectedVersionViewModel.VersionObject.GameVersion}" Foreground="Gray"
+                           Margin="20 5"/>
               </StackPanel>
 
               <StackPanel>
-                <TextBlock Text="Mod Version" FontSize="10" Margin="10 5"/>
-                <TextBlock Text="{Binding ModObject.SelectedVersion.FriendlyVersion}" Foreground="Gray"
-                           Margin="10 5"/>
+                <TextBlock Text="Mod Version" FontSize="10" Margin="20 5"/>
+                <TextBlock Text="{Binding SelectedVersionViewModel.VersionObject.FriendlyVersion}" Foreground="Gray"
+                           Margin="20 5" MaxWidth="60"/>
               </StackPanel>
 
               <StackPanel>
-                <TextBlock Text="Download Size" FontSize="10" Margin="10 5"/>
-                <TextBlock Text="{Binding ModObject.SelectedVersion.DownloadSizeDisplay}" Foreground="Gray"
-                           Margin="10 5"/>
+                <TextBlock Text="Download Size" FontSize="10" Margin="20 5"/>
+                <TextBlock Text="{Binding SelectedVersionViewModel.DownloadSizeDisplay}" Foreground="Gray"
+                           Margin="20 5"/>
               </StackPanel>
 
               <StackPanel>
-                <TextBlock Text="Downloads" FontSize="10" Margin="10 5"/>
+                <TextBlock Text="Downloads" FontSize="10" Margin="20 5"/>
                 <TextBlock Text="{Binding ModObject.Downloads}" Foreground="Gray"
-                           Margin="10 5"/>
+                           Margin="20 5"/>
               </StackPanel>
               
             </StackPanel>
-            
+
             <!-- DOWNLOAD ICONS -->
-            <StackPanel Grid.Row="0" Grid.Column="4" Margin="5">
+            <Grid Grid.Row="0" Grid.Column="4" Margin="5">
               <Button Background="Transparent" Width="50" Height="50"
                       Command="{Binding DataContext.DownloadModCommand, ElementName=ModListBox}"
                       CommandParameter="{Binding}" ToolTip.Tip="Download and Install"
                       IsEnabled="{Binding Progress, Converter={StaticResource ProgressToBooleanConverter}}"
                       IsVisible="{Binding Progress, Converter={StaticResource ProgressToBooleanConverter}}">
-                <Image Source="{DynamicResource DownloadIcon}" Width="50" Height="50"
-                     IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Download}"/>
+                <Image Source="{DynamicResource DownloadIcon}" Width="50" Height="50">
+                  <Image.IsVisible>
+                    <MultiBinding Converter="{StaticResource ProgressToStatusConverter}" ConverterParameter="Download">
+                      <Binding Path="Progress" />
+                      <Binding Path="ModState" />
+                    </MultiBinding>
+                  </Image.IsVisible>
+                </Image>
               </Button>
-              
-              
-              <Panel Grid.Row="0" Grid.Column="4" >
-                <Image Source="{DynamicResource DownloadingIcon}" Width="50" Height="50" Classes="rotating"
-                   IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloading}"/>
-                <!-- CANCEL BUTTON -->
-                <Button Background="Transparent" Width="50" Height="50" Classes="cancelButton" ToolTip.Tip="Cancel Download"
-                        IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloading}"
-                        Command="{Binding DataContext.CancelDownloadModCommand, ElementName=ModListBox}"
-                        CommandParameter="{Binding}">
-                  <Button.Content>
-                    <Image Source="{DynamicResource CloseIcon-White}" Width="40" Height="40"/>
-                  </Button.Content>
-                </Button>
-                
-                <Image Source="{DynamicResource DownloadedIcon}" Width="50" Height="50"
-                   IsVisible="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}, ConverterParameter=Downloaded}"/>
-              </Panel>
-            </StackPanel>
-            
+
+              <Image Source="{DynamicResource DownloadingIcon}" Width="50" Height="50" Classes="rotating">
+                <Image.IsVisible>
+                  <MultiBinding Converter="{StaticResource ProgressToStatusConverter}" ConverterParameter="Downloading">
+                    <Binding Path="Progress" />
+                    <Binding Path="ModState" />
+                  </MultiBinding>
+                </Image.IsVisible>
+              </Image>
+
+              <Button Background="Transparent" Width="50" Height="50" Classes="cancelButton" ToolTip.Tip="Cancel Download">
+                <Button.IsVisible>
+                  <MultiBinding Converter="{StaticResource ProgressToStatusConverter}" ConverterParameter="Downloading">
+                    <Binding Path="Progress" />
+                    <Binding Path="ModState" />
+                  </MultiBinding>
+                </Button.IsVisible>
+                <Button.Command>
+                  <Binding Path="DataContext.CancelDownloadModCommand" ElementName="ModListBox" />
+                </Button.Command>
+                <Button.CommandParameter>
+                  <Binding />
+                </Button.CommandParameter>
+                <Button.Content>
+                  <Image Source="{DynamicResource CloseIcon-White}" Width="40" Height="40" />
+                </Button.Content>
+              </Button>
+
+              <Image Source="{DynamicResource DownloadedIcon}" Width="50" Height="50">
+                <Image.IsVisible>
+                  <MultiBinding Converter="{StaticResource ProgressToStatusConverter}" ConverterParameter="Downloaded">
+                    <Binding Path="Progress" />
+                    <Binding Path="ModState" />
+                  </MultiBinding>
+                </Image.IsVisible>
+              </Image>
+            </Grid>
+
+
             <!-- SELECTED ICON -->
             <StackPanel Grid.Row="0" Grid.Column="5" Margin="5">
               <Image Width="50" Height="50"
-                  Classes.opened="{Binding $parent[ListBoxItem].IsSelected}"
-                  Classes.notOpened="{Binding !$parent[ListBoxItem].IsSelected}" />
+                     Classes.opened="{Binding $parent[ListBoxItem].IsSelected}"
+                     Classes.notOpened="{Binding !$parent[ListBoxItem].IsSelected}" />
             </StackPanel>
 
+            <ProgressBar Margin="5" Value="{Binding Progress}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4"
+                         Foreground="{Binding Progress, Converter={StaticResource ProgressToBrushConverter}}" />
 
-              <ProgressBar Margin="5" Value="{Binding Progress}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4"
-                      Foreground="{Binding Progress, Converter={StaticResource ProgressToBrushConverter}}"/>
-              
-              <TextBlock Text="{Binding Progress, Converter={StaticResource ProgressToStatusConverter}}" FontSize="12"
-                         Foreground="Gray" Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="2" Margin="5"/>
+            <TextBlock FontSize="12" Foreground="Gray" Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="2" Margin="5">
+              <TextBlock.Text>
+                <MultiBinding Converter="{StaticResource ProgressToStatusConverter}">
+                  <Binding Path="Progress" />
+                  <Binding Path="ModState" />
+                </MultiBinding>
+              </TextBlock.Text>
+            </TextBlock>
+
+
 
 
           </Grid>

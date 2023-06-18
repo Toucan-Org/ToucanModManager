@@ -74,9 +74,9 @@ namespace ToucanUI.ViewModels
 
             // Commands
 
-            ToucanUpdateCheckCommand = ReactiveCommand.Create(IsUpdateAvailable);
-            ScanKSP2InstallLocationsCommand = ReactiveCommand.Create(ScanKSP2InstallLocations);
-            SetGameInstallPathCommand = ReactiveCommand.Create(SetGameInstallPath);
+            ToucanUpdateCheckCommand = ReactiveCommand.CreateFromTask(IsToucanUpdateAvailable);
+            ScanKSP2InstallLocationsCommand = ReactiveCommand.CreateFromTask(ScanKSP2InstallLocations);
+            SetGameInstallPathCommand = ReactiveCommand.CreateFromTask(SetGameInstallPath);
             ClearConfigFileCommand = ReactiveCommand.Create(ClearConfigFile);
             ViewConfigFileCommand = ReactiveCommand.Create(ViewConfigFile);
 
@@ -92,7 +92,7 @@ namespace ToucanUI.ViewModels
         // =====================
 
         // Check if an update is available on Github for Toucan Mod Manager
-        public async void IsUpdateAvailable()
+        public async Task IsToucanUpdateAvailable()
         {
             var latestReleaseUrl = $"{MainViewModel.FooterVM.ToucanWebsite}/releases/latest";
             try
@@ -128,7 +128,6 @@ namespace ToucanUI.ViewModels
         // Method to update the time played values
         private void UpdateTimePlayed(int timePlayed)
         {
-            Debug.WriteLine($"Time played: {timePlayed}");
 
             // Calculate hours, minutes, and seconds from the stored seconds
             int totalSeconds = timePlayed;
@@ -136,13 +135,13 @@ namespace ToucanUI.ViewModels
             int minutes = (totalSeconds % 3600) / 60;
             int seconds = totalSeconds % 60;
 
-            this.MainViewModel.FooterVM.Hours = hours.ToString();
+            MainViewModel.FooterVM.Hours = hours.ToString();
             Debug.WriteLine($"Hours: {MainViewModel.FooterVM.Hours}");
 
-            this.MainViewModel.FooterVM.Minutes = minutes.ToString();
+            MainViewModel.FooterVM.Minutes = minutes.ToString();
             Debug.WriteLine($"Minutes: {MainViewModel.FooterVM.Minutes}");
 
-            this.MainViewModel.FooterVM.Seconds = seconds.ToString();
+            MainViewModel.FooterVM.Seconds = seconds.ToString();
             Debug.WriteLine($"Seconds: {MainViewModel.FooterVM.Seconds}");
         }
 
@@ -173,9 +172,7 @@ namespace ToucanUI.ViewModels
                 // Calculate time played
                 TimeSpan timePlayed = DateTime.Now - launchTime;
                 int timePlayedSeconds = (int)timePlayed.TotalSeconds;
-                Debug.WriteLine($"Time played: {timePlayedSeconds}");
 
-                
 
                 // Store the "Time played" in the config
                 _configManager.SetTimePlayed(timePlayedSeconds);
@@ -224,7 +221,7 @@ namespace ToucanUI.ViewModels
         }
 
         // Edit
-        public async void ScanKSP2InstallLocations()
+        public async Task ScanKSP2InstallLocations()
         {
             (string path, string version) = _ksp2Service.DetectGameVersion();
             Debug.WriteLine($"Version is {version} at {path}");
@@ -240,7 +237,7 @@ namespace ToucanUI.ViewModels
 
         }
 
-        public async void SetGameInstallPath()
+        public async Task SetGameInstallPath()
         {
             string folderPath = await OpenFolderAsync();
             if (!string.IsNullOrEmpty(folderPath))
@@ -391,9 +388,6 @@ namespace ToucanUI.ViewModels
                 // Set the Game Install Path in config
                 Debug.WriteLine("Saving config");
                 _configManager.SaveConfig(path, version);
-
-                // Update the UI
-                MainViewModel.ValidGameFound = true;
 
             }
         }
