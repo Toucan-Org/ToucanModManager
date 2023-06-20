@@ -621,6 +621,8 @@ namespace ToucanUI.ViewModels
                     ModList.Add(modViewModel);
                 }
             });
+
+            FetchState = FetchStateEnum.Success;
         }
 
 
