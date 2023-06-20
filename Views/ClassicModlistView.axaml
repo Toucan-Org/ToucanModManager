@@ -127,7 +127,8 @@
                 </Button.Content>
               </Button>
 
-              <Image Source="{DynamicResource DownloadedIcon}" Width="50" Height="50">
+              <Image Source="{DynamicResource DownloadedIcon}" Width="50" Height="50"
+                     ToolTip.Tip="Installed">
                 <Image.IsVisible>
                   <MultiBinding Converter="{StaticResource ProgressToStatusConverter}" ConverterParameter="Downloaded">
                     <Binding Path="Progress" />

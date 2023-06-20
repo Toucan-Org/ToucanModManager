@@ -4,54 +4,26 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+    <ApplicationIcon>Assets\tmm_icon.ico</ApplicationIcon>
+    <AssemblyName>Toucan</AssemblyName>
+    <RootNamespace>ToucanUI</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <AvaloniaResource Include="Assets\**" />
     <AvaloniaResource Include="Assets\Icons\**" />
-
-    <Content Include="Assets\**">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <AvaloniaResource Remove="Assets\Icons\Close-Icon-White.png" />
-    <AvaloniaResource Remove="Assets\Icons\OpenWebsite-Icon-White.png" />
-    <AvaloniaResource Remove="Assets\Icons\Refresh-Icon-White.png" />
-    <AvaloniaResource Remove="Assets\Icons\ToggleView-Grid-White.png" />
-    <AvaloniaResource Remove="Assets\Icons\ToggleView-List-White.png" />
-    <AvaloniaResource Remove="Assets\Icons\Uninstall-Icon-White.png" />
-    <AvaloniaResource Remove="Assets\Icons\Update-Icon-White.png" />
-    <AvaloniaResource Remove="Assets\toucan_manifest.json" />
-    <AvaloniaXaml Remove="Installed\**" />
-    <Compile Remove="Installed\**" />
-    <EmbeddedResource Remove="Installed\**" />
-    <None Remove="Installed\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Assets\Fonts\Orbitron-Regular.ttf" />
-    <None Remove="Assets\Fonts\ShareTechMono-Regular.ttf" />
-    <None Remove="Assets\Icons\Close-Icon-White.png" />
-    <None Remove="Assets\Icons\OpenWebsite-Icon-White.png" />
-    <None Remove="Assets\Icons\Refresh-Icon-White.png" />
-    <None Remove="Assets\Icons\ToggleView-Grid-White.png" />
-    <None Remove="Assets\Icons\ToggleView-List-White.png" />
-    <None Remove="Assets\Icons\Uninstall-Icon-White.png" />
-    <None Remove="Assets\Icons\Update-Icon-White.png" />
-    <None Remove="Assets\output.json" />
-    <None Remove="Assets\tmm_icon.ico" />
-    <None Remove="Assets\tmm_logo.png" />
-    <None Remove="Assets\toucan_manifest.json" />
+    <AvaloniaResource Include="Assets\Fonts\**" />
+    <AvaloniaResource Include="Assets\toucan_manifest.json" />
+    <AvaloniaResource Include="Assets\tmm_icon.ico" />
+    <AvaloniaResource Include="Assets\tmm_logo.png"/>
+    <Content Include="Assets\**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>
     <TrimmerRootAssembly Include="Avalonia.Themes.Fluent" />
   </ItemGroup>
-
+  
+  
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.19" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.19" />
@@ -67,6 +39,21 @@
     <!-- Added these ones -->
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.19" />
     
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Updater\set_permissions.sh">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Updater\updater_macos.sh">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Updater\updater_linux.sh">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Updater\updater_windows.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

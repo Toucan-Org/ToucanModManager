@@ -7,8 +7,10 @@ using MessageBox.Avalonia.Models;
 using ReactiveUI;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Net.Http;
 using System.Reactive;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading.Tasks;
 using ToucanUI.Services;
@@ -27,7 +29,7 @@ namespace ToucanUI.ViewModels
         // =====================
         // VARIABLES
         // =====================
-
+        private static readonly HttpClient httpClient = new HttpClient();
 
 
         // =====================
@@ -71,6 +73,7 @@ namespace ToucanUI.ViewModels
             _configManager = new ConfigurationManager();
 
             UpdateTimePlayed(_configManager.GetTimePlayed());
+            IsToucanUpdateAvailable();
 
             // Commands
 
@@ -94,28 +97,78 @@ namespace ToucanUI.ViewModels
         // Check if an update is available on Github for Toucan Mod Manager
         public async Task IsToucanUpdateAvailable()
         {
-            var latestReleaseUrl = $"{MainViewModel.FooterVM.ToucanWebsite}/releases/latest";
+            //var latestReleaseUrl = $"{MainViewModel.FooterVM.ToucanWebsite}/releases/latest";
+            var latestReleaseUrl = $"https://api.github.com/repos/KSP2-Toucan/TMM/releases/latest";
             try
             {
-                using (var client = new HttpClient())
-                {
-                    client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0");
-                    var response = await client.GetAsync(latestReleaseUrl);
-                    response.EnsureSuccessStatusCode();
-                    var responseContent = await response.Content.ReadAsStringAsync();
-                    var releaseJson = JsonDocument.Parse(responseContent);
+                httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0");
+                var response = await httpClient.GetAsync(latestReleaseUrl);
+                response.EnsureSuccessStatusCode();
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var releaseJson = JsonDocument.Parse(responseContent);
 
-                    var latestReleaseTagName = releaseJson.RootElement.GetProperty("tag_name").GetString();
-
-                    Debug.WriteLine(releaseJson);
-
-                    if (!string.Equals(latestReleaseTagName, MainViewModel.FooterVM.ToucanVersion, StringComparison.OrdinalIgnoreCase))
+                if (releaseJson.RootElement.TryGetProperty("tag_name", out JsonElement tagNameElement))
                     {
-                        Debug.WriteLine($"Update {latestReleaseTagName} available! (Currently on {MainViewModel.FooterVM.ToucanVersion}");
+                        var latestReleaseTagName = tagNameElement.GetString();
+
+
+                        Debug.WriteLine(releaseJson);
+
+                        if (!string.Equals(latestReleaseTagName, MainViewModel.FooterVM.ToucanVersion, StringComparison.OrdinalIgnoreCase))
+                        {
+                            Debug.WriteLine($"Update {latestReleaseTagName} available! (Currently on {MainViewModel.FooterVM.ToucanVersion}");
+                            var messageBoxStandardWindow = MessageBox.Avalonia.MessageBoxManager.GetMessageBoxStandardWindow(
+                                new MessageBoxStandardParams
+                                {
+                                    ContentHeader = "An update for Toucan Mod Manager is available!",
+                                    ContentMessage = $"Current version: {MainViewModel.FooterVM.ToucanVersion}\nNewest version: {latestReleaseTagName}\n\nWould you like to update?",
+                                    Icon = MessageBox.Avalonia.Enums.Icon.Info,
+                                    ButtonDefinitions = MessageBox.Avalonia.Enums.ButtonEnum.YesNo,
+                                    WindowStartupLocation = WindowStartupLocation.CenterScreen
+                                });;
+
+                            var result = await messageBoxStandardWindow.Show();
+                        
+                            if (result == ButtonResult.Yes)
+                            {
+                                
+                                string browserDownloadUrl = null;
+
+                                if (releaseJson.RootElement.TryGetProperty("assets", out JsonElement assetsElement) && assetsElement.ValueKind == JsonValueKind.Array)
+                                {
+                                    foreach (JsonElement assetElement in assetsElement.EnumerateArray())
+                                    {
+                                        if (assetElement.TryGetProperty("name", out JsonElement nameElement) && nameElement.GetString().EndsWith(".zip"))
+                                        {
+                                            if (assetElement.TryGetProperty("browser_download_url", out JsonElement downloadUrlElement))
+                                            {
+                                                browserDownloadUrl = downloadUrlElement.GetString();
+                                                Debug.WriteLine($"Download URL: {browserDownloadUrl}");
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (browserDownloadUrl != null)
+                                {
+                                    // Pass the browserDownloadUrl to the UpdateToucan function
+                                    UpdateToucan(browserDownloadUrl);
+                                }
+                                else
+                                {
+                                    Debug.WriteLine("Zip asset not found or browser_download_url not found");
+                                }
+                            }
+                        }
                     }
 
-                }
+                    else
+                    {
+                        Debug.WriteLine("tag_name property not found in the JSON response");
+                    }
             }
+
             catch (HttpRequestException)
             {
                 // Error connecting to GitHub or retrieving the release information
@@ -123,6 +176,59 @@ namespace ToucanUI.ViewModels
             }
 
         }
+
+        private void UpdateToucan(string downloadUrl)
+        {
+            try
+            {
+                // Save the download URL for the updater script
+                string updaterDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Updater");
+                string updaterConfigPath = Path.Combine(updaterDir, "updater_config.txt");
+                File.WriteAllText(updaterConfigPath, downloadUrl);
+
+                // Start the updater script based on the current OS
+                string updaterScript = null;
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    updaterScript = "updater_windows.bat";
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    updaterScript = "updater_linux.sh";
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    updaterScript = "updater_macos.sh";
+                }
+
+                if (updaterScript != null)
+                {
+                    string scriptPath = Path.Combine(updaterDir, updaterScript);
+
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = scriptPath,
+                        WorkingDirectory = updaterDir,
+                        UseShellExecute = true
+                    });
+                }
+                else
+                {
+                    Debug.WriteLine("Unsupported OS");
+                }
+
+                // Close the Toucan application
+                if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+                {
+                    desktopLifetime.MainWindow.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error: {ex}");
+            }
+        }
+
 
 
         // Method to update the time played values

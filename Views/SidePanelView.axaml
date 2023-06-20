@@ -124,7 +124,7 @@
 
           <!-- Open Website Button -->
           <Button Grid.Row="0" Grid.Column="0" Width="60" Height="60"
-                  ToolTip.Tip="Open Website"
+                  ToolTip.Tip="Open Website" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                   Background="Transparent" Command="{Binding OpenWebsiteCommand}">
             <Button.Content>
               <Image Source="{DynamicResource OpenWebsiteIcon-White}" Width="60" Height="60"/>
@@ -135,7 +135,7 @@
           <Button Grid.Row="0" Grid.Column="1" IsVisible="{Binding MainViewModel.SelectedMod.ModState, Converter={StaticResource ModStateToVisibilityConverter}}"
                   Width="60" Height="60" Background="Transparent" IsEnabled="{Binding MainViewModel.SelectedMod.IsUpdateAvailable}"
                   Command="{Binding MainViewModel.ModlistVM.UpdateModCommand}" CommandParameter="{Binding MainViewModel.SelectedMod}"
-                  ToolTip.Tip="Update Mod">
+                  ToolTip.Tip="Update Mod" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Button.Content>
               <Image Source="{DynamicResource UpdateIcon-White}" Width="70" Height="70"/>
             </Button.Content>
@@ -144,7 +144,7 @@
           <!-- Uninstall Button -->
           <Button Grid.Row="0" Grid.Column="2" IsVisible="{Binding MainViewModel.SelectedMod.ModState, Converter={StaticResource ModStateToVisibilityConverter}}"
                   Width="60" Height="60" Background="Transparent" Command="{Binding MainViewModel.ModlistVM.UninstallModCommand}" CommandParameter="{Binding MainViewModel.SelectedMod}"
-                  ToolTip.Tip="Uninstall Mod">
+                  ToolTip.Tip="Uninstall Mod" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Button.Content>
               <Image Source="{DynamicResource UninstallIcon-White}" Width="60" Height="60"/>
             </Button.Content>
@@ -200,9 +200,9 @@
               </Button.Content>
             </Button>
 
-            <Image Source="{DynamicResource DownloadedIcon}" Width="60" Height="70"
+            <Image Source="{DynamicResource DownloadedIcon}" Width="60" Height="60"
                    ToolTip.Tip="{Binding MainViewModel.SelectedMod.ModObject.SelectedVersion.FriendlyVersion, StringFormat='Installed {0}'}"
-                   HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                   HorizontalAlignment="Stretch" VerticalAlignment="Center">
               <Image.IsVisible>
                 <MultiBinding Converter="{StaticResource ProgressToStatusConverter}" ConverterParameter="Downloaded">
                   <Binding Path="MainViewModel.SelectedMod.Progress" />
@@ -218,8 +218,6 @@
         <ProgressBar Value="{Binding MainViewModel.SelectedMod.Progress}" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="4"
                       Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                       Foreground="{Binding MainViewModel.SelectedMod.Progress, Converter={StaticResource ProgressToBrushConverter}}"/>
-
-
 
         </Grid>
 	</Border>
