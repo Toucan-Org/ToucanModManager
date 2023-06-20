@@ -30,6 +30,7 @@ namespace ToucanUI.Services
         string PluginsLocation;
         string BepinExLocation;
         string KSProot;
+        string ToucanFolder;
 
         public enum BepInExStatusEnum
         {
@@ -46,6 +47,7 @@ namespace ToucanUI.Services
                 if (!string.IsNullOrEmpty(gamePath))
                 {
                     KSProot = System.IO.Path.GetDirectoryName(gamePath);
+                    ToucanFolder = Path.Combine(KSProot, "Toucan"); 
                     PluginsLocation = Path.Combine(KSProot, "BepInEx", "plugins");
                     BepinExLocation = Path.Combine(KSProot, "BepInEx");
 
@@ -68,7 +70,7 @@ namespace ToucanUI.Services
         // Reads in all mods that are stored in the offline json file
         public ObservableCollection<Mod> ReadInstalledMods()
         {
-            string path = Directory.GetCurrentDirectory() + @"\InstalledMods\InstalledMods.json";
+            string path = ToucanFolder + @"\InstalledMods\InstalledMods.json";
 
             if (File.Exists(path))
             {
@@ -99,7 +101,7 @@ namespace ToucanUI.Services
         // Writes mods to the offline json file
         private void WriteInstalledMods(ObservableCollection<Mod> installedMods)
         {
-            string path = Directory.GetCurrentDirectory() + @"\InstalledMods\InstalledMods.json";
+            string path = ToucanFolder + @"\InstalledMods\InstalledMods.json";
             var options = new JsonSerializerOptions
             {
                 WriteIndented = true,
@@ -111,7 +113,7 @@ namespace ToucanUI.Services
 
         public async void DownloadMod(ModViewModel mod, TaskCompletionSource<bool> tcs, CancellationToken cancellationToken)
         {
-            string path = Directory.GetCurrentDirectory() + @"\InstalledMods";
+            string path = ToucanFolder + @"\InstalledMods";
             string fileName = System.IO.Path.Combine(path, mod.ModObject.Name + ".zip");
             try
             {
@@ -228,7 +230,7 @@ namespace ToucanUI.Services
                 string modFolderPath = Path.Combine(PluginsLocation, mod.ModObject.Name);
                 if (!modFolderPath.Equals(BepinExLocation, StringComparison.OrdinalIgnoreCase) && !modFolderPath.Equals(PluginsLocation, StringComparison.OrdinalIgnoreCase))
                 {
-                    Debug.WriteLine($"Deleting: {modFolderPath}");
+                     Debug.WriteLine($"Deleting: {modFolderPath}");
                     Directory.Delete(modFolderPath, true);
                     // Remove the uninstalled mod from the list and update the JSON file
                     isDeleted = true;
@@ -242,7 +244,7 @@ namespace ToucanUI.Services
             // Use manifest to delete mod
             try
             {
-                string[] lines = File.ReadAllLines(Path.Combine(".\\Manifests", $"{mod.ModObject.Name}-Manifest.txt"));
+                string[] lines = File.ReadAllLines(Path.Combine(ToucanFolder + ".\\Manifests", $"{mod.ModObject.Name}-Manifest.txt"));
                 foreach (string file in lines)
                 {
                     try
@@ -308,15 +310,15 @@ namespace ToucanUI.Services
         {
             try
             {
-                if (!Directory.Exists(@".\Manifests"))
+                if (!Directory.Exists(ToucanFolder + @".\Manifests"))
                 {
-                    Directory.CreateDirectory(@".\Manifests");
+                    Directory.CreateDirectory(ToucanFolder + @".\Manifests");
                 }
 
                 //Gets the contents of the zip. May be useful if a manifest is used to delete mods
                 using (ZipArchive archive = ZipFile.OpenRead(fileName))
                 {
-                    using (StreamWriter outputFile = new StreamWriter(System.IO.Path.Combine(@".\Manifests", mod.ModObject.Name + "-Manifest.txt")))
+                    using (StreamWriter outputFile = new StreamWriter(System.IO.Path.Combine(ToucanFolder + @".\Manifests", mod.ModObject.Name + "-Manifest.txt")))
                     {
                         foreach (ZipArchiveEntry entry in archive.Entries)
 
