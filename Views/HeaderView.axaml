@@ -11,17 +11,17 @@
           <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto">
 
 
-            <Image Source="/Assets/tmm_logo.png" Width="75" Height="75" Grid.Row="0"
-                   Grid.Column="0" HorizontalAlignment="Left"
-                   ToolTip.Tip="Toucan Mod Manager"/>
+            <Image Source="avares://Toucan/Assets/tmm_logo.png" Width="75" Height="75" Grid.Row="0"
+                  Grid.Column="0" HorizontalAlignment="Left"
+                  ToolTip.Tip="Toucan Mod Manager"/>
 
             <!-- LAUNCH BUTTON -->
 
-            <Button x:Name="LaunchButton" FontSize="26" Width="220" Height="60"
+            <Button x:Name="LaunchButton" FontSize="22" Width="220" Height="50"
               Grid.Row="0" Grid.RowSpan="2" Grid.Column="3"
               Foreground="#800F0E" FontFamily="{StaticResource Orbitron}"
-              FontWeight="SemiBold" Margin="15 10" Command="{Binding LaunchCommand}"
-              IsEnabled="{Binding MainViewModel.ValidGameFound}" Cursor="Hand">
+              FontWeight="SemiBold" Margin="15 5" Command="{Binding LaunchCommand}"
+              IsEnabled="{Binding MainViewModel.ValidGameFound}" Cursor="Hand" VerticalContentAlignment="Center">
               <TextBlock Text="// LAUNCH //" HorizontalAlignment="Center" VerticalAlignment="Center"/>
               <Button.Styles>
                 <Style>
