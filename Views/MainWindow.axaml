@@ -8,7 +8,6 @@
         x:Class="ToucanUI.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         x:Name="MainWindowRoot"
-        Icon="/Assets/tmm_icon.ico"
         Title="Toucan Mod Manager"
         TransparencyLevelHint="AcrylicBlur"
         Background="Transparent"
@@ -52,7 +51,7 @@
 
       <!-- Control Panel -->
       <views:ControlPanelView x:Name="ControlPanelViewControl" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
-                              DataContext="{Binding ControlPanelVM}" Margin="5"/>
+                              DataContext="{Binding ControlPanelVM}" Margin="5 0"/>
 
       <!-- Content -->
       <views:ModlistView x:Name="ModlistViewControl" Grid.Row="3" Grid.Column="0"

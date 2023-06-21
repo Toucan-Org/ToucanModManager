@@ -209,7 +209,9 @@ namespace ToucanUI.ViewModels
                     {
                         FileName = scriptPath,
                         WorkingDirectory = updaterDir,
-                        UseShellExecute = true
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true
                     });
                 }
                 else
@@ -242,13 +244,9 @@ namespace ToucanUI.ViewModels
             int seconds = totalSeconds % 60;
 
             MainViewModel.FooterVM.Hours = hours.ToString();
-            Debug.WriteLine($"Hours: {MainViewModel.FooterVM.Hours}");
-
             MainViewModel.FooterVM.Minutes = minutes.ToString();
-            Debug.WriteLine($"Minutes: {MainViewModel.FooterVM.Minutes}");
-
             MainViewModel.FooterVM.Seconds = seconds.ToString();
-            Debug.WriteLine($"Seconds: {MainViewModel.FooterVM.Seconds}");
+
         }
 
 

@@ -1,4 +1,5 @@
 ﻿using ReactiveUI;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -63,7 +64,7 @@ namespace ToucanUI.ViewModels
         {
             MainViewModel = mainViewModel;
 
-            var manifestPath = "Assets/toucan_manifest.json";
+            var manifestPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "toucan_manifest.json");
             var manifestContent = File.ReadAllText(manifestPath);
             var manifestJson = JsonDocument.Parse(manifestContent);
 
