@@ -48,88 +48,26 @@
     <converters:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
     <converters:MultiEnumToVisibilityConverter x:Key="MultiEnumToVisibilityConverter"/>
     
+    
     <!-- FONTS -->
     <FontFamily x:Key="Orbitron">/Assets/Fonts/Orbitron-Regular.ttf#Orbitron</FontFamily>
     <FontFamily x:Key="ShareTechMono">/Assets/Fonts/ShareTechMono-Regular.ttf#ShareTechMono</FontFamily>
 
-	<!-- ICONS -->
-	<Bitmap x:Key="DownloadIcon">
-		<x:Arguments>
-			<x:String>Assets/Icons/Download-Icon-White.png</x:String>
-		</x:Arguments>
-	</Bitmap>
+	  <!-- ICONS -->
+    <converters:BitmapAssetExtension x:Key="DownloadIcon" AssetPath="Assets/Icons/Download-Icon-White.png" />
+    <converters:BitmapAssetExtension x:Key="DownloadingIcon" AssetPath="Assets/Icons/Downloading-Icon-White.png" />
+    <converters:BitmapAssetExtension x:Key="DownloadedIcon" AssetPath="Assets/Icons/Downloaded-Icon-White.png" />
+    <converters:BitmapAssetExtension x:Key="NotOpenedIcon" AssetPath="Assets/Icons/OpenMenu-Not-Opened-Icon-White.png" />
+    <converters:BitmapAssetExtension x:Key="OpenedIcon" AssetPath="Assets/Icons/OpenMenu-Opened-Icon-White.png" />
+    <converters:BitmapAssetExtension x:Key="GitHubIcon-White" AssetPath="Assets/Icons/github-mark-white.png" />
+    <converters:BitmapAssetExtension x:Key="OpenWebsiteIcon-White" AssetPath="Assets/Icons/OpenWebsite-Icon-White.png" />
+    <converters:BitmapAssetExtension x:Key="UpdateIcon-White" AssetPath="Assets/Icons/Update-Icon-White.png" />
+    <converters:BitmapAssetExtension x:Key="CloseIcon-White" AssetPath="Assets/Icons/Close-Icon-White.png" />
+    <converters:BitmapAssetExtension x:Key="RefreshIcon-White" AssetPath="Assets/Icons/Refresh-Icon-White.png" />
+    <converters:BitmapAssetExtension x:Key="ToggleView-Grid-White" AssetPath="Assets/Icons/ToggleView-Grid-White.png" />
+    <converters:BitmapAssetExtension x:Key="ToggleView-List-White" AssetPath="Assets/Icons/ToggleView-List-White.png" />
+    <converters:BitmapAssetExtension x:Key="UninstallIcon-White" AssetPath="Assets/Icons/Uninstall-Icon-White.png" />
 
-	<Bitmap x:Key="DownloadingIcon">
-		<x:Arguments>
-			<x:String>Assets/Icons/Downloading-Icon-White.png</x:String>
-		</x:Arguments>
-	</Bitmap>
-
-	<Bitmap x:Key="DownloadedIcon">
-		<x:Arguments>
-			<x:String>Assets/Icons/Downloaded-Icon-White.png</x:String>
-		</x:Arguments>
-	</Bitmap>
-
-	<Bitmap x:Key="NotOpenedIcon">
-		<x:Arguments>
-			<x:String>Assets/Icons/OpenMenu-Not-Opened-Icon-White.png</x:String>
-		</x:Arguments>
-	</Bitmap>
-
-	<Bitmap x:Key="OpenedIcon">
-		<x:Arguments>
-			<x:String>Assets/Icons/OpenMenu-Opened-Icon-White.png</x:String>
-		</x:Arguments>
-	</Bitmap>
-
-  <Bitmap x:Key="GitHubIcon-White">
-    <x:Arguments>
-      <x:String>Assets/Icons/github-mark-white.png</x:String>
-    </x:Arguments>
-  </Bitmap>
-
-  <Bitmap x:Key="OpenWebsiteIcon-White">
-    <x:Arguments>
-      <x:String>Assets/Icons/OpenWebsite-Icon-White.png</x:String>
-    </x:Arguments>
-  </Bitmap>
-
-  <Bitmap x:Key="UpdateIcon-White">
-    <x:Arguments>
-      <x:String>Assets/Icons/Update-Icon-White.png</x:String>
-    </x:Arguments>
-  </Bitmap>
-
-  <Bitmap x:Key="CloseIcon-White">
-    <x:Arguments>
-      <x:String>Assets/Icons/Close-Icon-White.png</x:String>
-    </x:Arguments>
-  </Bitmap>
-
-  <Bitmap x:Key="RefreshIcon-White">
-    <x:Arguments>
-      <x:String>Assets/Icons/Refresh-Icon-White.png</x:String>
-    </x:Arguments>
-  </Bitmap>
-
-  <Bitmap x:Key="ToggleView-Grid-White">
-    <x:Arguments>
-      <x:String>Assets/Icons/ToggleView-Grid-White.png</x:String>
-    </x:Arguments>
-  </Bitmap>
-
-  <Bitmap x:Key="ToggleView-List-White">
-    <x:Arguments>
-      <x:String>Assets/Icons/ToggleView-List-White.png</x:String>
-    </x:Arguments>
-  </Bitmap>
-
-  <Bitmap x:Key="UninstallIcon-White">
-    <x:Arguments>
-      <x:String>Assets/Icons/Uninstall-Icon-White.png</x:String>
-    </x:Arguments>
-  </Bitmap>
 
   </Application.Resources>
 

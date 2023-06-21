@@ -9,14 +9,24 @@
     <AssemblyName>Toucan</AssemblyName>
     <RootNamespace>ToucanUI</RootNamespace>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
 
   <ItemGroup>
-    <AvaloniaResource Include="Assets\Icons\**" />
-    <AvaloniaResource Include="Assets\Fonts\**" />
-    <AvaloniaResource Include="Assets\toucan_manifest.json" />
-    <AvaloniaResource Include="Assets\tmm_icon.ico" />
-    <AvaloniaResource Include="Assets\tmm_logo.png"/>
-    <Content Include="Assets\**" CopyToOutputDirectory="PreserveNewest" />
+    <AvaloniaResource Include="Assets/Icons/**" />
+    <AvaloniaResource Include="Assets/Fonts/**" />
+    <Content Include="Assets/**" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets/tmm_logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
   </ItemGroup>
 
   <ItemGroup>
@@ -40,18 +50,29 @@
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.19" />
     
   </ItemGroup>
+  
+  
+  <ItemGroup>
+    <EmbeddedResource Include="Assets/tmm_icon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    
+    <EmbeddedResource Include="Assets/toucan_manifest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
 
   <ItemGroup>
-    <None Update="Updater\set_permissions.sh">
+    <None Update="Updater/set_permissions.sh">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Updater\updater_macos.sh">
+    <None Update="Updater/updater_macos.sh">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Updater\updater_linux.sh">
+    <None Update="Updater/updater_linux.sh">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Updater\updater_windows.bat">
+    <None Update="Updater/updater_windows.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
