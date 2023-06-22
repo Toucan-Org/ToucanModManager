@@ -94,11 +94,36 @@ namespace ToucanUI.ViewModels
         // METHODS
         // =====================
 
+        // Get zip file for correct OS build
+        private string GetOsSpecificZipSuffix()
+        {
+            string osZipSuffix;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                osZipSuffix = "_win_x64";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                osZipSuffix = "_linux";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                osZipSuffix = "_osx";
+            }
+            else
+            {
+                throw new NotSupportedException("Unsupported OS");
+            }
+            return osZipSuffix;
+        }
+
+
+
         // Check if an update is available on Github for Toucan Mod Manager
         public async Task IsToucanUpdateAvailable()
         {
             //var latestReleaseUrl = $"{MainViewModel.FooterVM.ToucanWebsite}/releases/latest";
-            var latestReleaseUrl = $"https://api.github.com/repos/KSP2-Toucan/TMM/releases/latest";
+            var latestReleaseUrl = $"https://api.github.com/repos/KSP2-Toucan/ToucanModManager/releases/latest";
             try
             {
                 httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0");
@@ -131,14 +156,15 @@ namespace ToucanUI.ViewModels
                         
                             if (result == ButtonResult.Yes)
                             {
-                                
+
                                 string browserDownloadUrl = null;
+                                string osZipSuffix = GetOsSpecificZipSuffix();
 
                                 if (releaseJson.RootElement.TryGetProperty("assets", out JsonElement assetsElement) && assetsElement.ValueKind == JsonValueKind.Array)
                                 {
                                     foreach (JsonElement assetElement in assetsElement.EnumerateArray())
                                     {
-                                        if (assetElement.TryGetProperty("name", out JsonElement nameElement) && nameElement.GetString().EndsWith(".zip"))
+                                        if (assetElement.TryGetProperty("name", out JsonElement nameElement) && nameElement.GetString().EndsWith(osZipSuffix + ".zip"))
                                         {
                                             if (assetElement.TryGetProperty("browser_download_url", out JsonElement downloadUrlElement))
                                             {
@@ -149,6 +175,8 @@ namespace ToucanUI.ViewModels
                                         }
                                     }
                                 }
+
+
 
                                 if (browserDownloadUrl != null)
                                 {
