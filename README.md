@@ -1,5 +1,6 @@
 # Toucan Mod Manager
 ### Version 1.0.0
+![image](https://github.com/KSP2-Toucan/ToucanModManager/assets/1657477/adaddf4e-1bbe-4dce-8352-9ee0c7e11ae8)
 
 #### Description
 A work-in-progress Mod Manager for Kerbal Space Program 2 (KSP1 support coming soon).
