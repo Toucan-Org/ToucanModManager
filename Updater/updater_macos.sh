@@ -13,8 +13,7 @@ unzip -o "$zipFile" -d ..
 
 # Step 3: Ensure InstalledMods remains intact
 if [ ! -d "InstalledMods" ]; then
-    echo "Error: InstalledMods folder not found. Update failed."
-    exit 1
+    echo "Warning: InstalledMods folder not found."
 fi
 
 # Step 4: Clean up
@@ -23,4 +22,4 @@ rm "Updater/$updaterConfig"
 
 # Step 5: Start the new ToucanUI.exe and shut down the updater script
 echo "Update complete. Starting Toucan Mod Manager..."
-./Toucan.app & 
+./Toucan & 
