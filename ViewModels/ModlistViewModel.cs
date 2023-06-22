@@ -32,7 +32,7 @@ namespace ToucanUI.ViewModels
         // =====================
         SpacedockAPI api = new SpacedockAPI();
         private readonly ConfigurationManager _configManager;
-        InstallManager installer = new InstallManager();
+        public InstallManager Installer => MainViewModel.installer;
 
 
 
@@ -410,7 +410,7 @@ namespace ToucanUI.ViewModels
                         });
                 }
                 // Load the offline JSON list here
-                ObservableCollection<Mod> offlineMods = installer.ReadInstalledMods();
+                ObservableCollection<Mod> offlineMods = Installer?.ReadInstalledMods() ?? new ObservableCollection<Mod>();
 
                 ObservableCollection<ModViewModel> offlineModViewModels = new ObservableCollection<ModViewModel>(offlineMods.Select(mod => new ModViewModel(mod)));
 
@@ -500,6 +500,13 @@ namespace ToucanUI.ViewModels
         // Function to download a mod asynchronously
         public Task DownloadModAsync(ModViewModel mod, Action onSuccess = null)
         {
+
+            if (Installer == null)
+            {
+                Debug.WriteLine("Installer is null!");
+                return Task.CompletedTask;
+            }
+
             mod.ModState = ModViewModel.ModStateEnum.Downloading;
             mod.Progress = 0;
             mod.IsModifiable = false;
@@ -522,7 +529,7 @@ namespace ToucanUI.ViewModels
 
             try
             {
-                installer.DownloadMod(mod, tcs, cancellationToken);
+                Installer.DownloadMod(mod, tcs, cancellationToken);
                 tcs.Task.ContinueWith(t =>
                 {
                     if (t.IsCompletedSuccessfully)
@@ -605,7 +612,7 @@ namespace ToucanUI.ViewModels
             FetchingMessage = "";
 
             // Load the offline JSON list here
-            ObservableCollection<Mod> offlineMods = installer.ReadInstalledMods();
+            ObservableCollection<Mod> offlineMods = Installer.ReadInstalledMods();
 
             ObservableCollection<ModViewModel> offlineModViewModels = new ObservableCollection<ModViewModel>(offlineMods.Select(mod => new ModViewModel(mod)));
 
@@ -818,7 +825,7 @@ namespace ToucanUI.ViewModels
         private void UninstallModAndSetState(ModViewModel mod)
         {
 
-            bool isDeleted = installer.DeleteMod(mod);
+            bool isDeleted = Installer.DeleteMod(mod);
             if (isDeleted)
             {
                 mod.ModState = ModViewModel.ModStateEnum.NotInstalled;

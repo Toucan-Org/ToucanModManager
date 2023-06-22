@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -39,15 +38,15 @@ namespace ToucanUI.Services
             Error
         }
 
-        public InstallManager()
+        public InstallManager(string gamePath)
         {
             try
             {
-                string gamePath = config.GetGamePath();
                 if (!string.IsNullOrEmpty(gamePath))
                 {
-                    KSProot = System.IO.Path.GetDirectoryName(gamePath);
-                    ToucanFolder = Path.Combine(KSProot, "Toucan"); 
+                    KSProot = Path.GetDirectoryName(gamePath);
+                    ToucanFolder = Path.Combine(KSProot, "Toucan");
+                    CreateToucanFolder(); // Call the method to create the Toucan folder
                     PluginsLocation = Path.Combine(KSProot, "BepInEx", "plugins");
                     BepinExLocation = Path.Combine(KSProot, "BepInEx");
 
@@ -56,6 +55,7 @@ namespace ToucanUI.Services
                 else
                 {
                     KSProot = null;
+                    ToucanFolder = null;
                     PluginsLocation = null;
                     BepinExLocation = null;
                 }
@@ -67,10 +67,24 @@ namespace ToucanUI.Services
         }
 
 
+
+        private void CreateToucanFolder()
+        {
+            if (!string.IsNullOrEmpty(ToucanFolder) && !Directory.Exists(ToucanFolder))
+            {
+                Directory.CreateDirectory(ToucanFolder);
+            }
+        }
+
+
         // Reads in all mods that are stored in the offline json file
         public ObservableCollection<Mod> ReadInstalledMods()
         {
-            string path = ToucanFolder + @"\InstalledMods\InstalledMods.json";
+            if (string.IsNullOrEmpty(ToucanFolder))
+            {
+                return new ObservableCollection<Mod>();
+            }
+            string path = Path.Combine(ToucanFolder, "InstalledMods", "InstalledMods.json");
 
             if (File.Exists(path))
             {
@@ -101,19 +115,30 @@ namespace ToucanUI.Services
         // Writes mods to the offline json file
         private void WriteInstalledMods(ObservableCollection<Mod> installedMods)
         {
-            string path = ToucanFolder + @"\InstalledMods\InstalledMods.json";
-            var options = new JsonSerializerOptions
+            try
             {
-                WriteIndented = true,
-            };
-            string json = JsonSerializer.Serialize(installedMods, options);
-            File.WriteAllText(path, json);
+                string path = Path.Combine(ToucanFolder, "InstalledMods", "InstalledMods.json");
+
+
+                var options = new JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                };
+                string json = JsonSerializer.Serialize(installedMods, options);
+                File.WriteAllText(path, json);
+            }
+
+            catch (Exception e) 
+            {
+                Debug.WriteLine(e.Message);
+            }
+            
         }
 
 
         public async void DownloadMod(ModViewModel mod, TaskCompletionSource<bool> tcs, CancellationToken cancellationToken)
         {
-            string path = ToucanFolder + @"\InstalledMods";
+            string path = Path.Combine(ToucanFolder, "InstalledMods");
             string fileName = System.IO.Path.Combine(path, mod.ModObject.Name + ".zip");
             try
             {
@@ -195,28 +220,37 @@ namespace ToucanUI.Services
 
         private void MoveToPlugins(string fileName, ModViewModel mod)
         {
-            // Check if the root folder in the zip is "BepInEx"
-            bool isBepInExRoot = false;
-            using (ZipArchive archive = ZipFile.OpenRead(fileName))
+            try
             {
-                ZipArchiveEntry firstEntry = archive.Entries[0];
-                // Split on /, //, \, and \\
-                string rootFolderName = Regex.Split(firstEntry.FullName, @"[/]{1,2}|[\\]{1,2}")[0];
-                if (rootFolderName.Equals("BepInEx", StringComparison.InvariantCultureIgnoreCase))
+                // Check if the root folder in the zip is "BepInEx"
+                bool isBepInExRoot = false;
+                using (ZipArchive archive = ZipFile.OpenRead(fileName))
                 {
-                    isBepInExRoot = true;
+                    ZipArchiveEntry firstEntry = archive.Entries[0];
+                    // Split on /, //, \, and \\
+                    string rootFolderName = Regex.Split(firstEntry.FullName, @"[/]{1,2}|[\\]{1,2}")[0];
+                    if (rootFolderName.Equals("BepInEx", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        isBepInExRoot = true;
+                    }
+                }
+
+                // Extract the contents to the appropriate folder based on the isBepInExRoot flag
+                if (isBepInExRoot)
+                {
+                    ZipFile.ExtractToDirectory(fileName, KSProot, true);
+                }
+                else
+                {
+                    ZipFile.ExtractToDirectory(fileName, PluginsLocation, true);
                 }
             }
 
-            // Extract the contents to the appropriate folder based on the isBepInExRoot flag
-            if (isBepInExRoot)
+            catch (Exception e)
             {
-                ZipFile.ExtractToDirectory(fileName, KSProot, true);
+                Debug.WriteLine(e.Message);
             }
-            else
-            {
-                ZipFile.ExtractToDirectory(fileName, PluginsLocation, true);
-            }
+
         }
 
 

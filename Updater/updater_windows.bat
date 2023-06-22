@@ -15,9 +15,7 @@ powershell -Command "Expand-Archive -Path 'Updater\%zipFile%' -DestinationPath '
 
 :: Step 3: Ensure InstalledMods remains intact
 if not exist "InstalledMods" (
-    echo Error: InstalledMods folder not found. Update failed.
-    pause
-    exit /B 1
+    echo Warning: InstalledMods folder not found.
 )
 
 :: Step 4: Clean up

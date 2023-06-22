@@ -205,14 +205,30 @@ namespace ToucanUI.ViewModels
                 {
                     string scriptPath = Path.Combine(updaterDir, updaterScript);
 
-                    Process.Start(new ProcessStartInfo
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                     {
-                        FileName = scriptPath,
-                        WorkingDirectory = updaterDir,
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true,
-                        RedirectStandardError = true
-                    });
+                        Process.Start(new ProcessStartInfo
+                        {
+                            FileName = "bash",
+                            Arguments = $"-c \"{scriptPath}\"",
+                            WorkingDirectory = updaterDir,
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            RedirectStandardError = true
+                        });
+
+                    }
+
+                    else
+                    {
+                        Process.Start(new ProcessStartInfo
+                        {
+                            FileName = scriptPath,
+                            WorkingDirectory = updaterDir,
+                            UseShellExecute = true,
+                        });
+                    }
+
                 }
                 else
                 {
@@ -222,7 +238,7 @@ namespace ToucanUI.ViewModels
                 // Close the Toucan application
                 if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
                 {
-                    desktopLifetime.MainWindow.Close();
+                    desktopLifetime.Shutdown();
                 }
             }
             catch (Exception ex)
@@ -319,7 +335,7 @@ namespace ToucanUI.ViewModels
             {
                 if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
                 {
-                    desktopLifetime.MainWindow.Close();
+                    desktopLifetime.Shutdown();
                 }
             }
         }
