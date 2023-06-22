@@ -29,8 +29,8 @@ namespace ToucanUI.ViewModels
         // =====================
         // SERVICES
         // =====================
-        InstallManager installer;
-        ConfigurationManager configManager = new ConfigurationManager();
+        public InstallManager installer;
+        public ConfigurationManager configManager = new ConfigurationManager();
 
         // =====================
         // VARIABLES
@@ -100,26 +100,39 @@ namespace ToucanUI.ViewModels
             FooterVM = new FooterViewModel(this);
             HeaderVM = new HeaderViewModel(this);
             ControlPanelVM = new ControlPanelViewModel(this);
+
+            InitializeInstaller();
+            CheckValidGameFound();
+
             ModlistVM = new ModlistViewModel(this);
             SidePanelVM = new SidePanelViewModel(this);
-
-            CheckValidGameFound();
         }
+
+
 
 
 
         // =====================
         // METHODS
         // =====================
+        public void InitializeInstaller()
+        {
+            if (CheckGameInstallPath())
+            {
+                string gamePath = configManager.GetGamePath();
+                installer = new InstallManager(gamePath);
+            }
+        }
 
-
+ 
         // Run at startup to check if KSP2 and BepInEx installed
         private async void CheckValidGameFound()
         {
             // If a valid game path is found
             if (CheckGameInstallPath())
             {
-                installer = new InstallManager();
+                string gamePath = configManager.GetGamePath();
+                installer = new InstallManager(gamePath);
 
                 // Check if BepInEx is installed or not
                 BepInExState = await Dispatcher.UIThread.InvokeAsync(async () => await installer.CheckIfBepInEx());
@@ -139,6 +152,7 @@ namespace ToucanUI.ViewModels
                         if (bepInExInstalled)
                         {
                             BepInExState = BepInExStatusEnum.Installed;
+                            InitializeInstaller();
                             ValidGameFound = true;
                         }
                         else

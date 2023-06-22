@@ -13,8 +13,7 @@ unzip -o "$zipFile" -d ..
 
 # Step 3: Ensure InstalledMods remains intact
 if [ ! -d "InstalledMods" ]; then
-    echo "Error: InstalledMods folder not found. Update failed."
-    exit 1
+    echo "Warning: InstalledMods folder not found."
 fi
 
 # Step 4: Clean up
