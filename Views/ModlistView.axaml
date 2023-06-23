@@ -107,7 +107,7 @@
               <Button Content="Select All" FontSize="9" Width="80"
                       HorizontalContentAlignment="Center" Command="{Binding SelectAllModsCommand}"
                       Background="#252525" Foreground="DarkGray" Margin="5"/>
-              <Button Content="Unselect All" FontSize="9" Width="80"
+              <Button Content="Deselect All" FontSize="9" Width="80"
                       HorizontalContentAlignment="Center" Command="{Binding UnselectAllModsCommand}"
                       Background="#252525" Foreground="DarkGray" Margin="5"/>
             </StackPanel>

@@ -5,6 +5,7 @@ using MessageBox.Avalonia.Models;
 using ReactiveUI;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ToucanUI.Models.KSP2;
@@ -31,6 +32,8 @@ namespace ToucanUI.ViewModels
         // =====================
         public InstallManager installer;
         public ConfigurationManager configManager = new ConfigurationManager();
+        private KSP2Service ksp2Service = new KSP2Service();
+
 
         // =====================
         // VARIABLES
@@ -50,10 +53,11 @@ namespace ToucanUI.ViewModels
                 }
 
                 this.RaiseAndSetIfChanged(ref _selectedMod, value);
-                SidePanelVM.SidePanelVisible = true; // Show the side panel
 
+                // Check if the SelectedMod is null
                 if (SelectedMod != null)
                 {
+                    SidePanelVM.SidePanelVisible = true; // Show the side panel
                     SelectedMod.IsSelectedSidePanel = true;
 
                     // If download sizes for versions haven't been fetched, retrieve them
@@ -62,8 +66,13 @@ namespace ToucanUI.ViewModels
                         Task.Run(() => SelectedMod.InitializeDownloadSizesAsync());
                     }
                 }
+                else
+                {
+                    SidePanelVM.SidePanelVisible = false; // Hide the side panel
+                }
             }
         }
+
 
 
         // Tracks if BepInEx mod has been installed or not
@@ -101,6 +110,7 @@ namespace ToucanUI.ViewModels
             HeaderVM = new HeaderViewModel(this);
             ControlPanelVM = new ControlPanelViewModel(this);
 
+            InitializeGameInstallPath();
             InitializeInstaller();
             CheckValidGameFound();
 
@@ -117,9 +127,9 @@ namespace ToucanUI.ViewModels
         // =====================
         public void InitializeInstaller()
         {
-            if (CheckGameInstallPath())
+            string gamePath = configManager.GetGamePath();
+            if (!string.IsNullOrEmpty(gamePath))
             {
-                string gamePath = configManager.GetGamePath();
                 installer = new InstallManager(gamePath);
             }
         }
@@ -179,6 +189,39 @@ namespace ToucanUI.ViewModels
             }
         }
 
+        private void InitializeGameInstallPath()
+        {
+            string gameExePath = configManager.GetGamePath();
+            if (!string.IsNullOrEmpty(gameExePath) && File.Exists(gameExePath))
+            {
+                // Get the directory of the game executable
+                string gameRootDirectory = Path.GetDirectoryName(gameExePath);
+
+                // Use the KSP2Service to detect the game version and path
+                (string detectedGameExePath, string gameVersion) = ksp2Service.DetectGameVersion(gameRootDirectory);
+
+                if (!string.IsNullOrEmpty(detectedGameExePath))
+                {
+                    string configVersion = configManager.GetGameVersion();
+
+                    // Compare the detected game version with the version stored in the config
+                    if (configVersion != gameVersion)
+                    {
+                        // Update the config with the new version and path
+                        configManager.SetGameVersion(gameVersion);
+                        configManager.SetGamePath(detectedGameExePath);
+
+                        Debug.WriteLine($"Updated game version to {gameVersion}: {detectedGameExePath}");
+                    }
+                    else
+                    {
+                        Debug.WriteLine($"Initialized {gameVersion}: {detectedGameExePath}");
+                    }
+                }
+            }
+        }
+
+
 
         // Check the game install path from config
         private bool CheckGameInstallPath()
@@ -186,12 +229,18 @@ namespace ToucanUI.ViewModels
             string gamePath = configManager.GetGamePath();
             if (!string.IsNullOrEmpty(gamePath))
             {
-                Debug.WriteLine($"Config GamePath found: {gamePath}");
-                return true;
+
+                if (File.Exists(gamePath))
+                {
+                    Debug.WriteLine($"Config GamePath found: {gamePath}");
+                    return true;
+                }
             }
 
             return false;
         }
+
+
 
         // Run on startup to show if a game install path was not found
         private async Task ShowNoGameFoundMessageBox()

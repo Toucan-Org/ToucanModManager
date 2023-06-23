@@ -385,7 +385,7 @@ namespace ToucanUI.ViewModels
                     }
 
                     ModList.Add(modViewModel);
-                    Debug.WriteLine($"Added {mod.Name} [{mod.Id}]");
+                    //Debug.WriteLine($"Added {mod.Name} [{mod.Id}]");
 
                     // Subscribe to IsSelectedBulk changes
                     modViewModel
@@ -401,20 +401,20 @@ namespace ToucanUI.ViewModels
                                 SelectedBulkMods.Remove(modViewModel);
                             }
 
-                            if (SelectedBulkMods.Count > 0)
-                            {
-                                Debug.WriteLine($"Checked mods: {string.Join(", ", SelectedBulkMods.Items.Select(m => m.ModObject.Name))}");
-                            }
+                            //if (SelectedBulkMods.Count > 0)
+                            //{
+                            //    Debug.WriteLine($"Checked mods: {string.Join(", ", SelectedBulkMods.Items.Select(m => m.ModObject.Name))}");
+                            //}
 
 
                         });
                 }
-                // Load the offline JSON list here
-                ObservableCollection<Mod> offlineMods = Installer?.ReadInstalledMods() ?? new ObservableCollection<Mod>();
+                // Load the installed JSON list here
+                ObservableCollection<Mod> installedMods = Installer?.ReadInstalledMods() ?? new ObservableCollection<Mod>();
 
-                ObservableCollection<ModViewModel> offlineModViewModels = new ObservableCollection<ModViewModel>(offlineMods.Select(mod => new ModViewModel(mod)));
+                ObservableCollection<ModViewModel> installedModViewModels = new ObservableCollection<ModViewModel>(installedMods.Select(mod => new ModViewModel(mod)));
 
-                MarkInstalledMods(ModList, offlineModViewModels);
+                MarkInstalledMods(ModList, installedModViewModels);
 
 
             });
@@ -450,12 +450,12 @@ namespace ToucanUI.ViewModels
         }
 
 
-        public void MarkInstalledMods(ObservableCollection<ModViewModel> onlineMods, ObservableCollection<ModViewModel> offlineModViewModels)
+        public void MarkInstalledMods(ObservableCollection<ModViewModel> onlineMods, ObservableCollection<ModViewModel> installedModViewModels)
         {
-            // Iterate through the onlineMods and offlineModViewModels
+            // Iterate through the onlineMods and installedModViewModels
             foreach (var onlineMod in onlineMods)
             {
-                var offlineMod = offlineModViewModels.FirstOrDefault(om => om.ModObject.Id == onlineMod.ModObject.Id);
+                var offlineMod = installedModViewModels.FirstOrDefault(om => om.ModObject.Id == onlineMod.ModObject.Id);
                 if (offlineMod != null)
                 {
                     // If a match is found, set the IsInstalled property to true
@@ -614,19 +614,39 @@ namespace ToucanUI.ViewModels
             // Load the offline JSON list here
             ObservableCollection<Mod> offlineMods = Installer.ReadInstalledMods();
 
-            ObservableCollection<ModViewModel> offlineModViewModels = new ObservableCollection<ModViewModel>(offlineMods.Select(mod => new ModViewModel(mod)));
+            ObservableCollection<ModViewModel> installedModViewModels = new ObservableCollection<ModViewModel>(offlineMods.Select(mod => new ModViewModel(mod)));
 
             // Update the ModList on the UI thread
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 ModList.Clear();
-                foreach (var modViewModel in offlineModViewModels)
+                foreach (var modViewModel in installedModViewModels)
                 {
                     modViewModel.ModState = ModViewModel.ModStateEnum.Installed;
                     modViewModel.Progress = 100;
                     modViewModel.IsModifiable = false;
+
+
+                    // Subscribe to IsSelectedBulk changes
+                    modViewModel
+                        .WhenAnyValue(x => x.IsSelectedBulk)
+                        .Subscribe(isSelected =>
+                        {
+                            if (isSelected)
+                            {
+                                SelectedBulkMods.Add(modViewModel);
+                            }
+                            else
+                            {
+                                SelectedBulkMods.Remove(modViewModel);
+                            }
+
+                        });
+
                     ModList.Add(modViewModel);
                 }
+
+
             });
 
             FetchState = FetchStateEnum.Success;

@@ -23,46 +23,46 @@
 
   
   <Panel>
-    <Grid>
-      <ExperimentalAcrylicBorder IsHitTestVisible="False">
-        <ExperimentalAcrylicBorder.Material>
-          <ExperimentalAcrylicMaterial
-              BackgroundSource="Digger"
-              TintColor="Black"
-              TintOpacity="1"
-              MaterialOpacity="0.5"/>
-        </ExperimentalAcrylicBorder.Material>
-      </ExperimentalAcrylicBorder>
+    <Grid Background="#101010" IsHitTestVisible="False">
 
       <Border CornerRadius="5" BoxShadow="inset 0 -5 5 2 #191919" IsHitTestVisible="False">
         <Border.Background>
           <LinearGradientBrush StartPoint="50%,40%" EndPoint="50%,0%">
-            <GradientStop Color="Transparent" Offset="0.55"/>
-            <GradientStop Color="#67411D" Offset="1.0"/>
+            <GradientStop Color="#005D3C1A" Offset="0.0"/>
+            <GradientStop Color="#FF5D3C1A" Offset="0.5"/>
+            <GradientStop Color="#FFA85430" Offset="0.7"/>
+            <GradientStop Color="#FFBF4040" Offset="0.9"/>
+            <GradientStop Color="#FFBF4040" Offset="1.0"/>
+
           </LinearGradientBrush>
+
+          <!--<LinearGradientBrush StartPoint="50%,40%" EndPoint="50%,0%">
+            <GradientStop Color="#00F2E394" Offset="0.0"/>
+            <GradientStop Color="#FFF2DF83" Offset="0.5"/>
+            <GradientStop Color="#FFD98B53" Offset="0.7"/>
+            <GradientStop Color="#FFBF4040" Offset="0.9"/>
+            <GradientStop Color="#FFBF4040" Offset="1.0"/>
+          </LinearGradientBrush>-->
         </Border.Background>
       </Border>
+
     </Grid>
 
-    <Grid x:Name="MainGrid" RowDefinitions="20, Auto, Auto, *, Auto" ColumnDefinitions="2*, Auto" Margin="5">
+    <Grid x:Name="MainGrid" RowDefinitions="20, Auto, *, Auto" ColumnDefinitions="2*, Auto" Margin="5">
       <!-- Header -->
       <views:HeaderView x:Name="HeaderViewControl" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
                           DataContext="{Binding HeaderVM}"/>
 
-      <!-- Control Panel -->
-      <views:ControlPanelView x:Name="ControlPanelViewControl" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
-                              DataContext="{Binding ControlPanelVM}" Margin="5 0"/>
-
       <!-- Content -->
-      <views:ModlistView x:Name="ModlistViewControl" Grid.Row="3" Grid.Column="0"
-                          DataContext="{Binding ModlistVM}" Margin="5"/>
+      <views:ModlistView x:Name="ModlistViewControl" Grid.Row="2" Grid.Column="0"
+                          DataContext="{Binding ModlistVM}" Margin="10 5"/>
 
       <!-- Side Panel -->
-      <views:SidePanelView x:Name="SidePanelViewControl" Grid.Row="3" Grid.Column="1"
-                            DataContext="{Binding SidePanelVM}" Margin="5"/>
+      <views:SidePanelView x:Name="SidePanelViewControl" Grid.Row="2" Grid.Column="1"
+                            DataContext="{Binding SidePanelVM}" Margin="0 5 10 5"/>
 
       <views:FooterView x:Name="FooterViewControl" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
-                        DataContext="{Binding FooterVM}" Margin="5"/>
+                        DataContext="{Binding FooterVM}" Margin="10 5"/>
     </Grid>
   </Panel>
 

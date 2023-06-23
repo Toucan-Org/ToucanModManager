@@ -16,7 +16,7 @@ namespace ToucanUI.Views
         {
             DataContext = viewModel;
             HeaderViewControl.DataContext = viewModel.HeaderVM;
-            ControlPanelViewControl.DataContext = viewModel.ControlPanelVM;
+            //ControlPanelViewControl.DataContext = viewModel.ControlPanelVM;
             ModlistViewControl.DataContext = viewModel.ModlistVM;
             SidePanelViewControl.DataContext = viewModel.SidePanelVM;
         }
