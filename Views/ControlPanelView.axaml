@@ -32,11 +32,9 @@
   </UserControl.Styles>
   
   
-  <Grid RowDefinitions="Auto" ColumnDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto" Margin="0">
+  <Grid RowDefinitions="Auto" ColumnDefinitions="Auto, Auto">
     
-    <!-- Search Bar -->
-    <TextBox Text="{Binding MainViewModel.ModlistVM.SearchText, Mode=TwoWay}" Grid.Column="0" Watermark="Search..." Width="350"
-             HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
 
 
     <!-- Category List (CURRENTLY NOT WORKING DUE TO BUG IN SPACEDOCK API, FIX INCOMING) -->
@@ -50,64 +48,67 @@
       </ComboBox>-->
 
 
-    <!-- Filters Button -->
-    <Menu Grid.Column="3" Margin="10,0" BorderBrush="White" CornerRadius="5" BorderThickness="0.7"
-          Cursor="Hand">
-      <MenuItem Header="Filters">
-        <StackPanel>
-          <CheckBox Content="Installed Mods" IsChecked="{Binding FilterInstalled}" Margin="10 5" />
-        </StackPanel>
-        <StackPanel>
-          <CheckBox Content="Compatible Mods" IsChecked="{Binding FilterVersion}" Margin="10 5" />
-        </StackPanel>
-        <StackPanel>
-          <CheckBox Content="Update Available" IsChecked="{Binding FilterUpdateAvailable}" Margin="10 5" />
-        </StackPanel>
+      <StackPanel Orientation="Horizontal" Grid.Column="0">
 
-      </MenuItem>
-    </Menu>
+        <!-- Refresh Button -->
+        <Button Margin="10 0" Background="Transparent" Cursor="Hand"
+                Command="{Binding MainViewModel.HeaderVM.RefreshModlistCommand}"
+                IsEnabled="{Binding !MainViewModel.ModlistVM.IsFetchingData}"
+                ToolTip.Tip="Refresh Modlist" Width="50" Height="40">
+          <Button.Content>
+            <Image Source="{DynamicResource RefreshIcon-White}" Width="40" Height="40"/>
+          </Button.Content>
 
+        </Button>
 
-    <!-- Refresh Button -->
-    <Button Grid.Column="5" Margin="10 0" Background="Transparent" Cursor="Hand"
-            Command="{Binding MainViewModel.HeaderVM.RefreshModlistCommand}"
-            IsEnabled="{Binding !MainViewModel.ModlistVM.IsFetchingData}"
-            ToolTip.Tip="Refresh Modlist" Width="50" Height="40">
-      <Button.Content>
-        <Image Source="{DynamicResource RefreshIcon-White}" Width="40" Height="40"/>
-      </Button.Content>
+        <!-- Classic/Grid View Toggle Button -->
+        <ToggleButton Height="40" Width="50" Background="Transparent" Cursor="Hand"
+                      Command="{Binding DataContext.ModlistVM.ToggleViewCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=views:MainWindow}}">
+          <ToggleButton.Content>
+            <ContentControl>
+              <Grid>
+                <Image Source="{DynamicResource ToggleView-Grid-White}" Width="40" Height="40" Classes="listIcon"
+                       ToolTip.Tip="Switch to Grid View"/>
+                <Image Source="{DynamicResource ToggleView-List-White}" Width="40" Height="40" Classes="gridIcon"
+                       ToolTip.Tip="Switch to List View"/>
+              </Grid>
+            </ContentControl>
+          </ToggleButton.Content>
+        </ToggleButton>
 
-    </Button>
+        <!-- Update All Button -->
+        <Button Grid.Column="7" Margin="10 0" Background="Transparent" Cursor="Hand"
+                ToolTip.Tip="Update All" Width="50" Height="40"
+                Command="{Binding MainViewModel.ModlistVM.UpdateAllCommand}">
+          <Button.Content>
+            <Image Source="{DynamicResource UpdateIcon-White}" Width="45" Height="45"/>
+          </Button.Content>
+
+        </Button>
+
+        <!-- Filters Button -->
+        <Menu Margin="10,0" BorderBrush="White" CornerRadius="5" BorderThickness="0.7"
+              Cursor="Hand" Background="#90202020">
+          <MenuItem Header="Filters">
+            <StackPanel>
+              <CheckBox Content="Installed Mods" IsChecked="{Binding FilterInstalled}" Margin="10 5" />
+            </StackPanel>
+            <StackPanel>
+              <CheckBox Content="Compatible Mods" IsChecked="{Binding FilterVersion}" Margin="10 5" />
+            </StackPanel>
+            <StackPanel>
+              <CheckBox Content="Update Available" IsChecked="{Binding FilterUpdateAvailable}" Margin="10 5" />
+            </StackPanel>
+
+          </MenuItem>
+        </Menu>
+      </StackPanel>
+      
+
     
-    
-
-    <!-- Classic/Grid View Toggle Button -->
-    <ToggleButton Grid.Column="6" Height="40" Width="50" Background="Transparent" Cursor="Hand"
-                  Command="{Binding DataContext.ModlistVM.ToggleViewCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=views:MainWindow}}">
-      <ToggleButton.Content>
-        <ContentControl>
-          <Grid>
-            <Image Source="{DynamicResource ToggleView-Grid-White}" Width="40" Height="40" Classes="listIcon"
-                   ToolTip.Tip="Switch to Grid View"/>
-            <Image Source="{DynamicResource ToggleView-List-White}" Width="40" Height="40" Classes="gridIcon"
-                   ToolTip.Tip="Switch to List View"/>
-          </Grid>
-        </ContentControl>
-      </ToggleButton.Content>
-    </ToggleButton>
-
-    <!-- Update All Button -->
-    <Button Grid.Column="7" Margin="10 0" Background="Transparent" Cursor="Hand"
-            ToolTip.Tip="Update All" Width="50" Height="40"
-            Command="{Binding MainViewModel.ModlistVM.UpdateAllCommand}">
-      <Button.Content>
-        <Image Source="{DynamicResource UpdateIcon-White}" Width="45" Height="45"/>
-      </Button.Content>
-
-    </Button>
-
-
-
+    <!-- Search Bar -->
+    <TextBox Text="{Binding MainViewModel.ModlistVM.SearchText, Mode=TwoWay}" Grid.Column="1" Watermark="Search..." Width="300"
+             HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15 0"/>
 
   </Grid>
 

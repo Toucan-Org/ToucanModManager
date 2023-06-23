@@ -8,7 +8,7 @@
   <DataGrid CornerRadius="5" Items="{Binding Mods}" Background="Transparent"
             SelectedItem="{Binding MainViewModel.SelectedMod}" AutoGenerateColumns="False"
             Margin="10" IsReadOnly="False" CanUserReorderColumns="True" CanUserResizeColumns="True"
-            CanUserSortColumns="True" AreRowDetailsFrozen="True">
+            CanUserSortColumns="True" AreRowDetailsFrozen="True" SelectionMode="Single">
     <DataGrid.Columns>
       <!-- Custom column for download/downloading/downloaded icons -->
       <DataGridTemplateColumn Width="40" Header="Status" CanUserResize="False">

@@ -2,16 +2,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:views="clr-namespace:ToucanUI.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="200"
              x:Class="ToucanUI.Views.HeaderView">
 
   <Panel>
 
-      <Grid RowDefinitions="Auto, Auto">
-          <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto">
+      <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, 2*">
+          <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                ColumnDefinitions="Auto, *, Auto">
 
 
-            <Image Source="avares://Toucan/Assets/tmm_logo.png" Width="75" Height="75" Grid.Row="0"
+            <Image Source="avares://Toucan/Assets/tmm_logo.png" Width="70" Height="70" Grid.Row="0"
                   Grid.Column="0" HorizontalAlignment="Left"
                   ToolTip.Tip="Toucan Mod Manager"/>
 
@@ -20,7 +22,7 @@
             <Button x:Name="LaunchButton" FontSize="22" Width="220" Height="50"
               Grid.Row="0" Grid.RowSpan="2" Grid.Column="3"
               Foreground="#800F0E" FontFamily="{StaticResource Orbitron}"
-              FontWeight="SemiBold" Margin="15 5" Command="{Binding LaunchCommand}"
+              FontWeight="SemiBold" Margin="15 5 15 0" Command="{Binding LaunchCommand}"
               IsEnabled="{Binding MainViewModel.ValidGameFound}" Cursor="Hand" VerticalContentAlignment="Center">
               <TextBlock Text="// LAUNCH //" HorizontalAlignment="Center" VerticalAlignment="Center"/>
               <Button.Styles>
@@ -45,10 +47,11 @@
 
 
         <!-- FILE/EDIT/HELP MENU -->
-        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0">
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0"
+                    Margin="15 5 20 0">
           <Menu>
 
-            <MenuItem Header="File" Foreground="DarkGray">
+            <MenuItem Header="File" Foreground="White">
 
               <MenuItem Header="Offline Mode"
                         Command="{Binding MainViewModel.ModlistVM.LoadOfflineModsCommand}">
@@ -68,7 +71,7 @@
           </Menu>
 
           <Menu>
-            <MenuItem Header="Edit" Foreground="DarkGray">
+            <MenuItem Header="Edit" Foreground="White">
               <MenuItem Header="Set Game Directory"
                         Command="{Binding SetGameInstallPathCommand}"/>
               <MenuItem Header="Scan KSP2 Install Locations"
@@ -83,7 +86,7 @@
           </Menu>
 
           <Menu>
-            <MenuItem Header="View" Foreground="DarkGray">
+            <MenuItem Header="View" Foreground="White">
               <MenuItem Header="Toggle List View"
                         Command="{Binding MainViewModel.ModlistVM.ToggleViewCommand}"/>
 
@@ -91,7 +94,7 @@
           </Menu>
 
           <Menu>
-            <MenuItem Header="Help" Foreground="DarkGray">
+            <MenuItem Header="Help" Foreground="White">
               <MenuItem Header="GitHub Page"
                         Command="{Binding MainViewModel.FooterVM.OpenGitHubCommand}"/>
 
@@ -100,6 +103,9 @@
           </Menu>
 
         </StackPanel>
+
+        <views:ControlPanelView x:Name="ControlPanelViewControl" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right"
+                                DataContext="{Binding MainViewModel.ControlPanelVM}"/>
         
 
       </Grid>
