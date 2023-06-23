@@ -157,6 +157,47 @@ namespace ToucanUI.Services
 
         }
 
+        // Used to set the game path in the config
+        public void SetGamePath(string gamePath)
+        {
+            var parser = new FileIniDataParser();
+
+            if (!File.Exists(_configFilePath))
+            {
+                return;
+            }
+
+            // Load the data from the config file
+            IniData data = parser.ReadFile(_configFilePath);
+
+            // Update the game path in the config
+            data["Game"]["Path"] = gamePath;
+
+            // Save the updated config back to the file
+            parser.WriteFile(_configFilePath, data);
+        }
+
+        // Used to set the game version in the config
+        public void SetGameVersion(string gameVersion)
+        {
+            var parser = new FileIniDataParser();
+
+            if (!File.Exists(_configFilePath))
+            {
+                return;
+            }
+
+            // Load the data from the config file
+            IniData data = parser.ReadFile(_configFilePath);
+
+            // Update the game version in the config
+            data["Game"]["Version"] = gameVersion;
+
+            // Save the updated config back to the file
+            parser.WriteFile(_configFilePath, data);
+        }
+
+
         // Clear the config file
         public void ClearConfig()
         {

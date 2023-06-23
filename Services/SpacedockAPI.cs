@@ -51,9 +51,9 @@ namespace ToucanUI.Services
             {
                 // Request mod data from the API using the provided id
                 var url = $"{MOD_URL}/{id}?{GAME_ID}";
-                Debug.WriteLine($"Requesting mod data from {url}");
+                //Debug.WriteLine($"Requesting mod data from {url}");
                 var response = await _client.GetAsync(url);
-                Debug.WriteLine($"Response status code: {response.StatusCode}");
+                //Debug.WriteLine($"Response status code: {response.StatusCode}");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -115,7 +115,7 @@ namespace ToucanUI.Services
             {
                 // Request mod data from the first URL
                 var url = $"{BROWSE_URL}{categoryString}?{GAME_ID}";
-                Debug.WriteLine($"Requesting mod data from {url}");
+                //Debug.WriteLine($"Requesting mod data from {url}");
                 var response = await _client.GetAsync(url);
                 Debug.WriteLine($"Response status code: {response.StatusCode}");
                 var jsonString = await response.Content.ReadAsStringAsync();
@@ -135,9 +135,9 @@ namespace ToucanUI.Services
 
                         // Request mod data from the URL
                         url = $"{BROWSE_URL}{categoryString}?{GAME_ID}&page={currentPage}";
-                        Debug.WriteLine($"Requesting mod data from {url} on page {currentPage}");
+                        //Debug.WriteLine($"Requesting mod data from {url} on page {currentPage}");
                         response = await _client.GetAsync(url);
-                        Debug.WriteLine($"Response status code: {response.StatusCode}");
+                        //Debug.WriteLine($"Response status code: {response.StatusCode}");
                         jsonString = await response.Content.ReadAsStringAsync();
 
                         // Parse the mod data

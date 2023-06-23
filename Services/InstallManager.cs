@@ -298,7 +298,7 @@ namespace ToucanUI.Services
                                 Debug.WriteLine($"Deleting file: {filePath}");
                                 File.Delete(filePath);
                             }
-                            else if (Directory.Exists(filePath))
+                            if (Directory.Exists(filePath))
                             {
                                 Debug.WriteLine($"Deleting directory: {filePath}");
                                 Directory.Delete(filePath, true);

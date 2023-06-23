@@ -24,11 +24,11 @@
         </Button>
 
         <!-- MOD NAME AND AUTHORS -->
-				<TextBlock Text="{Binding MainViewModel.SelectedMod.ModObject.Name}" FontWeight="SemiBold" FontSize="26"
+				<TextBlock Text="{Binding MainViewModel.SelectedMod.ModObject.Name}" FontWeight="SemiBold" FontSize="22"
 				    Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Margin="15 10 35 0" TextWrapping="WrapWithOverflow"/>
 
 				<TextBlock Text= "{Binding MainViewModel.SelectedMod.ModObject.Author}" FontWeight="Regular" Grid.Row="1"
-                   Grid.Column="0" Grid.ColumnSpan="4" Margin="15 5 15 10" Foreground="DarkGray"/>
+                   Grid.Column="0" Grid.ColumnSpan="4" Margin="15 0 15 5" Foreground="DarkGray"/>
 
         <Rectangle Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Height="1" Fill="Gray" Margin="15 5 15 0"/>
 
@@ -118,7 +118,7 @@
         </TabControl>
 
 				<!-- BUTTONS -->
-        <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Margin="25 10 0 0"
+        <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Margin="0 10"
               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
               RowDefinitions="Auto, Auto" ColumnDefinitions="*, *, *, *">
 
@@ -200,8 +200,8 @@
               </Button.Content>
             </Button>
 
-            <Image Source="{DynamicResource DownloadedIcon}" Width="60" Height="60"
-                   ToolTip.Tip="{Binding MainViewModel.SelectedMod.ModObject.SelectedVersion.FriendlyVersion, StringFormat='Installed {0}'}"
+            <Image Source="{DynamicResource DownloadedIcon}" Width="70" Height="70" Margin="0 0 0 10"
+                   ToolTip.Tip="{Binding MainViewModel.SelectedMod.SelectedVersionViewModel.VersionObject.FriendlyVersion, StringFormat='Installed {0}'}"
                    HorizontalAlignment="Stretch" VerticalAlignment="Center">
               <Image.IsVisible>
                 <MultiBinding Converter="{StaticResource ProgressToStatusConverter}" ConverterParameter="Downloaded">

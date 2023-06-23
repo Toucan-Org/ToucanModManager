@@ -16,6 +16,35 @@ namespace ToucanUI.Services
         // Method to detect current game version and path for KSP2
         public (string path, string version) DetectGameVersion(string path = "")
         {
+            List<string> searchDirectories = GenerateSearchDirectories(path);
+
+            string ksp2Path = FindKSP2(searchDirectories);
+
+            if (string.IsNullOrEmpty(ksp2Path))
+            {
+                Debug.WriteLine("Could not find KSP2 executable");
+                return ("", "");
+            }
+
+            string version;
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                version = GetFileVersionMacOS(ksp2Path);
+            }
+            else
+            {
+                FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(ksp2Path);
+                version = versionInfo.ProductVersion;
+            }
+
+
+            return (ksp2Path, version);
+        }
+
+        // Generate Search directories depending on OS
+        private List<string> GenerateSearchDirectories(string path = "")
+        {
             List<string> searchDirectories = new List<string>();
 
             if (string.IsNullOrEmpty(path))
@@ -31,7 +60,7 @@ namespace ToucanUI.Services
                         // Steam
                         searchDirectories.Add(Path.Combine(drive.Name, "Program Files (x86)", "Steam", "steamapps", "common", "Kerbal Space Program 2"));
                         searchDirectories.Add(Path.Combine(drive.Name, "Program Files", "Steam", "steamapps", "common", "Kerbal Space Program 2"));
-                        searchDirectories.Add(Path.Combine(drive.Name, "Steam", "steamapps", "common", "Kerbal Space Program 2"));
+                        searchDirectories.Add(Path.Combine(drive.Name, "SteamLibrary", "steamapps", "common", "Kerbal Space Program 2"));
 
                         // Epic Games
                         searchDirectories.Add(Path.Combine(drive.Name, "Program Files", "Epic Games", "Kerbal Space Program 2"));
@@ -59,38 +88,18 @@ namespace ToucanUI.Services
                 searchDirectories = new List<string> { path };
             }
 
-            string ksp2ExePath = FindKSP2Exe(searchDirectories);
-
-            if (string.IsNullOrEmpty(ksp2ExePath))
-            {
-                Debug.WriteLine("Could not find KSP2 executable");
-                return ("", "");
-            }
-
-            string version;
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                version = GetFileVersionMacOS(ksp2ExePath);
-            }
-            else
-            {
-                FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(ksp2ExePath);
-                version = versionInfo.ProductVersion;
-            }
-
-
-            return (ksp2ExePath, version);
+            return searchDirectories;
         }
 
+
         // Method to find KSP2 executable
-        private string FindKSP2Exe(List<string> searchDirectories)
+        private string FindKSP2(List<string> searchDirectories)
         {
             string fileName;
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                fileName = "KSP2_x64.exe";
+                fileName = "KSP2_x64";
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
@@ -103,16 +112,30 @@ namespace ToucanUI.Services
 
             foreach (string directory in searchDirectories)
             {
-                string filePath = Path.Combine(directory, fileName);
-
-                if (File.Exists(filePath))
+                try
                 {
-                    Debug.WriteLine($"Found: {filePath}");
-                    return filePath;
+                    string[] files = Directory.GetFiles(directory);
+
+                    foreach (string file in files)
+                    {
+                        if (Path.GetFileNameWithoutExtension(file) == fileName)
+                        {
+                            Debug.WriteLine($"Found: {file}");
+                            return file;
+                        }
+                    }
                 }
+
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                }
+
             }
+
             return "";
         }
+
 
         private string GetFileVersionMacOS(string filePath)
         {
