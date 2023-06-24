@@ -3,6 +3,7 @@ using Avalonia.Threading;
 using MessageBox.Avalonia.DTO;
 using MessageBox.Avalonia.Models;
 using ReactiveUI;
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -10,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ToucanUI.Models.KSP2;
 using ToucanUI.Services;
+using ToucanUI.Themes;
 using static ToucanUI.Services.InstallManager;
 
 namespace ToucanUI.ViewModels
@@ -38,6 +40,14 @@ namespace ToucanUI.ViewModels
         // =====================
         // VARIABLES
         // =====================
+
+        // Tracks the current theme
+        private Theme _currentTheme;
+        public Theme CurrentTheme
+        {
+            get => _currentTheme;
+            set => this.RaiseAndSetIfChanged(ref _currentTheme, value);
+        }
 
         // Keeps track of currently selected mod
         private ModViewModel _selectedMod;
@@ -106,6 +116,25 @@ namespace ToucanUI.ViewModels
         // =====================
         public MainWindowViewModel()
         {
+            // Get the theme from the config
+            string themeFullName = configManager.GetTheme();
+
+            // If the theme is not null, apply it
+            if (themeFullName != null)
+            {
+                Type themeType = Type.GetType(themeFullName);
+                if (themeType != null && typeof(Theme).IsAssignableFrom(themeType))
+                {
+                    Theme theme = (Theme)Activator.CreateInstance(themeType);
+                    CurrentTheme = theme;
+                }
+            }
+            else
+            {
+                // Set default theme if no theme is found in the config
+                CurrentTheme = HotRodTheme.Instance;
+            }
+
             FooterVM = new FooterViewModel(this);
             HeaderVM = new HeaderViewModel(this);
             ControlPanelVM = new ControlPanelViewModel(this);
@@ -117,8 +146,6 @@ namespace ToucanUI.ViewModels
             ModlistVM = new ModlistViewModel(this);
             SidePanelVM = new SidePanelViewModel(this);
         }
-
-
 
 
 

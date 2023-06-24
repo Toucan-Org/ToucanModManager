@@ -81,11 +81,11 @@
       <DataGridTextColumn Header="Name" Binding="{Binding ModObject.Name}" Width="250" IsReadOnly="True"/>
       <DataGridTextColumn Header="Author" Binding="{Binding ModObject.Author}" Width="200" IsReadOnly="True"/>
       <DataGridTextColumn Header="Game Version" Binding="{Binding SelectedVersionViewModel.VersionObject.GameVersion}" IsReadOnly="True"/>
-      <DataGridTextColumn Header="Mod Version" Binding="{Binding SelectedVersionViewModel.VersionObject.FriendlyVersion}" IsReadOnly="True"/>      
+      <DataGridTextColumn Header="Downloads" Binding="{Binding ModObject.Downloads}" IsReadOnly="True"/>  
       <DataGridTextColumn Header="Description" Binding="{Binding ModObject.Description}" Width="500" IsReadOnly="True"/>
-      <DataGridTextColumn Header="Downloads" Binding="{Binding ModObject.Downloads}" IsReadOnly="True"/>
       <DataGridTextColumn Header="Download Size" Binding="{Binding SelectedVersionViewModel.DownloadSizeDisplay}"
                           SortMemberPath="SelectedVersionViewModel.DownloadSize" IsReadOnly="True"/>
+      <DataGridTextColumn Header="Mod Version" Binding="{Binding SelectedVersionViewModel.VersionObject.FriendlyVersion}" IsReadOnly="True"/>
       <DataGridTextColumn Header="Followers" Binding="{Binding ModObject.Followers}" IsReadOnly="True"/>
       <DataGridTextColumn Header="License" Binding="{Binding ModObject.License}" IsReadOnly="True"/>
     </DataGrid.Columns>

@@ -14,6 +14,7 @@ using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading.Tasks;
 using ToucanUI.Services;
+using ToucanUI.Themes;
 
 namespace ToucanUI.ViewModels
 {
@@ -55,7 +56,7 @@ namespace ToucanUI.ViewModels
         public ReactiveCommand<Unit, Unit> ViewConfigFileCommand { get; }
 
         // View
-
+        public ReactiveCommand<Theme, Unit> ChangeThemeCommand { get; }
 
         // Help
         public ReactiveCommand<Unit, Unit> ToucanUpdateCheckCommand { get; }
@@ -83,6 +84,8 @@ namespace ToucanUI.ViewModels
             ClearConfigFileCommand = ReactiveCommand.Create(ClearConfigFile);
             ViewConfigFileCommand = ReactiveCommand.Create(ViewConfigFile);
 
+            ChangeThemeCommand = ReactiveCommand.Create<Theme>(ChangeTheme);
+
             LaunchCommand = ReactiveCommand.Create(LaunchApplication);
             RefreshModlistCommand = ReactiveCommand.Create(RefreshModlist);
             ExitCommand = ReactiveCommand.Create(ExitApplication);
@@ -93,6 +96,14 @@ namespace ToucanUI.ViewModels
         // =====================
         // METHODS
         // =====================
+
+        // Change theme based on user selection
+        private void ChangeTheme(Theme theme)
+        {
+            MainViewModel.CurrentTheme = theme;
+            _configManager.SetTheme(theme.GetType().FullName);
+
+        }
 
         // Get zip file for correct OS build
         private string GetOsSpecificZipSuffix()

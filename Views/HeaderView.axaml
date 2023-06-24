@@ -3,52 +3,20 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:views="clr-namespace:ToucanUI.Views"
+             xmlns:themes="clr-namespace:ToucanUI.Themes"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="200"
              x:Class="ToucanUI.Views.HeaderView">
+  
 
   <Panel>
+    
 
-      <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, 2*">
-          <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
-                ColumnDefinitions="Auto, *, Auto">
-
-
-            <Image Source="avares://Toucan/Assets/tmm_logo.png" Width="70" Height="70" Grid.Row="0"
-                  Grid.Column="0" HorizontalAlignment="Left"
-                  ToolTip.Tip="Toucan Mod Manager"/>
-
-            <!-- LAUNCH BUTTON -->
-
-            <Button x:Name="LaunchButton" FontSize="22" Width="220" Height="50"
-              Grid.Row="0" Grid.RowSpan="2" Grid.Column="3"
-              Foreground="#800F0E" FontFamily="{StaticResource Orbitron}"
-              FontWeight="SemiBold" Margin="15 5 15 0" Command="{Binding LaunchCommand}"
-              IsEnabled="{Binding MainViewModel.ValidGameFound}" Cursor="Hand" VerticalContentAlignment="Center">
-              <TextBlock Text="// LAUNCH //" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-              <Button.Styles>
-                <Style>
-                  <Style.Resources>
-                    <SolidColorBrush x:Key="ButtonBorderBrush">Transparent</SolidColorBrush>
-                    <SolidColorBrush x:Key="ButtonBackground">#C66000</SolidColorBrush>
-                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver">#ff7b00</SolidColorBrush>
-                    <SolidColorBrush x:Key="ButtonBackgroundPressed">#FFDD00</SolidColorBrush>
-                  </Style.Resources>
-                </Style>
-                <Style Selector="Button:pressed">
-                  <Setter Property="RenderTransform" Value="scale(0.8)" />
-                </Style>
-                <Style Selector="Button:pointerover">
-                  <Setter Property="RenderTransform" Value="scale(1.1)" />
-                </Style>
-              </Button.Styles>
-            </Button>
-
-          </Grid>
-
+      <Grid RowDefinitions="Auto" ColumnDefinitions="*, Auto, *">
 
         <!-- FILE/EDIT/HELP MENU -->
-        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0"
-                    Margin="15 5 20 0">
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0"
+                    HorizontalAlignment="Left" VerticalAlignment="Center"
+                    Margin="15 5">
           <Menu>
 
             <MenuItem Header="File" Foreground="White">
@@ -87,6 +55,49 @@
 
           <Menu>
             <MenuItem Header="View" Foreground="White">
+
+              <MenuItem Header="Set Theme">
+                <MenuItem Header="Hot Rod"
+                          Command="{Binding ChangeThemeCommand}"
+                          CommandParameter="{x:Static themes:HotRodTheme.Instance}"
+                          Foreground="Orange"/>
+                
+                <MenuItem Header="Celestial"
+                          Command="{Binding ChangeThemeCommand}"
+                          CommandParameter="{x:Static themes:CelestialTheme.Instance}"
+                          Foreground="Magenta"/>
+
+                <MenuItem Header="Mango Tango"
+                          Command="{Binding ChangeThemeCommand}"
+                          CommandParameter="{x:Static themes:SherbertTheme.Instance}"
+                          Foreground="Yellow"/>
+
+                <MenuItem Header="Cool Sky"
+                          Command="{Binding ChangeThemeCommand}"
+                          CommandParameter="{x:Static themes:CoolSkyTheme.Instance}"
+                          Foreground="LightBlue"/>
+
+                <MenuItem Header="Electric Blue"
+                          Command="{Binding ChangeThemeCommand}"
+                          CommandParameter="{x:Static themes:ElectricBlueTheme.Instance}"
+                          Foreground="DodgerBlue"/>
+
+                <MenuItem Header="Green Mint"
+                          Command="{Binding ChangeThemeCommand}"
+                          CommandParameter="{x:Static themes:GreenMintTheme.Instance}"
+                          Foreground="GreenYellow"/>
+
+                <MenuItem Header="Netflix"
+                          Command="{Binding ChangeThemeCommand}"
+                          CommandParameter="{x:Static themes:NetflixTheme.Instance}"
+                          Foreground="Red"/>
+
+                <MenuItem Header="Deep Space"
+                          Command="{Binding ChangeThemeCommand}"
+                          CommandParameter="{x:Static themes:DeepSpaceTheme.Instance}"
+                          Foreground="White"/>
+              </MenuItem>
+
               <MenuItem Header="Toggle List View"
                         Command="{Binding MainViewModel.ModlistVM.ToggleViewCommand}"/>
 
@@ -104,8 +115,38 @@
 
         </StackPanel>
 
-        <views:ControlPanelView x:Name="ControlPanelViewControl" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right"
-                                DataContext="{Binding MainViewModel.ControlPanelVM}"/>
+        <!-- Control Panel View -->
+        <views:ControlPanelView x:Name="ControlPanelViewControl" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center"
+                                DataContext="{Binding MainViewModel.ControlPanelVM}" VerticalAlignment="Center" Margin="15 5"/>
+
+
+        <!-- LAUNCH BUTTON -->
+
+        <!-- Orange -->
+        <Button x:Name="LaunchButton" FontSize="20" 
+                Grid.Row="0" Grid.Column="2" Width="200" Height="40"
+                FontFamily="{StaticResource Orbitron}" Margin="15 5"
+                FontWeight="SemiBold" Command="{Binding LaunchCommand}"
+                IsEnabled="{Binding MainViewModel.ValidGameFound}" Cursor="Hand" VerticalContentAlignment="Center" HorizontalAlignment="Right">
+          <TextBlock Text="// LAUNCH //" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          <Button.Styles>
+            <Style>
+              <Style.Resources>
+                <SolidColorBrush x:Key="ButtonForeground" Color="{Binding MainViewModel.CurrentTheme.ButtonForeground.Color}" />
+                <SolidColorBrush x:Key="ButtonBorderBrush" Color="{Binding MainViewModel.CurrentTheme.ButtonBorderBrush.Color}" />
+                <SolidColorBrush x:Key="ButtonBackground" Color="{Binding MainViewModel.CurrentTheme.ButtonBackground.Color}" />
+                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{Binding MainViewModel.CurrentTheme.ButtonBackgroundPointerOver.Color}" />
+                <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="{Binding MainViewModel.CurrentTheme.ButtonBackgroundPressed.Color}" />
+              </Style.Resources>
+            </Style>
+            <Style Selector="Button:pressed">
+              <Setter Property="RenderTransform" Value="scale(0.8)" />
+            </Style>
+            <Style Selector="Button:pointerover">
+              <Setter Property="RenderTransform" Value="scale(1.1)" />
+            </Style>
+          </Button.Styles>
+        </Button>
         
 
       </Grid>
