@@ -217,6 +217,44 @@ namespace ToucanUI.Services
             // Save the updated config back to the file
             parser.WriteFile(_configFilePath, data);
         }
+
+        // Used to retrieve Theme
+        public string GetTheme()
+        {
+            var parser = new FileIniDataParser();
+
+            if (!File.Exists(_configFilePath))
+            {
+                return null;
+            }
+
+            // Load the data from the config file
+            IniData data = parser.ReadFile(_configFilePath);
+
+            // Return the theme from the config, or null if it doesn't exist
+            return data["UI"]["Theme"] ?? null;
+        }
+
+        // Used to set the theme in the config
+        public void SetTheme(string theme)
+        {
+            var parser = new FileIniDataParser();
+
+            if (!File.Exists(_configFilePath))
+            {
+                return;
+            }
+
+            // Load the data from the config file
+            IniData data = parser.ReadFile(_configFilePath);
+
+            // Update the theme in the config
+            data["UI"]["Theme"] = theme;
+
+            // Save the updated config back to the file
+            parser.WriteFile(_configFilePath, data);
+        }
+
     }
 
 }
