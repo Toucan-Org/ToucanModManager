@@ -22,7 +22,7 @@ namespace ToucanUI.Services
 
             if (string.IsNullOrEmpty(ksp2Path))
             {
-                Console.WriteLine($"[ERROR] Could not find KSP2 executable!");
+                Trace.WriteLine($"[ERROR] Could not find KSP2 executable!");
                 return ("", "");
             }
 
@@ -120,7 +120,7 @@ namespace ToucanUI.Services
                     {
                         if (Path.GetFileNameWithoutExtension(file) == fileName)
                         {
-                            Console.WriteLine($"[INFO] Found KSP2!");
+                            Trace.WriteLine($"[INFO] Found KSP2!");
                             return file;
                         }
                     }
@@ -128,7 +128,7 @@ namespace ToucanUI.Services
 
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[ERROR] {ex.Message}");
+                    Trace.WriteLine($"[ERROR] {ex.Message}");
                 }
 
             }
@@ -162,7 +162,7 @@ namespace ToucanUI.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[ERROR]: {ex}");
+                Trace.WriteLine($"[ERROR]: {ex}");
                 return "";
             }
         }
