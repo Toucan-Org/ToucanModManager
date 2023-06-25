@@ -93,7 +93,6 @@ namespace ToucanUI.Models.KSP2
 
             try
             {
-                //Debug.WriteLine($"Getting download size for {VersionObject.FriendlyVersion}");
                 var request = new HttpRequestMessage(HttpMethod.Head, downloadUrl);
                 var response = await httpClient.SendAsync(request);
 

@@ -31,9 +31,10 @@ namespace ToucanUI.Services
                 {
                     Directory.CreateDirectory(dataFolderPath);
                 }
-                catch
+                catch(Exception ex) 
                 {
-                    Debug.WriteLine($"Error creating directory for {configFileName}!");
+                    Console.WriteLine($"[ERROR] Could not create directory for {configFileName}!");
+                    Console.WriteLine(ex.Message);
                 }
 
             }

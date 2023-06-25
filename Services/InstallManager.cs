@@ -50,7 +50,6 @@ namespace ToucanUI.Services
                     PluginsLocation = Path.Combine(KSProot, "BepInEx", "plugins");
                     BepinExLocation = Path.Combine(KSProot, "BepInEx");
 
-                    Debug.WriteLine(PluginsLocation);
                 }
                 else
                 {
@@ -62,7 +61,7 @@ namespace ToucanUI.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                Console.WriteLine(ex.Message);
             }
         }
 
@@ -96,15 +95,15 @@ namespace ToucanUI.Services
                 }
                 catch (JsonException ex)
                 {
-                    Debug.WriteLine($"JSON deserialization error: {ex.Message}");
+                    Console.WriteLine($"[ERROR] JSON deserialization error: {ex.Message}");
                 }
                 catch (InvalidOperationException ex)
                 {
-                    Debug.WriteLine($"Invalid operation error: {ex.Message}");
+                    Console.WriteLine($"[ERROR] Invalid operation error: {ex.Message}");
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Unexpected error: {ex.Message}");
+                    Console.WriteLine($"[ERROR] Unexpected error: {ex.Message}");
                 }
             }
 
@@ -130,7 +129,7 @@ namespace ToucanUI.Services
 
             catch (Exception e) 
             {
-                Debug.WriteLine(e.Message);
+                Console.WriteLine(e.Message);
             }
             
         }
@@ -145,12 +144,12 @@ namespace ToucanUI.Services
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
-                    Debug.WriteLine("Creating Directory");
+                    Console.WriteLine($"[INFO] Creating InstalledMods directory in {path}");
                 }
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Process Failed");
+                Console.WriteLine($"[ERROR] {e.Message}");
             }
 
             //if (!File.Exists(fileName))
@@ -160,7 +159,6 @@ namespace ToucanUI.Services
                 using (var client = new HttpClient())
                 {
                     // Download the file asynchronously
-                    Debug.WriteLine(mod.GetLatestVersion().DownloadPath);
                     using (HttpResponseMessage response = await client.GetAsync(new Uri(mod.SelectedVersionViewModel.VersionObject.DownloadPath), HttpCompletionOption.ResponseHeadersRead, cancellationToken))
                     using (Stream streamToReadFrom = await response.Content.ReadAsStreamAsync())
                     using (Stream streamToWriteTo = File.Open(fileName, FileMode.Create))
@@ -212,8 +210,7 @@ namespace ToucanUI.Services
             catch (Exception e)
             {
                 mod.ModState = ModViewModel.ModStateEnum.NotInstalled;
-                Debug.WriteLine("Download Failed");
-                Debug.WriteLine(e);
+                Console.WriteLine($"[ERROR] Download Failed! {e.Message}");
                 tcs.TrySetException(e);
             }
         }
@@ -248,7 +245,7 @@ namespace ToucanUI.Services
 
             catch (Exception e)
             {
-                Debug.WriteLine(e.Message);
+                Console.WriteLine(e.Message);
             }
 
         }
@@ -264,7 +261,7 @@ namespace ToucanUI.Services
                 string modFolderPath = Path.Combine(PluginsLocation, mod.ModObject.Name);
                 if (!modFolderPath.Equals(BepinExLocation, StringComparison.OrdinalIgnoreCase) && !modFolderPath.Equals(PluginsLocation, StringComparison.OrdinalIgnoreCase))
                 {
-                     Debug.WriteLine($"Deleting: {modFolderPath}");
+                    Console.WriteLine($"[INFO] Deleting: {modFolderPath}");
                     Directory.Delete(modFolderPath, true);
                     // Remove the uninstalled mod from the list and update the JSON file
                     isDeleted = true;
@@ -272,7 +269,7 @@ namespace ToucanUI.Services
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Failed to delete mod directory");
+                Console.WriteLine($"[ERROR] Failed to delete mod directory! {e.Message}");
             }
 
             // Use manifest to delete mod
@@ -295,27 +292,27 @@ namespace ToucanUI.Services
 
                             if (File.Exists(filePath))
                             {
-                                Debug.WriteLine($"Deleting file: {filePath}");
+                                Console.WriteLine($"[INFO] Deleting file: {filePath}");
                                 File.Delete(filePath);
                             }
                             if (Directory.Exists(filePath))
                             {
-                                Debug.WriteLine($"Deleting directory: {filePath}");
+                                Console.WriteLine($"[INFO] Deleting directory: {filePath}");
                                 Directory.Delete(filePath, true);
                             }
 
                             isDeleted = true; // If this point is reached, consider the deletion successful even if some files fail to delete
                         }
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        Debug.WriteLine($"Error: {file}");
+                        Console.WriteLine($"[ERROR] {file}:{ex.Message}");
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                Debug.WriteLine("Failed to delete using manifest");
+                Console.WriteLine($"[ERROR] Failed to delete using manifest! {ex.Message}");
             }
 
             try
@@ -332,7 +329,7 @@ namespace ToucanUI.Services
 
             catch (Exception e)
             {
-                Debug.WriteLine($"{e.Message}");
+                Console.WriteLine($"[ERROR] {e.Message}");
             }
 
             return isDeleted;
@@ -357,8 +354,6 @@ namespace ToucanUI.Services
                         foreach (ZipArchiveEntry entry in archive.Entries)
 
                         {
-                            //Debug.WriteLine(entry.FullName);
-                           // outputFile.WriteLine(entry.FullName.Replace('/', '\\')); //replace the / with \ for valid windows path. NOTE - this breaks linux systems
                             outputFile.WriteLine(entry.FullName.Replace('/', Path.DirectorySeparatorChar)); // This should work cross-platform
 
                         }
@@ -367,10 +362,10 @@ namespace ToucanUI.Services
                 }
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
 
-                Debug.WriteLine("Error creating manifest");
+                Console.WriteLine($"[ERROR] Could not create manifest! {ex.Message}");
 
             }
 
@@ -398,7 +393,7 @@ namespace ToucanUI.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error checking BepInEx: {ex.Message}");
+                Console.WriteLine($"[ERROR] Could not check for BepInEx: {ex.Message}");
                 return BepInExStatusEnum.Error;
             }
         }
@@ -444,7 +439,7 @@ namespace ToucanUI.Services
                 using (var client = new HttpClient())
                 {
                     string bepinexZipPath = System.IO.Path.Combine(KSProot, "BepInEx.zip");
-                    Debug.WriteLine("Downloading BepInEx");
+                    Console.WriteLine($"[INFO] Downloading & Installing BepInEx!");
 
                     // Create an instance of ModViewModel with the BepInExMod
                     var bepinexViewModel = new ModViewModel(await api.GetMod(BepinexId));
@@ -459,7 +454,7 @@ namespace ToucanUI.Services
                     }
 
                     // Extract to directory
-                    Debug.WriteLine($"Extracting files from {bepinexZipPath} to {KSProot}");
+                    Console.WriteLine($"[INFO] Extracting files from {bepinexZipPath} to {KSProot}");
                     await Task.Run(() => ZipFile.ExtractToDirectory(bepinexZipPath, KSProot, overwriteFiles: true));
 
                     // Also need to Install UITK which is a dependency for BepInEx
@@ -479,19 +474,18 @@ namespace ToucanUI.Services
                     modList.Add(UiTKMod);
 
                     // Delete zip
-                    Debug.WriteLine("Removing zip file");
                     File.Delete(bepinexZipPath);
 
                     await UiTKtcs.Task; // Wait for the UiTK mod to be downloaded and installed
                     modlistViewModel.FetchState = ModlistViewModel.FetchStateEnum.Success;
                     modlistViewModel.FetchingMessage = "";
-                    Debug.WriteLine($"Completed with no issues!");
+                    Console.WriteLine($"[INFO] Completed with no issues!");
 
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"{ex.Message}");
+                Console.WriteLine($"[ERROR] {ex.Message}");
                 modlistViewModel.FetchState = ModlistViewModel.FetchStateEnum.Failed;
                 modlistViewModel.FetchingMessage = $"Error: {ex.Message}";
             }
