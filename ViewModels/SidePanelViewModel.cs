@@ -51,7 +51,7 @@ namespace ToucanUI.ViewModels
                 }
                 catch (System.InvalidOperationException)
                 {
-                    Debug.WriteLine("No Website was found in SelectedMod!");
+                    Console.WriteLine("[WARNING] No Website was found in SelectedMod!");
                 }
 
 

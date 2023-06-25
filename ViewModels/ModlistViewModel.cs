@@ -31,7 +31,7 @@ namespace ToucanUI.ViewModels
         // SERVICES
         // =====================
         SpacedockAPI api = new SpacedockAPI();
-        private readonly ConfigurationManager _configManager;
+
         public InstallManager Installer => MainViewModel.installer;
 
 
@@ -55,7 +55,6 @@ namespace ToucanUI.ViewModels
                 MainViewModel.SelectedMod = null;
                 MainViewModel.SidePanelVM.SidePanelVisible = false;
 
-                Debug.WriteLine(Category.ToString());
                 // Fetch mods with the new category
                 FetchMods(Category);
             }
@@ -71,6 +70,7 @@ namespace ToucanUI.ViewModels
         // List of mods selected via checkbox for bulk actions
         public SourceList<ModViewModel> SelectedBulkMods { get; set; }
         public ReadOnlyObservableCollection<ModViewModel> SelectedBulkModsReadOnly { get; private set; }
+
 
         public enum FetchStateEnum
         {
@@ -245,6 +245,7 @@ namespace ToucanUI.ViewModels
 
             var observableSearchFilter = this.WhenAnyValue(viewModel => viewModel.SearchText).Select(SearchName);
             var InstalledFilter = this.WhenAnyValue(x => x.MainViewModel.ControlPanelVM.FilterInstalled).Select(SetInstalledFilter);
+            var NotInstalledFilter = this.WhenAnyValue(x => x.MainViewModel.ControlPanelVM.FilterNotInstalled).Select(SetNotInstalledFilter);
             var VersionFilter = this.WhenAnyValue(x => x.MainViewModel.ControlPanelVM.FilterVersion).Select(SetVersionFilter);
             var UpdateAvailableFilter = this.WhenAnyValue(x => x.MainViewModel.ControlPanelVM.FilterUpdateAvailable).Select(SetUpdateAvailableFilter);
 
@@ -254,6 +255,7 @@ namespace ToucanUI.ViewModels
                 .Sort(SortExpressionComparer<ModViewModel>.Ascending(x => x.ModObject.Name))
                 .Filter(observableSearchFilter)
                 .Filter(InstalledFilter)
+                .Filter(NotInstalledFilter)
                 .Filter(VersionFilter)
                 .Filter(UpdateAvailableFilter)
                 .AsObservableList();
@@ -285,9 +287,9 @@ namespace ToucanUI.ViewModels
         }
 
         // Set the IsInstalled filter on or off
-        private Func<ModViewModel, bool> SetInstalledFilter(bool isOn)
+        private Func<ModViewModel, bool> SetInstalledFilter(bool isInstalledFilterOn)
         {
-            if (isOn)
+            if (isInstalledFilterOn)
             {
                 return Mod => Mod.ModState == ModViewModel.ModStateEnum.Installed;
             }
@@ -296,6 +298,19 @@ namespace ToucanUI.ViewModels
                 return Mod => true;
             }
         }
+
+        private Func<ModViewModel, bool> SetNotInstalledFilter(bool isNotInstalledFilterOn)
+        {
+            if (isNotInstalledFilterOn)
+            {
+                return Mod => Mod.ModState == ModViewModel.ModStateEnum.NotInstalled;
+            }
+            else
+            {
+                return Mod => true;
+            }
+        }
+
 
         // Set the compatible version filter on/off
         private Func<ModViewModel, bool> SetVersionFilter(bool isOn)
@@ -378,14 +393,13 @@ namespace ToucanUI.ViewModels
 
                     // If the mod is BepInEx then ignore it as it should already be installed (we dont need to show it to the user anymore)
                     // This can be updated in future so we can show the user if they have the latest version of BepInEx installed
-                    if (mod.Id == 3255)
+                    if (mod.Id == 3255 || mod.Id == 3277)
                     {
-                        Debug.WriteLine($"Skipping {mod.Name} [{mod.Id}]");
+                        Console.WriteLine($"[INFO] Skipping {mod.Name} [{mod.Id}]");
                         continue;
                     }
 
                     ModList.Add(modViewModel);
-                    //Debug.WriteLine($"Added {mod.Name} [{mod.Id}]");
 
                     // Subscribe to IsSelectedBulk changes
                     modViewModel
@@ -403,7 +417,7 @@ namespace ToucanUI.ViewModels
 
                             //if (SelectedBulkMods.Count > 0)
                             //{
-                            //    Debug.WriteLine($"Checked mods: {string.Join(", ", SelectedBulkMods.Items.Select(m => m.ModObject.Name))}");
+                            //    Console.WriteLine($"Checked mods: {string.Join(", ", SelectedBulkMods.Items.Select(m => m.ModObject.Name))}");
                             //}
 
 
@@ -415,6 +429,7 @@ namespace ToucanUI.ViewModels
                 ObservableCollection<ModViewModel> installedModViewModels = new ObservableCollection<ModViewModel>(installedMods.Select(mod => new ModViewModel(mod)));
 
                 MarkInstalledMods(ModList, installedModViewModels);
+
 
 
             });
@@ -485,7 +500,7 @@ namespace ToucanUI.ViewModels
                     if (onlineMod.GetLatestVersion().Created > onlineMod.SelectedVersionViewModel.VersionObject.Created)
                     {
                         // Notify the user about the version mismatch
-                        Debug.WriteLine($"Mod {onlineMod.ModObject.Name} is not up to date. Installed version: {onlineMod.SelectedVersionViewModel.VersionObject.FriendlyVersion}, Latest version: {onlineMod.GetLatestVersion().FriendlyVersion}");
+                        Console.WriteLine($"[INFO] Mod {onlineMod.ModObject.Name} is not up to date. Installed version: {onlineMod.SelectedVersionViewModel.VersionObject.FriendlyVersion}, Latest version: {onlineMod.GetLatestVersion().FriendlyVersion}");
                         onlineMod.IsUpdateAvailable = true;
                     }
                     else
@@ -503,9 +518,11 @@ namespace ToucanUI.ViewModels
 
             if (Installer == null)
             {
-                Debug.WriteLine("Installer is null!");
+                Console.WriteLine("[WARNING] Installer is null!");
                 return Task.CompletedTask;
             }
+
+            Console.WriteLine($"[INFO] Installing {mod.ModObject.Name}!");
 
             mod.ModState = ModViewModel.ModStateEnum.Downloading;
             mod.Progress = 0;
@@ -521,6 +538,7 @@ namespace ToucanUI.ViewModels
 
                 if (mod.ModState != ModViewModel.ModStateEnum.Installed)
                 {
+                    Console.WriteLine($"[INFO] Cancelling {mod.ModObject.Name}!");
                     mod.Progress = 0;
                 }
                 mod.IsModifiable = true;
@@ -534,6 +552,7 @@ namespace ToucanUI.ViewModels
                 {
                     if (t.IsCompletedSuccessfully)
                     {
+                        Console.WriteLine($"[INFO] Installed {mod.ModObject.Name}!");
                         onSuccess?.Invoke();
                     }
                 });
@@ -541,7 +560,7 @@ namespace ToucanUI.ViewModels
 
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                Console.WriteLine($"[ERROR] {ex}");
             }
 
             return tcs.Task;
@@ -553,6 +572,7 @@ namespace ToucanUI.ViewModels
             {
                 return;
             }
+            Console.WriteLine($"[INFO] Updating {mod.ModObject.Name}!");
 
             // Delete the current mod
             UninstallModAndSetState(mod);
@@ -851,7 +871,7 @@ namespace ToucanUI.ViewModels
                 mod.ModState = ModViewModel.ModStateEnum.NotInstalled;
                 mod.Progress = 0;
                 mod.IsModifiable = true;
-                Debug.WriteLine("Mod deleted successfully");
+                Console.WriteLine($"[INFO] {mod.ModObject.Name} deleted successfully!");
             }
         }
 
