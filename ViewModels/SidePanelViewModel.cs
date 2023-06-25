@@ -1,4 +1,5 @@
 ﻿using ReactiveUI;
+using System;
 using System.Diagnostics;
 using System.Windows.Input;
 
@@ -51,7 +52,7 @@ namespace ToucanUI.ViewModels
                 }
                 catch (System.InvalidOperationException)
                 {
-                    Console.WriteLine("[WARNING] No Website was found in SelectedMod!");
+                    Trace.WriteLine("[WARNING] No Website was found in SelectedMod!");
                 }
 
 

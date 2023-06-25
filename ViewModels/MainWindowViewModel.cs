@@ -116,7 +116,7 @@ namespace ToucanUI.ViewModels
         // =====================
         public MainWindowViewModel()
         {
-            Console.WriteLine($"\n[INIT] Initialising Toucan: {DateTime.Now}");
+            Trace.WriteLine($"\n[INIT] Initialising Toucan: {DateTime.Now}");
             // Get the theme from the config
             string themeFullName = configManager.GetTheme();
 
@@ -179,13 +179,13 @@ namespace ToucanUI.ViewModels
                 {
                     // If it's already installed, set ValidGameFound
                     case BepInExStatusEnum.Installed:
-                        Console.WriteLine("[INFO] BepInEx is installed");
+                        Trace.WriteLine("[INFO] BepInEx is installed");
                         ValidGameFound = true;
                         break;
 
                     // Else install it
                     case BepInExStatusEnum.NotInstalled:
-                        Console.WriteLine("[WARNING] BepInEx is not installed");
+                        Trace.WriteLine("[WARNING] BepInEx is not installed");
                         bool bepInExInstalled = await installer.BepInExStatusBox(ModlistVM);
                         if (bepInExInstalled)
                         {
@@ -200,12 +200,12 @@ namespace ToucanUI.ViewModels
                         break;
 
                     case BepInExStatusEnum.Error:
-                        Console.WriteLine("[ERROR] Error checking BepInEx");
+                        Trace.WriteLine("[ERROR] Error checking BepInEx");
                         ValidGameFound = false;
                         break;
 
                     default:
-                        Console.WriteLine("[ERROR] Unexpected BepInEx status");
+                        Trace.WriteLine("[ERROR] Unexpected BepInEx status");
                         ValidGameFound = false;
                         break;
                 }
@@ -239,11 +239,11 @@ namespace ToucanUI.ViewModels
                         configManager.SetGameVersion(gameVersion);
                         configManager.SetGamePath(detectedGameExePath);
 
-                        Console.WriteLine($"[INFO] Updated game version to {gameVersion}: {detectedGameExePath}");
+                        Trace.WriteLine($"[INFO] Updated game version to {gameVersion}: {detectedGameExePath}");
                     }
                     else
                     {
-                        Console.WriteLine($"[INFO] Initialized {gameVersion}: {detectedGameExePath}");
+                        Trace.WriteLine($"[INFO] Initialized {gameVersion}: {detectedGameExePath}");
                     }
                 }
             }
@@ -260,7 +260,7 @@ namespace ToucanUI.ViewModels
 
                 if (File.Exists(gamePath))
                 {
-                    Console.WriteLine($"[INFO] Config GamePath found: {gamePath}");
+                    Trace.WriteLine($"[INFO] Config GamePath found: {gamePath}");
                     return true;
                 }
             }

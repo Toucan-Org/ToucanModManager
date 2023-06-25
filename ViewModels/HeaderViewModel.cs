@@ -150,7 +150,7 @@ namespace ToucanUI.ViewModels
 
                         if (!string.Equals(latestReleaseTagName, MainViewModel.FooterVM.ToucanVersion, StringComparison.OrdinalIgnoreCase))
                         {
-                            Console.WriteLine($"[INFO] Update {latestReleaseTagName} available! (Currently on {MainViewModel.FooterVM.ToucanVersion}");
+                            Trace.WriteLine($"[INFO] Update {latestReleaseTagName} available! (Currently on {MainViewModel.FooterVM.ToucanVersion}");
                             var messageBoxStandardWindow = MessageBox.Avalonia.MessageBoxManager.GetMessageBoxStandardWindow(
                                 new MessageBoxStandardParams
                                 {
@@ -178,7 +178,7 @@ namespace ToucanUI.ViewModels
                                             if (assetElement.TryGetProperty("browser_download_url", out JsonElement downloadUrlElement))
                                             {
                                                 browserDownloadUrl = downloadUrlElement.GetString();
-                                                Console.WriteLine($"[INFO] Downloading update from: {browserDownloadUrl}");
+                                                Trace.WriteLine($"[INFO] Downloading update from: {browserDownloadUrl}");
                                                 break;
                                             }
                                         }
@@ -194,7 +194,7 @@ namespace ToucanUI.ViewModels
                                 }
                                 else
                                 {
-                                    Console.WriteLine("[WARNING] Zip asset not found or browser_download_url not found");
+                                    Trace.WriteLine("[WARNING] Zip asset not found or browser_download_url not found");
                                 }
                             }
                         }
@@ -202,14 +202,14 @@ namespace ToucanUI.ViewModels
 
                     else
                     {
-                        Console.WriteLine("[ERROR] tag_name property not found in the JSON response");
+                        Trace.WriteLine("[ERROR] tag_name property not found in the JSON response");
                     }
             }
 
             catch (HttpRequestException ex)
             {
                 // Error connecting to GitHub or retrieving the release information
-                Console.WriteLine($"[ERROR] Something went wrong retrieving Toucan Update: {ex.Message}");
+                Trace.WriteLine($"[ERROR] Something went wrong retrieving Toucan Update: {ex.Message}");
             }
 
         }
@@ -269,7 +269,7 @@ namespace ToucanUI.ViewModels
                 }
                 else
                 {
-                    Console.WriteLine("[ERROR] Unsupported OS for self updater!");
+                    Trace.WriteLine("[ERROR] Unsupported OS for self updater!");
                 }
 
                 // Close the Toucan application
@@ -280,7 +280,7 @@ namespace ToucanUI.ViewModels
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[ERROR]: {ex}");
+                Trace.WriteLine($"[ERROR]: {ex}");
             }
         }
 
@@ -310,7 +310,7 @@ namespace ToucanUI.ViewModels
             try
             {
                 string gamePath = _configManager.GetGamePath();
-                Console.WriteLine($"[INFO] Launching Application: {gamePath}");
+                Trace.WriteLine($"[INFO] Launching Application: {gamePath}");
                 DateTime launchTime = DateTime.Now;
 
                 // Launch the application 
@@ -342,7 +342,7 @@ namespace ToucanUI.ViewModels
 
             catch (Exception ex)
             {
-                Console.WriteLine($"[ERROR] {ex}");
+                Trace.WriteLine($"[ERROR] {ex}");
             }
 
         }
@@ -381,7 +381,7 @@ namespace ToucanUI.ViewModels
         public async Task ScanKSP2InstallLocations()
         {
             (string path, string version) = _ksp2Service.DetectGameVersion();
-            Console.WriteLine($"[INFO] Game Version is {version} at {path}");
+            Trace.WriteLine($"[INFO] Game Version is {version} at {path}");
 
             if (!string.IsNullOrEmpty(version))
             {
@@ -401,7 +401,7 @@ namespace ToucanUI.ViewModels
             {
                 // Search for the exe in that folder path
                 (string path, string version) = _ksp2Service.DetectGameVersion(folderPath);
-                Console.WriteLine($"[INFO] Game Version is {version} at {path}");
+                Trace.WriteLine($"[INFO] Game Version is {version} at {path}");
 
                 if (!string.IsNullOrEmpty(version))
                 {
@@ -434,7 +434,7 @@ namespace ToucanUI.ViewModels
         private async void ClearConfigFile()
         {
             // A dialog to ask if the user is sure they want to delete
-            Console.WriteLine("[INFO] Clearing config file...");
+            Trace.WriteLine("[INFO] Clearing config file...");
 
             await ShowConfirmClearConfigMessageBox();
 
@@ -542,7 +542,7 @@ namespace ToucanUI.ViewModels
             if (result == "Confirm")
             {
                 // Set the Game Install Path in config
-                Console.WriteLine("[INFO] Saving config file!");
+                Trace.WriteLine("[INFO] Saving config file!");
                 _configManager.SaveConfig(path, version);
 
             }

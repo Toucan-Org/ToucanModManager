@@ -33,8 +33,8 @@ namespace ToucanUI.Services
                 }
                 catch(Exception ex) 
                 {
-                    Console.WriteLine($"[ERROR] Could not create directory for {configFileName}!");
-                    Console.WriteLine(ex.Message);
+                    Trace.WriteLine($"[ERROR] Could not create directory for {configFileName}!");
+                    Trace.WriteLine(ex.Message);
                 }
 
             }
