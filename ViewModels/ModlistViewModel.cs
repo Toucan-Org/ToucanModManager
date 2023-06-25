@@ -395,7 +395,7 @@ namespace ToucanUI.ViewModels
                     // This can be updated in future so we can show the user if they have the latest version of BepInEx installed
                     if (mod.Id == 3255 || mod.Id == 3277)
                     {
-                        Console.WriteLine($"[INFO] Skipping {mod.Name} [{mod.Id}]");
+                        Trace.WriteLine($"[INFO] Skipping {mod.Name} [{mod.Id}]");
                         continue;
                     }
 
@@ -417,7 +417,7 @@ namespace ToucanUI.ViewModels
 
                             //if (SelectedBulkMods.Count > 0)
                             //{
-                            //    Console.WriteLine($"Checked mods: {string.Join(", ", SelectedBulkMods.Items.Select(m => m.ModObject.Name))}");
+                            //    Trace.WriteLine($"Checked mods: {string.Join(", ", SelectedBulkMods.Items.Select(m => m.ModObject.Name))}");
                             //}
 
 
@@ -500,7 +500,7 @@ namespace ToucanUI.ViewModels
                     if (onlineMod.GetLatestVersion().Created > onlineMod.SelectedVersionViewModel.VersionObject.Created)
                     {
                         // Notify the user about the version mismatch
-                        Console.WriteLine($"[INFO] Mod {onlineMod.ModObject.Name} is not up to date. Installed version: {onlineMod.SelectedVersionViewModel.VersionObject.FriendlyVersion}, Latest version: {onlineMod.GetLatestVersion().FriendlyVersion}");
+                        Trace.WriteLine($"[INFO] Mod {onlineMod.ModObject.Name} is not up to date. Installed version: {onlineMod.SelectedVersionViewModel.VersionObject.FriendlyVersion}, Latest version: {onlineMod.GetLatestVersion().FriendlyVersion}");
                         onlineMod.IsUpdateAvailable = true;
                     }
                     else
@@ -518,11 +518,11 @@ namespace ToucanUI.ViewModels
 
             if (Installer == null)
             {
-                Console.WriteLine("[WARNING] Installer is null!");
+                Trace.WriteLine("[WARNING] Installer is null!");
                 return Task.CompletedTask;
             }
 
-            Console.WriteLine($"[INFO] Installing {mod.ModObject.Name}!");
+            Trace.WriteLine($"[INFO] Installing {mod.ModObject.Name}!");
 
             mod.ModState = ModViewModel.ModStateEnum.Downloading;
             mod.Progress = 0;
@@ -538,7 +538,7 @@ namespace ToucanUI.ViewModels
 
                 if (mod.ModState != ModViewModel.ModStateEnum.Installed)
                 {
-                    Console.WriteLine($"[INFO] Cancelling {mod.ModObject.Name}!");
+                    Trace.WriteLine($"[INFO] Cancelling {mod.ModObject.Name}!");
                     mod.Progress = 0;
                 }
                 mod.IsModifiable = true;
@@ -552,7 +552,7 @@ namespace ToucanUI.ViewModels
                 {
                     if (t.IsCompletedSuccessfully)
                     {
-                        Console.WriteLine($"[INFO] Installed {mod.ModObject.Name}!");
+                        Trace.WriteLine($"[INFO] Installed {mod.ModObject.Name}!");
                         onSuccess?.Invoke();
                     }
                 });
@@ -560,7 +560,7 @@ namespace ToucanUI.ViewModels
 
             catch (Exception ex)
             {
-                Console.WriteLine($"[ERROR] {ex}");
+                Trace.WriteLine($"[ERROR] {ex}");
             }
 
             return tcs.Task;
@@ -572,7 +572,7 @@ namespace ToucanUI.ViewModels
             {
                 return;
             }
-            Console.WriteLine($"[INFO] Updating {mod.ModObject.Name}!");
+            Trace.WriteLine($"[INFO] Updating {mod.ModObject.Name}!");
 
             // Delete the current mod
             UninstallModAndSetState(mod);
@@ -871,7 +871,7 @@ namespace ToucanUI.ViewModels
                 mod.ModState = ModViewModel.ModStateEnum.NotInstalled;
                 mod.Progress = 0;
                 mod.IsModifiable = true;
-                Console.WriteLine($"[INFO] {mod.ModObject.Name} deleted successfully!");
+                Trace.WriteLine($"[INFO] {mod.ModObject.Name} deleted successfully!");
             }
         }
 
