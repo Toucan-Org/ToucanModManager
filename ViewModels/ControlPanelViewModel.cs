@@ -32,6 +32,18 @@ namespace ToucanUI.ViewModels
 
         }
 
+        // Not instaleld filter
+        private bool _filterNotInstalled = false;
+        public bool FilterNotInstalled
+        {
+            get => _filterNotInstalled;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _filterNotInstalled, value);
+            }
+
+        }
+
         // Is compatible version filter
         private bool _filterVersion = false;
         public bool FilterVersion

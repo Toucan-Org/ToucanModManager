@@ -51,9 +51,9 @@ namespace ToucanUI.Services
             {
                 // Request mod data from the API using the provided id
                 var url = $"{MOD_URL}/{id}?{GAME_ID}";
-                //Debug.WriteLine($"Requesting mod data from {url}");
+                //Console.WriteLine($"Requesting mod data from {url}");
                 var response = await _client.GetAsync(url);
-                //Debug.WriteLine($"Response status code: {response.StatusCode}");
+                //Console.WriteLine($"Response status code: {response.StatusCode}");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -68,12 +68,12 @@ namespace ToucanUI.Services
                 }
                 else
                 {
-                    Debug.WriteLine($"Error retrieving mod data: {response.ReasonPhrase}");
+                    Console.WriteLine($"[ERROR] Unable to retrieve mod data: {response.ReasonPhrase}");
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error retrieving mod data: {ex.Message}");
+                Console.WriteLine($"[ERROR] Something went wrong while retrieving mod data: {ex.Message}");
             }
 
             return mod;
@@ -109,15 +109,15 @@ namespace ToucanUI.Services
             }
 
             var mods = new List<Mod>();
-            Debug.WriteLine($"Fetching mod data for category {category}");
+            Console.WriteLine($"[INFO] Fetching mod data for category {category}");
 
             try
             {
                 // Request mod data from the first URL
                 var url = $"{BROWSE_URL}{categoryString}?{GAME_ID}";
-                //Debug.WriteLine($"Requesting mod data from {url}");
+                //Console.WriteLine($"Requesting mod data from {url}");
                 var response = await _client.GetAsync(url);
-                Debug.WriteLine($"Response status code: {response.StatusCode}");
+                Console.WriteLine($"[INFO] Response status code: {response.StatusCode}");
                 var jsonString = await response.Content.ReadAsStringAsync();
 
                 // Parse the JSON data
@@ -135,16 +135,16 @@ namespace ToucanUI.Services
 
                         // Request mod data from the URL
                         url = $"{BROWSE_URL}{categoryString}?{GAME_ID}&page={currentPage}";
-                        //Debug.WriteLine($"Requesting mod data from {url} on page {currentPage}");
+                        //Console.WriteLine($"Requesting mod data from {url} on page {currentPage}");
                         response = await _client.GetAsync(url);
-                        //Debug.WriteLine($"Response status code: {response.StatusCode}");
+                        //Console.WriteLine($"Response status code: {response.StatusCode}");
                         jsonString = await response.Content.ReadAsStringAsync();
 
                         // Parse the mod data
                         var modData = ParseModData(jsonString);
                         mods.AddRange(modData);
 
-                        //Debug.WriteLine($"Finished retrieving {modData.Count} mods from page {currentPage}");
+                        //Console.WriteLine($"Finished retrieving {modData.Count} mods from page {currentPage}");
                     }
                 }
 
@@ -156,14 +156,14 @@ namespace ToucanUI.Services
 
 
 
-                Debug.WriteLine($"{mods.Count} mods retrieved!");
+                Console.WriteLine($"[INFO] {mods.Count} mods retrieved!");
 
                 mods = mods.OrderBy(mod => mod.Name).ToList();
             }
 
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error retrieving mod data: {ex.Message}");
+                Console.WriteLine($"[ERROR] Unable to retrieve mod data: {ex.Message}");
             }
 
             return mods;
@@ -180,7 +180,7 @@ namespace ToucanUI.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error pinging Spacedock: {ex.Message}");
+                Console.WriteLine($"[ERROR] Unable to ping Spacedock: {ex.Message}");
                 return false;
             }
         }
@@ -204,7 +204,7 @@ namespace ToucanUI.Services
                 }
                 else // If the JSON data is neither an array nor has a "results" property
                 {
-                    Debug.WriteLine($"Unexpected JSON data format: {jsonString}");
+                    Console.WriteLine($"[ERROR] Unexpected JSON data format: {jsonString}");
                     return mods;
                 }
 
@@ -217,13 +217,13 @@ namespace ToucanUI.Services
                     }
                     catch (Exception ex)
                     {
-                        Debug.WriteLine($"Error: {ex}");
+                        Console.WriteLine($"[ERROR]: {ex}");
                     }
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error parsing mod data: {ex.Message}");
+                Console.WriteLine($"[ERROR] Parsing mod data: {ex.Message}");
             }
 
             return mods;
