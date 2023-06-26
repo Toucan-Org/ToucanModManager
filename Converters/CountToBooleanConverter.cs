@@ -9,7 +9,7 @@ namespace ToucanUI.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
 
-            return (int)value > 1;
+            return (int)value > 0;
 
         }
 

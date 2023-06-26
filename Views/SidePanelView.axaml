@@ -6,8 +6,8 @@
              xmlns:controls="using:ToucanUI.Controls"
              mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="950"
              x:Class="ToucanUI.Views.SidePanelView"
-             Background="Transparent">  
-	
+             Background="Transparent">
+
 	<Border IsVisible="{Binding SidePanelVisible}" Background="#90181818"
           CornerRadius="15" Width="550">
 			<Grid RowDefinitions="Auto, Auto, Auto, *, Auto, Auto" 
@@ -90,14 +90,16 @@
           
           <!-- VERSIONS SUBMENU -->
           <TabItem Header="Versions" FontSize="18">
-              <DataGrid Items="{Binding MainViewModel.SelectedMod.VersionViewModels, Mode=OneWay}" AutoGenerateColumns="False" SelectionMode="Single"
+              <DataGrid Name="VersionDataGrid" Items="{Binding MainViewModel.SelectedMod.VersionViewModels, Mode=OneWay}" AutoGenerateColumns="False" SelectionMode="Single"
                         IsReadOnly="True" CanUserSortColumns="True" Margin="10" Background="Transparent" AlternatingRowBackground="#80303030"
-                        IsEnabled="{Binding MainViewModel.SelectedMod.IsModifiable}">
+                         >
                 <DataGrid.Columns>
-                  <DataGridTemplateColumn>
+                  <DataGridTemplateColumn >
                     <DataGridTemplateColumn.CellTemplate>
                       <DataTemplate>
-                        <RadioButton IsChecked="{Binding IsSelected}" GroupName="VersionGroup" HorizontalAlignment="Center"/>
+                        <RadioButton IsChecked="{Binding IsSelected}" GroupName="VersionGroup" 
+                                     HorizontalAlignment="Center"
+                                     IsEnabled="{Binding DataContext.MainViewModel.SelectedMod.IsModifiable, RelativeSource={RelativeSource AncestorType=DataGrid, AncestorLevel=1}}" />
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                   </DataGridTemplateColumn>

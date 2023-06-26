@@ -8,7 +8,7 @@ namespace ToucanUI.Themes
         public static HotRodTheme Instance { get; } = new HotRodTheme();
 
         // Title
-        public override SolidColorBrush TitleForeground => new SolidColorBrush(Colors.Black);
+        public override SolidColorBrush TitleForeground => new SolidColorBrush(Colors.White);
 
         // Button 
         public override SolidColorBrush ButtonForeground => new SolidColorBrush(Color.Parse("#800F0E"));
