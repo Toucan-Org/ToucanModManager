@@ -41,7 +41,7 @@
                   HorizontalAlignment="Left"/>
 
         <TextBlock FontSize="12" Foreground="{Binding CurrentTheme.TitleForeground}" Text="Toucan Mod Manager"
-                   FontFamily="{StaticResource Orbitron}" IsHitTestVisible="False"/>
+                   FontFamily="{StaticResource Orbitron}" IsHitTestVisible="False" FontWeight="SemiLight"/>
       </StackPanel>
 
 

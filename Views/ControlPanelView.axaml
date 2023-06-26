@@ -57,14 +57,13 @@
         <Menu Margin="5 0" BorderBrush="White" CornerRadius="5" BorderThickness="0.7"
               Cursor="Hand" Background="#90202020">
           <MenuItem Header="Filters">
+            <CheckBox x:Name="InstalledCheckBox" Content="Installed Mods" IsChecked="{Binding FilterInstalled}" Margin="10 0" />
+            <CheckBox x:Name="NotInstalledCheckBox" Content="Not Installed Mods" IsChecked="{Binding FilterNotInstalled}" Margin="10 0" />
             
-              <CheckBox Content="Installed Mods" IsChecked="{Binding FilterInstalled}" Margin="10 5" />
+            <Separator/>
                         
-              <CheckBox Content="Not Installed Mods" IsChecked="{Binding FilterNotInstalled}" Margin="10 5" />
-                        
-              <CheckBox Content="Compatible Mods" IsChecked="{Binding FilterVersion}" Margin="10 5" />
-                        
-              <CheckBox Content="Update Available" IsChecked="{Binding FilterUpdateAvailable}" Margin="10 5" />
+            <CheckBox Content="Compatible Mods" IsChecked="{Binding FilterVersion}" Margin="10 5" />     
+            <CheckBox Content="Update Available" IsChecked="{Binding FilterUpdateAvailable}" Margin="10 5" />
             
           </MenuItem>
         </Menu>
