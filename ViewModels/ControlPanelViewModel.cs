@@ -20,7 +20,7 @@ namespace ToucanUI.ViewModels
         // List to be used when filtering mods
         public ReadOnlyObservableCollection<Mod> filteredList;
 
-        // Is installed filter
+
         private bool _filterInstalled = false;
         public bool FilterInstalled
         {
@@ -28,11 +28,13 @@ namespace ToucanUI.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref _filterInstalled, value);
+                if (value)
+                {
+                    FilterNotInstalled = false;
+                }
             }
-
         }
 
-        // Not instaleld filter
         private bool _filterNotInstalled = false;
         public bool FilterNotInstalled
         {
@@ -40,9 +42,13 @@ namespace ToucanUI.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref _filterNotInstalled, value);
+                if (value)
+                {
+                    FilterInstalled = false;
+                }
             }
-
         }
+
 
         // Is compatible version filter
         private bool _filterVersion = false;

@@ -351,6 +351,11 @@ namespace ToucanUI.ViewModels
         {
             MainViewModel.SelectedMod = null;
             MainViewModel.SidePanelVM.SidePanelVisible = false;
+            MainViewModel.ControlPanelVM.FilterInstalled = false;
+            MainViewModel.ControlPanelVM.FilterNotInstalled = false;
+            MainViewModel.ControlPanelVM.FilterVersion = false;
+            MainViewModel.ControlPanelVM.FilterUpdateAvailable = false;
+
             await MainViewModel.ModlistVM.FetchMods(MainViewModel.ModlistVM.Category);
         }
 

@@ -39,7 +39,7 @@
           </Menu>
 
           <Menu>
-            <MenuItem Header="Edit" Foreground="White">
+            <MenuItem Header="Edit" Foreground="White" >
               <MenuItem Header="Set Game Directory"
                         Command="{Binding SetGameInstallPathCommand}"/>
               <MenuItem Header="Scan KSP2 Install Locations"
@@ -57,42 +57,42 @@
             <MenuItem Header="View" Foreground="White">
 
               <MenuItem Header="Set Theme">
-                <MenuItem Header="Hot Rod"
+                <RadioButton Content="Hot Rod" GroupName="ThemeGroup" IsChecked="True"
                           Command="{Binding ChangeThemeCommand}"
                           CommandParameter="{x:Static themes:HotRodTheme.Instance}"
                           Foreground="Orange"/>
-                
-                <MenuItem Header="Celestial"
+
+                <RadioButton Content="Celestial" GroupName="ThemeGroup"
                           Command="{Binding ChangeThemeCommand}"
                           CommandParameter="{x:Static themes:CelestialTheme.Instance}"
                           Foreground="Magenta"/>
 
-                <MenuItem Header="Mango Tango"
+                <RadioButton Content="Mango Tango" GroupName="ThemeGroup"
                           Command="{Binding ChangeThemeCommand}"
                           CommandParameter="{x:Static themes:SherbertTheme.Instance}"
                           Foreground="Yellow"/>
 
-                <MenuItem Header="Cool Sky"
+                <RadioButton Content="Cool Sky" GroupName="ThemeGroup"
                           Command="{Binding ChangeThemeCommand}"
                           CommandParameter="{x:Static themes:CoolSkyTheme.Instance}"
                           Foreground="LightBlue"/>
 
-                <MenuItem Header="Electric Blue"
+                <RadioButton Content="Electric Blue" GroupName="ThemeGroup"
                           Command="{Binding ChangeThemeCommand}"
                           CommandParameter="{x:Static themes:ElectricBlueTheme.Instance}"
                           Foreground="DodgerBlue"/>
 
-                <MenuItem Header="Green Mint"
+                <RadioButton Content="Green Mint" GroupName="ThemeGroup"
                           Command="{Binding ChangeThemeCommand}"
                           CommandParameter="{x:Static themes:GreenMintTheme.Instance}"
                           Foreground="GreenYellow"/>
 
-                <MenuItem Header="Netflix"
+                <RadioButton Content="Netflix" GroupName="ThemeGroup"
                           Command="{Binding ChangeThemeCommand}"
                           CommandParameter="{x:Static themes:NetflixTheme.Instance}"
                           Foreground="Red"/>
 
-                <MenuItem Header="Deep Space"
+                <RadioButton Content="Deep Space" GroupName="ThemeGroup"
                           Command="{Binding ChangeThemeCommand}"
                           CommandParameter="{x:Static themes:DeepSpaceTheme.Instance}"
                           Foreground="White"/>
