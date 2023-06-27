@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace ToucanUI.Themes
 {
-    public class ElectricBlueTheme : Theme
+    public class BlueOceanTheme : Theme
     {
-        public static ElectricBlueTheme Instance { get; } = new ElectricBlueTheme();
+        public static BlueOceanTheme Instance { get; } = new BlueOceanTheme();
 
         // Title
         public override SolidColorBrush TitleForeground => new SolidColorBrush(Colors.White);
@@ -27,15 +27,12 @@ namespace ToucanUI.Themes
 
         public override LinearGradientBrush BackgroundGradientBrush => new LinearGradientBrush
         {
-            StartPoint = new RelativePoint(0.5, 0.4, RelativeUnit.Relative),
+            StartPoint = new RelativePoint(0.5, 1, RelativeUnit.Relative),
             EndPoint = new RelativePoint(0.5, 0, RelativeUnit.Relative),
             GradientStops = new GradientStops
         {
-            new GradientStop(Color.Parse("#001A5656"), 0),
-            new GradientStop(Color.Parse("#FF1A4D73"), 0.5),
-            new GradientStop(Color.Parse("#FF2C3F90"), 0.7),
-            new GradientStop(Color.Parse("#FF3D31AD"), 0.9),
-            new GradientStop(Color.Parse("#FF4E23CA"), 1)
+            new GradientStop(Color.Parse("#00c6ff"), 0),
+            new GradientStop(Color.Parse("#0072ff"), 1)
         }
         };
     }

@@ -13,9 +13,9 @@ namespace ToucanUI.Themes
         // Button
         public override SolidColorBrush ButtonForeground => new SolidColorBrush(Color.Parse("#000000"));
         public override SolidColorBrush ButtonBorderBrush => new SolidColorBrush(Colors.Transparent);
-        public override SolidColorBrush ButtonBackground => new SolidColorBrush(Color.Parse("#1B3753"));
-        public override SolidColorBrush ButtonBackgroundPointerOver => new SolidColorBrush(Color.Parse("#387EC5"));
-        public override SolidColorBrush ButtonBackgroundPressed => new SolidColorBrush(Color.Parse("#48A4FF"));
+        public override SolidColorBrush ButtonBackground => new SolidColorBrush(Color.Parse("#737675"));
+        public override SolidColorBrush ButtonBackgroundPointerOver => new SolidColorBrush(Color.Parse("#BBBDBC"));
+        public override SolidColorBrush ButtonBackgroundPressed => new SolidColorBrush(Color.Parse("#D2D6D4"));
 
         // Background gradient
         public override SolidColorBrush GridBackground => new SolidColorBrush(Color.Parse("#101010"));

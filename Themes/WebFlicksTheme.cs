@@ -8,19 +8,19 @@ using System.Threading.Tasks;
 
 namespace ToucanUI.Themes
 {
-    public class CoolSkyTheme : Theme
+    public class WebFlicksTheme : Theme
     {
-        public static CoolSkyTheme Instance { get; } = new CoolSkyTheme();
+        public static WebFlicksTheme Instance { get; } = new WebFlicksTheme();
 
         // Title
-        public override SolidColorBrush TitleForeground => new SolidColorBrush(Colors.Black);
+        public override SolidColorBrush TitleForeground => new SolidColorBrush(Colors.White);
 
         // Button
-        public override SolidColorBrush ButtonForeground => new SolidColorBrush(Color.Parse("#000000"));
+        public override SolidColorBrush ButtonForeground => new SolidColorBrush(Color.Parse("#101010"));
         public override SolidColorBrush ButtonBorderBrush => new SolidColorBrush(Colors.Transparent);
-        public override SolidColorBrush ButtonBackground => new SolidColorBrush(Color.Parse("#0B486B"));
-        public override SolidColorBrush ButtonBackgroundPointerOver => new SolidColorBrush(Color.Parse("#3E90B7"));
-        public override SolidColorBrush ButtonBackgroundPressed => new SolidColorBrush(Color.Parse("#084C6F"));
+        public override SolidColorBrush ButtonBackground => new SolidColorBrush(Color.Parse("#8E0E00"));
+        public override SolidColorBrush ButtonBackgroundPointerOver => new SolidColorBrush(Color.Parse("#AD3315"));
+        public override SolidColorBrush ButtonBackgroundPressed => new SolidColorBrush(Color.Parse("#6A0A00"));
 
         // Background gradient
         public override SolidColorBrush GridBackground => new SolidColorBrush(Color.Parse("#101010"));
@@ -31,8 +31,8 @@ namespace ToucanUI.Themes
             EndPoint = new RelativePoint(0.5, 0, RelativeUnit.Relative),
             GradientStops = new GradientStops
         {
-            new GradientStop(Color.Parse("#2980b9"), 0),
-            new GradientStop(Color.Parse("#6dd5fa"), 1)
+            new GradientStop(Color.Parse("#FF8E0E00"), 0),
+            new GradientStop(Color.Parse("#FF1F1C18"), 1)
         }
         };
     }
