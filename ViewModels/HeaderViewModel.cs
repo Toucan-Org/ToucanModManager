@@ -187,7 +187,8 @@ namespace ToucanUI.ViewModels
 
 
 
-                                if (browserDownloadUrl != null)
+
+                            if (browserDownloadUrl != null)
                                 {
                                     // Pass the browserDownloadUrl to the UpdateToucan function
                                     UpdateToucan(browserDownloadUrl);
