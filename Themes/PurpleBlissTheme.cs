@@ -1,11 +1,11 @@
-﻿using Avalonia;
-using Avalonia.Media;
+﻿using Avalonia.Media;
+using Avalonia;
 
 namespace ToucanUI.Themes
 {
-    public class CelestialTheme : Theme
+    public class PurpleBlissTheme : Theme
     {
-        public static CelestialTheme Instance { get; } = new CelestialTheme();
+        public static PurpleBlissTheme Instance { get; } = new PurpleBlissTheme();
 
         // Title
         public override SolidColorBrush TitleForeground => new SolidColorBrush(Colors.White);
@@ -13,9 +13,9 @@ namespace ToucanUI.Themes
         // Button
         public override SolidColorBrush ButtonForeground => new SolidColorBrush(Color.Parse("#2C4C5A"));
         public override SolidColorBrush ButtonBorderBrush => new SolidColorBrush(Colors.Transparent);
-        public override SolidColorBrush ButtonBackground => new SolidColorBrush(Color.Parse("#C33764"));
-        public override SolidColorBrush ButtonBackgroundPointerOver => new SolidColorBrush(Color.Parse("#E94057"));
-        public override SolidColorBrush ButtonBackgroundPressed => new SolidColorBrush(Color.Parse("#AB2553"));
+        public override SolidColorBrush ButtonBackground => new SolidColorBrush(Color.Parse("#875AA1"));
+        public override SolidColorBrush ButtonBackgroundPointerOver => new SolidColorBrush(Color.Parse("#B67DD7"));
+        public override SolidColorBrush ButtonBackgroundPressed => new SolidColorBrush(Color.Parse("#B04CE9"));
 
         // Background gradient
         public override SolidColorBrush GridBackground => new SolidColorBrush(Color.Parse("#101010"));
@@ -26,10 +26,9 @@ namespace ToucanUI.Themes
             EndPoint = new RelativePoint(0.5, 0, RelativeUnit.Relative),
             GradientStops = new GradientStops
         {
-            new GradientStop(Color.Parse("#c33764"), 0),
-            new GradientStop(Color.Parse("#1d2671"), 1)
+            new GradientStop(Color.Parse("#360033"), 0),
+            new GradientStop(Color.Parse("#812BB3"), 1)
         }
         };
     }
-
 }

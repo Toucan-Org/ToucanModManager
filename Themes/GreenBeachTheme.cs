@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace ToucanUI.Themes
 {
-    public class SherbertTheme : Theme
+    public class GreenBeachTheme : Theme
     {
-        public static SherbertTheme Instance { get; } = new SherbertTheme();
+        public static GreenBeachTheme Instance { get; } = new GreenBeachTheme();
 
         // Title
         public override SolidColorBrush TitleForeground => new SolidColorBrush(Colors.Black);
@@ -18,9 +18,9 @@ namespace ToucanUI.Themes
         // Button
         public override SolidColorBrush ButtonForeground => new SolidColorBrush(Color.Parse("#000000"));
         public override SolidColorBrush ButtonBorderBrush => new SolidColorBrush(Colors.Transparent);
-        public override SolidColorBrush ButtonBackground => new SolidColorBrush(Color.Parse("#F7971E"));
-        public override SolidColorBrush ButtonBackgroundPointerOver => new SolidColorBrush(Color.Parse("#FFD15C"));
-        public override SolidColorBrush ButtonBackgroundPressed => new SolidColorBrush(Color.Parse("#D46A00"));
+        public override SolidColorBrush ButtonBackground => new SolidColorBrush(Color.Parse("#40A951"));
+        public override SolidColorBrush ButtonBackgroundPointerOver => new SolidColorBrush(Color.Parse("#50D265"));
+        public override SolidColorBrush ButtonBackgroundPressed => new SolidColorBrush(Color.Parse("#2EEE4E"));
 
         // Background gradient
         public override SolidColorBrush GridBackground => new SolidColorBrush(Color.Parse("#101010"));
@@ -31,8 +31,8 @@ namespace ToucanUI.Themes
             EndPoint = new RelativePoint(0.5, 0, RelativeUnit.Relative),
             GradientStops = new GradientStops
         {
-            new GradientStop(Color.Parse("#FFFAD961"), 0),
-            new GradientStop(Color.Parse("#FFF76B1C"), 1)
+            new GradientStop(Color.Parse("#248645"), 0),
+            new GradientStop(Color.Parse("#22BC3C"), 1)
         }
         };
     }
