@@ -9,6 +9,7 @@
         x:DataType="vm:MainWindowViewModel"
         x:Name="MainWindowRoot"
         Title="Toucan Mod Manager"
+        Icon="resm:ToucanUI.Assets.tmm_icon2.ico"
         TransparencyLevelHint="AcrylicBlur"
         Background="Transparent"
         WindowStartupLocation="CenterScreen"

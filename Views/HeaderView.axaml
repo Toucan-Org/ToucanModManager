@@ -57,44 +57,59 @@
             <MenuItem Header="View" Foreground="White">
 
               <MenuItem Header="Set Theme">
-                <RadioButton Content="Hot Rod" GroupName="ThemeGroup" IsChecked="True"
+                <RadioButton Content="Hot Rod" GroupName="ThemeGroup"
                           Command="{Binding ChangeThemeCommand}"
                           CommandParameter="{x:Static themes:HotRodTheme.Instance}"
                           Foreground="Orange"/>
 
-                <RadioButton Content="Celestial" GroupName="ThemeGroup"
+                <RadioButton Content="Blue Ocean" GroupName="ThemeGroup"
                           Command="{Binding ChangeThemeCommand}"
-                          CommandParameter="{x:Static themes:CelestialTheme.Instance}"
-                          Foreground="Magenta"/>
+                          CommandParameter="{x:Static themes:BlueOceanTheme.Instance}"
+                          Foreground="Blue"/>
 
-                <RadioButton Content="Mango Tango" GroupName="ThemeGroup"
+                <RadioButton Content="Purple Bliss" GroupName="ThemeGroup"
                           Command="{Binding ChangeThemeCommand}"
-                          CommandParameter="{x:Static themes:SherbertTheme.Instance}"
-                          Foreground="Yellow"/>
+                          CommandParameter="{x:Static themes:PurpleBlissTheme.Instance}"
+                          Foreground="Purple"/>
 
                 <RadioButton Content="Cool Sky" GroupName="ThemeGroup"
                           Command="{Binding ChangeThemeCommand}"
                           CommandParameter="{x:Static themes:CoolSkyTheme.Instance}"
                           Foreground="LightBlue"/>
 
-                <RadioButton Content="Electric Blue" GroupName="ThemeGroup"
+                <RadioButton Content="Green Beach" GroupName="ThemeGroup"
                           Command="{Binding ChangeThemeCommand}"
-                          CommandParameter="{x:Static themes:ElectricBlueTheme.Instance}"
-                          Foreground="DodgerBlue"/>
+                          CommandParameter="{x:Static themes:GreenBeachTheme.Instance}"
+                          Foreground="LimeGreen"/>
 
-                <RadioButton Content="Green Mint" GroupName="ThemeGroup"
+                <RadioButton Content="Celestial" GroupName="ThemeGroup"
                           Command="{Binding ChangeThemeCommand}"
-                          CommandParameter="{x:Static themes:GreenMintTheme.Instance}"
-                          Foreground="GreenYellow"/>
+                          CommandParameter="{x:Static themes:CelestialTheme.Instance}"
+                          Foreground="Plum"/>
 
-                <RadioButton Content="Netflix" GroupName="ThemeGroup"
+                <RadioButton Content="Sunset" GroupName="ThemeGroup"
                           Command="{Binding ChangeThemeCommand}"
-                          CommandParameter="{x:Static themes:NetflixTheme.Instance}"
+                          CommandParameter="{x:Static themes:SunsetTheme.Instance}"
+                          Foreground="OrangeRed"/>
+
+                <RadioButton Content="WebFlix" GroupName="ThemeGroup"
+                          Command="{Binding ChangeThemeCommand}"
+                          CommandParameter="{x:Static themes:WebFlicksTheme.Instance}"
                           Foreground="Red"/>
+
+                <RadioButton Content="Citrus Peel" GroupName="ThemeGroup"
+                          Command="{Binding ChangeThemeCommand}"
+                          CommandParameter="{x:Static themes:CitrusPeelTheme.Instance}"
+                          Foreground="Yellow"/>
 
                 <RadioButton Content="Deep Space" GroupName="ThemeGroup"
                           Command="{Binding ChangeThemeCommand}"
                           CommandParameter="{x:Static themes:DeepSpaceTheme.Instance}"
+                          Foreground="Gray"/>
+
+                <RadioButton Content="Moonrise" GroupName="ThemeGroup"
+                          Command="{Binding ChangeThemeCommand}"
+                          CommandParameter="{x:Static themes:MoonriseTheme.Instance}"
                           Foreground="White"/>
               </MenuItem>
 
