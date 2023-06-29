@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ToucanUI.Models.KSP2;
 using ToucanUI.Services;
+using static ToucanUI.Services.InstallManager;
 
 namespace ToucanUI.ViewModels
 {
@@ -40,6 +41,7 @@ namespace ToucanUI.ViewModels
         // VARIABLES
         // =====================
 
+        public readonly int BepinexId = 3277;
         // The current category (All, Top, New, Featured) (currently hardcoded to All due to API issues)
         private SpacedockAPI.Category _category;
 
@@ -391,12 +393,22 @@ namespace ToucanUI.ViewModels
                 {
                     var modViewModel = new ModViewModel(mod);
 
-                    // If the mod is BepInEx then ignore it as it should already be installed (we dont need to show it to the user anymore)
-                    // This can be updated in future so we can show the user if they have the latest version of BepInEx installed
-                    if (mod.Id == 3255 || mod.Id == 3277)
+                    // Skip the single bepinex mod (we have the bepinex/spacewarp version)
+                    if (mod.Id == 3255)
                     {
                         Trace.WriteLine($"[INFO] Skipping {mod.Name} [{mod.Id}]");
                         continue;
+                    }
+
+                    // Else if its the correct BepInEx/SpaceWarp id
+                    else if (mod.Id == BepinexId)
+                    {
+                        // If the mod is installed, set the state to installed
+                        if (MainViewModel.BepInExState == InstallManager.BepInExStatusEnum.Installed)
+                        {
+                            modViewModel.ModState = ModViewModel.ModStateEnum.Installed;
+                            modViewModel.Progress = 100;
+                        }
                     }
 
                     ModList.Add(modViewModel);
@@ -572,7 +584,14 @@ namespace ToucanUI.ViewModels
             {
                 return;
             }
+
             Trace.WriteLine($"[INFO] Updating {mod.ModObject.Name}!");
+
+            if(mod.ModObject.Id == BepinexId)
+            {
+                // Update BepInEx function
+                await Installer.UpdateBepInEx(this);
+            }
 
             // Delete the current mod
             UninstallModAndSetState(mod);
@@ -864,8 +883,25 @@ namespace ToucanUI.ViewModels
 
         private void UninstallModAndSetState(ModViewModel mod)
         {
+            bool isDeleted = false;
 
-            bool isDeleted = Installer.DeleteMod(mod);
+            if (mod.ModObject.Id == BepinexId)
+            {
+                // Delete BepInEx function
+                isDeleted = Installer.DeleteBepInEx();
+
+                if (isDeleted)
+                {
+                    // Set BepInExState to NotInstalled
+                    MainViewModel.BepInExState = BepInExStatusEnum.NotInstalled;
+                }
+            }
+            else
+            {
+                // Delete mod function
+                isDeleted = Installer.DeleteMod(mod);
+            }
+
             if (isDeleted)
             {
                 mod.ModState = ModViewModel.ModStateEnum.NotInstalled;
@@ -874,8 +910,6 @@ namespace ToucanUI.ViewModels
                 Trace.WriteLine($"[INFO] {mod.ModObject.Name} deleted successfully!");
             }
         }
-
-
 
     }
 }

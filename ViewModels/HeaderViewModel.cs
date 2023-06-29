@@ -52,6 +52,7 @@ namespace ToucanUI.ViewModels
         // Edit
         public ReactiveCommand<Unit, Unit> ScanKSP2InstallLocationsCommand { get; }
         public ReactiveCommand<Unit, Unit> SetGameInstallPathCommand { get; }
+        public ReactiveCommand<Unit, Unit> OpenGamePathDirectoryCommand { get; }
         public ReactiveCommand<Unit, Unit> ClearConfigFileCommand { get; }
         public ReactiveCommand<Unit, Unit> ViewConfigFileCommand { get; }
 
@@ -81,6 +82,7 @@ namespace ToucanUI.ViewModels
             ToucanUpdateCheckCommand = ReactiveCommand.CreateFromTask(IsToucanUpdateAvailable);
             ScanKSP2InstallLocationsCommand = ReactiveCommand.CreateFromTask(ScanKSP2InstallLocations);
             SetGameInstallPathCommand = ReactiveCommand.CreateFromTask(SetGameInstallPath);
+            OpenGamePathDirectoryCommand = ReactiveCommand.Create(OpenGamePathFolderAsync);
             ClearConfigFileCommand = ReactiveCommand.Create(ClearConfigFile);
             ViewConfigFileCommand = ReactiveCommand.Create(ViewConfigFile);
 
@@ -126,6 +128,44 @@ namespace ToucanUI.ViewModels
                 throw new NotSupportedException("Unsupported OS");
             }
             return osZipSuffix;
+        }
+
+        // Open game path directory
+        public void OpenGamePathFolderAsync()
+        {
+            try
+            {
+                string gamePath = _configManager.GetGamePath();
+                if (!string.IsNullOrEmpty(gamePath))
+                {
+                    // Get the parent directory of the game path
+                    var directoryInfo = Directory.GetParent(gamePath);
+                    string parentDirectory = directoryInfo.FullName;
+
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        Process.Start("explorer.exe", parentDirectory);
+                    }
+                    else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                    {
+                        Process.Start("open", parentDirectory);
+                    }
+                    else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                    {
+                        Process.Start("xdg-open", parentDirectory);
+                    }
+                    else
+                    {
+                        // Unsupported OS
+                        Trace.WriteLine("[ERROR] Unsupported OS when attempting to open GamePath directory!");
+                    }
+                }
+            }
+
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"[ERROR] {ex.Message}");
+            }
         }
 
 
@@ -402,7 +442,7 @@ namespace ToucanUI.ViewModels
 
         public async Task SetGameInstallPath()
         {
-            string folderPath = await OpenFolderAsync();
+            string folderPath = await SetKSP2BrowseFolderAsync();
             if (!string.IsNullOrEmpty(folderPath))
             {
                 // Search for the exe in that folder path
@@ -420,7 +460,7 @@ namespace ToucanUI.ViewModels
             }
         }
 
-        public async Task<string> OpenFolderAsync()
+        public async Task<string> SetKSP2BrowseFolderAsync()
         {
             var openFolderDialog = new OpenFolderDialog
             {

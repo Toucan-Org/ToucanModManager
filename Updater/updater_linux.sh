@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Step 0: Run the set_permissions script
+chmod +x set_permissions.sh
+./set_permissions.sh
+
 # Step 1: Read the download URL from "updater_config.txt" and download the zip file
 updaterConfig="updater_config.txt"
 downloadUrl=$(cat "$updaterConfig")
