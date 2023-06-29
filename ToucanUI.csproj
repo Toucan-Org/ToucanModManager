@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
-    <ApplicationIcon>Assets\tmm_icon2.ico</ApplicationIcon>
+    <ApplicationIcon>Assets/tmm_icon.ico</ApplicationIcon>
     <AssemblyName>Toucan</AssemblyName>
     <RootNamespace>ToucanUI</RootNamespace>
   </PropertyGroup>
@@ -53,7 +53,7 @@
   
   
   <ItemGroup>
-    <EmbeddedResource Include="Assets/tmm_icon2.ico">
+    <EmbeddedResource Include="Assets/tmm_icon_2.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     
