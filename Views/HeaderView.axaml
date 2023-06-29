@@ -40,11 +40,13 @@
 
           <Menu>
             <MenuItem Header="Edit" Foreground="White" >
-              <MenuItem Header="Set Game Directory"
-                        Command="{Binding SetGameInstallPathCommand}"/>
+
               <MenuItem Header="Scan KSP2 Install Locations"
                         Command="{Binding ScanKSP2InstallLocationsCommand}" />
-
+              <MenuItem Header="Set Game Directory"
+                        Command="{Binding SetGameInstallPathCommand}"/>
+              <MenuItem Header="Open Game Directory"
+                        Command="{Binding OpenGamePathDirectoryCommand}"/>
               <Separator />
               <MenuItem Header="View Config File"
                         Command="{Binding ViewConfigFileCommand}" />

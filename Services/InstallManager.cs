@@ -24,10 +24,10 @@ namespace ToucanUI.Services
         ConfigurationManager config = new ConfigurationManager();
         SpacedockAPI api = new SpacedockAPI();
 
-        private readonly int BepinexId = 3277;
+        public readonly int BepinexId = 3277;
         private readonly int UitkId = 3363;
         string PluginsLocation;
-        string BepinExLocation;
+        string BepInExLocation;
         string KSProot;
         string ToucanFolder;
 
@@ -48,7 +48,7 @@ namespace ToucanUI.Services
                     ToucanFolder = Path.Combine(KSProot, "Toucan");
                     CreateToucanFolder(); // Call the method to create the Toucan folder
                     PluginsLocation = Path.Combine(KSProot, "BepInEx", "plugins");
-                    BepinExLocation = Path.Combine(KSProot, "BepInEx");
+                    BepInExLocation = Path.Combine(KSProot, "BepInEx");
 
                 }
                 else
@@ -56,7 +56,7 @@ namespace ToucanUI.Services
                     KSProot = null;
                     ToucanFolder = null;
                     PluginsLocation = null;
-                    BepinExLocation = null;
+                    BepInExLocation = null;
                 }
             }
             catch (Exception ex)
@@ -259,7 +259,7 @@ namespace ToucanUI.Services
             try
             {
                 string modFolderPath = Path.Combine(PluginsLocation, mod.ModObject.Name);
-                if (!modFolderPath.Equals(BepinExLocation, StringComparison.OrdinalIgnoreCase) && !modFolderPath.Equals(PluginsLocation, StringComparison.OrdinalIgnoreCase))
+                if (!modFolderPath.Equals(BepInExLocation, StringComparison.OrdinalIgnoreCase) && !modFolderPath.Equals(PluginsLocation, StringComparison.OrdinalIgnoreCase))
                 {
                     Trace.WriteLine($"[INFO] Deleting: {modFolderPath}");
                     Directory.Delete(modFolderPath, true);
@@ -375,19 +375,25 @@ namespace ToucanUI.Services
         {
             try
             {
-                if (Directory.Exists(BepinExLocation))
+                if (Directory.Exists(BepInExLocation))
                 {
-
-                    if (!Directory.Exists(PluginsLocation))
+                    // Check for the existence of BepInEx.dll in the core directory
+                    if (Directory.Exists(Path.Combine(BepInExLocation, "core")) && File.Exists(Path.Combine(BepInExLocation, "core", "BepInEx.dll")))
                     {
-                        Directory.CreateDirectory(PluginsLocation);
+                        if (!Directory.Exists(PluginsLocation))
+                        {
+                            Directory.CreateDirectory(PluginsLocation);
+                        }
+                        return BepInExStatusEnum.Installed;
                     }
-
-                    return BepInExStatusEnum.Installed;
+                    else
+                    {
+                        // BepInEx directory exists but key files/directories are missing
+                        return BepInExStatusEnum.NotInstalled;
+                    }
                 }
                 else
                 {
-
                     return BepInExStatusEnum.NotInstalled;
                 }
             }
@@ -397,6 +403,7 @@ namespace ToucanUI.Services
                 return BepInExStatusEnum.Error;
             }
         }
+
 
 
         public async Task<bool> BepInExStatusBox(ModlistViewModel modlistViewModel)
@@ -491,6 +498,79 @@ namespace ToucanUI.Services
             }
 
         }
+
+        public async Task UpdateBepInEx(ModlistViewModel modlistViewModel)
+        {
+            // Similar to GetBepInEx, but without deleting the previous version
+            var bepinexViewModel = new ModViewModel(await api.GetMod(BepinexId));
+
+            // Get the downloadPath for the LatestVersion
+            Uri downloadUri = new Uri(bepinexViewModel.GetLatestVersion().DownloadPath);
+            using (var client = new HttpClient())
+            {
+                string bepinexZipPath = System.IO.Path.Combine(KSProot, "BepInEx.zip");
+                using (HttpResponseMessage response = await client.GetAsync(downloadUri, HttpCompletionOption.ResponseHeadersRead))
+                using (Stream streamToReadFrom = await response.Content.ReadAsStreamAsync())
+                using (Stream streamToWriteTo = File.Open(bepinexZipPath, FileMode.Create))
+                {
+                    await streamToReadFrom.CopyToAsync(streamToWriteTo);
+                }
+
+                // Extract to directory and overwrite files
+                await Task.Run(() => ZipFile.ExtractToDirectory(bepinexZipPath, KSProot, overwriteFiles: true));
+
+                // Delete zip
+                File.Delete(bepinexZipPath);
+            }
+        }
+
+
+        public bool DeleteBepInEx()
+        {
+            try
+            {
+                // Get all files in the BepInEx folder
+                string[] files = Directory.GetFiles(BepInExLocation);
+
+                // Loop through the files
+                foreach (string file in files)
+                {
+                    // Do not delete files in the plugins folder
+                    if (!file.StartsWith(Path.Combine(BepInExLocation, "plugins"), StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Delete the file
+                        File.Delete(file);
+                    }
+                }
+
+                // Get all directories in the BepInEx folder
+                string[] directories = Directory.GetDirectories(BepInExLocation);
+
+                // Loop through the directories
+                foreach (string directory in directories)
+                {
+                    // Do not delete the plugins directory
+                    if (!directory.Equals(Path.Combine(BepInExLocation, "plugins"), StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Delete the directory
+                        Directory.Delete(directory, true);
+                    }
+                }
+
+                // If we reach this point without any exceptions, the deletion was successful
+                return true;
+            }
+            catch (Exception e)
+            {
+                // Log the error
+                Trace.WriteLine($"[ERROR] Failed to delete BepInEx! {e.Message}");
+
+                // An error occurred, so the deletion was not successful
+                return false;
+            }
+        }
+
+
 
     }
 }
