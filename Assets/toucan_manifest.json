@@ -6,5 +6,5 @@
   "website": "https://github.com/KSP2-Toucan/ToucanModManager",
   "license": "MIT License",
   "platforms": [ "Windows", "macOS", "Linux" ],
-  "releaseNotes": "Version 1.0.0:\n- Initial release\n-"
+  "releaseNotes": "Version 1.0.0:\n- Beta version release\n-"
 }
