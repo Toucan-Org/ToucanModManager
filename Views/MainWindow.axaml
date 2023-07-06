@@ -38,7 +38,7 @@
 
     <Grid x:Name="MainGrid" RowDefinitions="25, Auto, *, Auto" ColumnDefinitions="2*, Auto" Margin="5">
       <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" Margin="5">
-        <Image Source="avares://Toucan/Assets/tmm_logo.png" Width="45" Height="45"
+        <Image Source="avares://Toucan/Assets/tmm_logo.png" Width="40" Height="40"
                   HorizontalAlignment="Left"/>
 
         <TextBlock FontSize="12" Foreground="{Binding CurrentTheme.TitleForeground}" Text="Toucan Mod Manager"
