@@ -463,6 +463,7 @@ namespace ToucanUI.Services
                     // Extract to directory
                     Trace.WriteLine($"[INFO] Extracting files from {bepinexZipPath} to {KSProot}");
                     await Task.Run(() => ZipFile.ExtractToDirectory(bepinexZipPath, KSProot, overwriteFiles: true));
+                    bepinexViewModel.GetLatestVersion().IsInstalled = true;
 
                     // Also need to Install UITK which is a dependency for BepInEx
                     modlistViewModel.FetchingMessage = "Installing UITK...";
@@ -518,6 +519,7 @@ namespace ToucanUI.Services
 
                 // Extract to directory and overwrite files
                 await Task.Run(() => ZipFile.ExtractToDirectory(bepinexZipPath, KSProot, overwriteFiles: true));
+                bepinexViewModel.GetLatestVersion().IsInstalled = true;
 
                 // Delete zip
                 File.Delete(bepinexZipPath);
