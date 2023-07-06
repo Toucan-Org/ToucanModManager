@@ -346,6 +346,8 @@ namespace ToucanUI.ViewModels
 
 
         // File
+
+        // This is convoluted because of bypassing the PD launcher, but it works
         private async void LaunchApplication()
         {
             try
@@ -354,23 +356,72 @@ namespace ToucanUI.ViewModels
                 Trace.WriteLine($"[INFO] Launching Application: {gamePath}");
                 DateTime launchTime = DateTime.Now;
 
+                // Set up the process start info
+                ProcessStartInfo startInfo = new ProcessStartInfo(gamePath)
+                {
+                    Arguments = "-popupwindow", // Add the "-popupwindow" argument
+                    UseShellExecute = false
+                };
+
                 // Launch the application 
-                Process process = Process.Start(gamePath);
+                Process process = new Process { StartInfo = startInfo };
+                process.Start();
 
                 // Disable most of the UI
                 MainViewModel.ValidGameFound = false;
 
-                // Run the process on a separate thread asynchronously
-                await Task.Run(() =>
+                await Task.Run(async () =>
                 {
-                    // Wait for the application to exit
                     process.WaitForExit();
                 });
+
+                //await Task.Delay(3000);
+
+                // Run the process on a separate thread asynchronously
+                //await Task.Run(async () =>
+                //{
+                //    Process gameProcess = null;
+                //    var startTime = DateTime.Now;
+
+                //    // Keep trying to get the process until it's found or until 30 seconds have passed
+                //    while (gameProcess == null && (DateTime.Now - startTime).TotalSeconds < 30)
+                //    {
+                //        // Try to get the process by the first name 
+                //        Process[] gameProcesses = Process.GetProcessesByName("KSP2_x64");
+                //        if (gameProcesses.Length > 0)
+                //        {
+                //            gameProcess = gameProcesses[0];
+                //        }
+                //        else
+                //        {
+                //            // Try to get the process by the second name
+                //            gameProcesses = Process.GetProcessesByName("Kerbal Space Program 2");
+                //            if (gameProcesses.Length > 0)
+                //            {
+                //                gameProcess = gameProcesses[0];
+                //            }
+                //        }
+
+                //        // If the game process wasn't found, wait a bit before trying again
+                //        if (gameProcess == null)
+                //        {
+                //            await Task.Delay(1000);
+                //        }
+                //    }
+
+                //    // If the game process was found, wait for it to exit
+                //    if (gameProcess != null)
+                //    {
+                //        gameProcess.WaitForExit();
+                //    }
+                //});
+
+
+
 
                 // Calculate time played
                 TimeSpan timePlayed = DateTime.Now - launchTime;
                 int timePlayedSeconds = (int)timePlayed.TotalSeconds;
-
 
                 // Store the "Time played" in the config
                 _configManager.SetTimePlayed(timePlayedSeconds);
@@ -380,13 +431,13 @@ namespace ToucanUI.ViewModels
 
                 MainViewModel.ValidGameFound = true;
             }
-
             catch (Exception ex)
             {
                 Trace.WriteLine($"[ERROR] {ex}");
             }
-
         }
+
+
 
         private async void RefreshModlist()
         {
