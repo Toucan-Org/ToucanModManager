@@ -95,6 +95,7 @@
                     <MultiBinding Converter="{StaticResource ProgressToStatusConverter}" ConverterParameter="Download">
                       <Binding Path="Progress" />
                       <Binding Path="ModState" />
+                      <Binding Path="IsUpdateAvailable" />
                     </MultiBinding>
                   </Image.IsVisible>
                 </Image>
@@ -105,6 +106,7 @@
                   <MultiBinding Converter="{StaticResource ProgressToStatusConverter}" ConverterParameter="Downloading">
                     <Binding Path="Progress" />
                     <Binding Path="ModState" />
+                    <Binding Path="IsUpdateAvailable" />
                   </MultiBinding>
                 </Image.IsVisible>
               </Image>
@@ -114,6 +116,7 @@
                   <MultiBinding Converter="{StaticResource ProgressToStatusConverter}" ConverterParameter="Downloading">
                     <Binding Path="Progress" />
                     <Binding Path="ModState" />
+                    <Binding Path="IsUpdateAvailable" />
                   </MultiBinding>
                 </Button.IsVisible>
                 <Button.Command>
@@ -133,9 +136,35 @@
                   <MultiBinding Converter="{StaticResource ProgressToStatusConverter}" ConverterParameter="Downloaded">
                     <Binding Path="Progress" />
                     <Binding Path="ModState" />
+                    <Binding Path="IsUpdateAvailable" />
                   </MultiBinding>
                 </Image.IsVisible>
               </Image>
+
+              <Button Width="50" Height="50"
+                      Background="Transparent" Cursor="Hand"
+                      Command="{Binding DataContext.UpdateModCommand, ElementName=ModListBox}"
+                      CommandParameter="{Binding}"
+                      ToolTip.Tip="Update Available">
+
+                <Button.IsEnabled>
+                  <Binding Path="IsUpdateAvailable" />
+                </Button.IsEnabled>
+
+                <Button.IsVisible>
+                  <MultiBinding Converter="{StaticResource UpdateVisibilityConverter}">
+                    <Binding Path="IsUpdateAvailable" />
+                    <Binding Path="ModState" />
+                  </MultiBinding>
+                </Button.IsVisible>
+
+                <Button.Content>
+                  <Image Source="{DynamicResource UpdateIcon-White}"
+                         Width="50" Height="50"/>
+                </Button.Content>
+              </Button>
+
+
             </Grid>
 
 
@@ -154,6 +183,7 @@
                 <MultiBinding Converter="{StaticResource ProgressToStatusConverter}">
                   <Binding Path="Progress" />
                   <Binding Path="ModState" />
+                  <Binding Path="IsUpdateAvailable" />
                 </MultiBinding>
               </TextBlock.Text>
             </TextBlock>
