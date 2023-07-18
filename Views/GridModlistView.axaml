@@ -25,6 +25,7 @@
                     <MultiBinding Converter="{StaticResource ProgressToStatusConverter}" ConverterParameter="Download">
                       <Binding Path="Progress" />
                       <Binding Path="ModState" />
+                      <Binding Path="IsUpdateAvailable" />
                     </MultiBinding>
                   </Image.IsVisible>
                 </Image>
@@ -35,6 +36,7 @@
                   <MultiBinding Converter="{StaticResource ProgressToStatusConverter}" ConverterParameter="Downloading">
                     <Binding Path="Progress" />
                     <Binding Path="ModState" />
+                    <Binding Path="IsUpdateAvailable" />
                   </MultiBinding>
                 </Image.IsVisible>
               </Image>
@@ -45,6 +47,7 @@
                   <MultiBinding Converter="{StaticResource ProgressToStatusConverter}" ConverterParameter="Downloading">
                     <Binding Path="Progress" />
                     <Binding Path="ModState" />
+                    <Binding Path="IsUpdateAvailable" />
                   </MultiBinding>
                 </Button.IsVisible>
                 <Button.CommandParameter>
@@ -60,9 +63,33 @@
                   <MultiBinding Converter="{StaticResource ProgressToStatusConverter}" ConverterParameter="Downloaded">
                     <Binding Path="Progress" />
                     <Binding Path="ModState" />
+                    <Binding Path="IsUpdateAvailable" />
                   </MultiBinding>
                 </Image.IsVisible>
               </Image>
+
+              <Button Width="40" Height="40"
+                      Background="Transparent" Cursor="Hand"
+                      Command="{Binding DataContext.UpdateModCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                      CommandParameter="{Binding}"
+                      ToolTip.Tip="Update Available">
+
+                <Button.IsEnabled>
+                  <Binding Path="IsUpdateAvailable" />
+                </Button.IsEnabled>
+
+                <Button.IsVisible>
+                  <MultiBinding Converter="{StaticResource UpdateVisibilityConverter}">
+                    <Binding Path="IsUpdateAvailable" />
+                    <Binding Path="ModState" />
+                  </MultiBinding>
+                </Button.IsVisible>
+
+                <Button.Content>
+                  <Image Source="{DynamicResource UpdateIcon-White}"
+                         Width="40" Height="40"/>
+                </Button.Content>
+              </Button>
             </Grid>
           </DataTemplate>
         </DataGridTemplateColumn.CellTemplate>

@@ -191,19 +191,31 @@ namespace ToucanUI.ViewModels
                         if (!string.Equals(latestReleaseTagName, MainViewModel.FooterVM.ToucanVersion, StringComparison.OrdinalIgnoreCase))
                         {
                             Trace.WriteLine($"[INFO] Update {latestReleaseTagName} available! (Currently on {MainViewModel.FooterVM.ToucanVersion}");
-                            var messageBoxStandardWindow = MessageBox.Avalonia.MessageBoxManager.GetMessageBoxStandardWindow(
-                                new MessageBoxStandardParams
+                            var messageBoxCustomWindow = MessageBox.Avalonia.MessageBoxManager
+                                .GetMessageBoxCustomWindow(new MessageBoxCustomParams
                                 {
-                                    ContentHeader = "An update for Toucan Mod Manager is available!",
-                                    ContentMessage = $"Current version: {MainViewModel.FooterVM.ToucanVersion}\nNewest version: {latestReleaseTagName}\n\nWould you like to update?",
                                     Icon = MessageBox.Avalonia.Enums.Icon.Info,
-                                    ButtonDefinitions = MessageBox.Avalonia.Enums.ButtonEnum.YesNo,
+                                    ContentHeader = "An update for Toucan Mod Manager is available!",
+                                    ContentMessage = $"Current version: {MainViewModel.FooterVM.ToucanVersion}\nNewest version: {latestReleaseTagName}",
+                                    ButtonDefinitions = new[] {
+                                            new ButtonDefinition { Name = "Auto Update", IsDefault = true},
+                                            new ButtonDefinition { Name = "Manual Update"},
+                                            new ButtonDefinition { Name = "Cancel", IsCancel = true}
+                                    },
                                     WindowStartupLocation = WindowStartupLocation.CenterScreen
-                                });;
+                                });
 
-                            var result = await messageBoxStandardWindow.Show();
-                        
-                            if (result == ButtonResult.Yes)
+                            var result = await messageBoxCustomWindow.Show();
+                        if (result == "Manual Update")
+                        {
+                            Process.Start(new ProcessStartInfo
+                            {
+                                FileName = "https://github.com/KSP2-Toucan/ToucanModManager/releases/latest",
+                                UseShellExecute = true
+                            });
+                        }
+
+                        else if (result == "Auto Update")
                             {
 
                                 string browserDownloadUrl = null;

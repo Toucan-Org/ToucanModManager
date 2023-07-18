@@ -15,21 +15,27 @@
       <!-- Fetching Data Panel -->
       <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
                   Margin="10" ZIndex="100">
-        <StackPanel Orientation="Horizontal" Margin="10">
+        <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
           <StackPanel.IsVisible>
             <Binding Path="FetchState" Converter="{StaticResource EnumToVisibilityConverter}" ConverterParameter="Fetching,Failed,Offline" />
           </StackPanel.IsVisible>
-
-
-          <Image Source="{DynamicResource DownloadingIcon}" Width="50" Height="50" Classes="rotating"
-                 IsVisible="{Binding FetchState, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Fetching}" />
           
-          <Image Source="{DynamicResource CloseIcon-White}" Width="50" Height="50"
-                 IsVisible="{Binding FetchState, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Failed}" />
-          
-          <TextBlock x:Name="FetchingMessage" FontSize="16"
-                     Text="{Binding FetchingMessage}" FontFamily="{StaticResource Orbitron}"
-                     VerticalAlignment="Center" HorizontalAlignment="Center"/>
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            
+            <Image Source="{DynamicResource DownloadingIcon}" Width="40" Height="40" Classes="rotating"
+                    IsVisible="{Binding FetchState, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Fetching}" />
+
+            <Image Source="{DynamicResource CloseIcon-White}" Width="40" Height="40"
+                    IsVisible="{Binding FetchState, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Failed}" />
+
+            <TextBlock x:Name="FetchingMessage" FontSize="16"
+                        Text="{Binding FetchingMessage}" FontFamily="{StaticResource Orbitron}"
+                        VerticalAlignment="Center" HorizontalAlignment="Center"/>
+          </StackPanel>
+
+          <ProgressBar Minimum="0" Maximum="{Binding FetchTotalPages}" Margin="0 10 0 0"
+                       Value="{Binding FetchCurrentPage}" Background="White" HorizontalAlignment="Center"
+                       Foreground="{Binding MainViewModel.CurrentTheme.ButtonBackground}" Width="350"/>
         </StackPanel>
         
         <Button Content="Retry" Margin="10"

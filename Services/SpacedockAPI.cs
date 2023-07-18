@@ -81,7 +81,7 @@ namespace ToucanUI.Services
 
 
         // Returns a list of Mods from spacedock API
-        public async Task<List<Mod>> GetMods(Category category = Category.All)
+        public async Task<List<Mod>> GetMods(Action<int, int> updateProgress, Category category = Category.All)
         {
             string categoryString;
 
@@ -126,12 +126,15 @@ namespace ToucanUI.Services
 
                 if (category == Category.All)
                 {
-                    // Get the totalPages
+                    // Get the totalPages 
                     int totalPages = data.GetProperty("pages").GetInt32();
+
 
                     // Now iterate through all the pages
                     for (int currentPage = 1; currentPage <= totalPages; currentPage++)
                     {
+                        // Update the progress bar
+                        updateProgress(currentPage, totalPages);
 
                         // Request mod data from the URL
                         url = $"{BROWSE_URL}{categoryString}?{GAME_ID}&page={currentPage}";

@@ -158,7 +158,7 @@ namespace ToucanUI.Models.KSP2
 
             // Check if the selected version is the latest version
             Version latestVersion = GetLatestVersion();
-            if (latestVersion != null && SelectedVersionViewModel.VersionObject != latestVersion)
+            if (latestVersion != null && SelectedVersionViewModel.VersionObject != latestVersion && ModState == ModStateEnum.Installed)
             {
                 IsUpdateAvailable = true;
             }

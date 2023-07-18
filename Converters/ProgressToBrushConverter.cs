@@ -2,6 +2,7 @@
 using Avalonia.Media;
 using System;
 using System.Globalization;
+using ToucanUI.ViewModels;
 
 
 // This class is used to convert the progress of a mod download to a color for the ProgressBar
@@ -16,7 +17,7 @@ namespace ToucanUI.Converters
             {
                 if (progress >= 100)
                 {
-                    return new SolidColorBrush(Color.FromArgb(255, 169, 169, 169)); // Gray color
+                    return new SolidColorBrush(Color.FromArgb(255, 195, 195, 195)); // Gray color
                 }
                 double relativeProgress = progress / 100.0;
                 Color color = InterpolateColor(relativeProgress);
