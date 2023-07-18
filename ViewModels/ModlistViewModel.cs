@@ -110,6 +110,23 @@ namespace ToucanUI.ViewModels
             set => this.RaiseAndSetIfChanged(ref _fetchingMessage, value);
         }
 
+        // Sets the fetching progress bar value (current page)
+        private int _fetchCurrentPage;
+        public int FetchCurrentPage
+        {
+            get => _fetchCurrentPage;
+            set => this.RaiseAndSetIfChanged(ref _fetchCurrentPage, value);
+        }
+
+        // Sets the fetching progress bar max value (total pages)
+        private int _fetchTotalPages;
+        public int FetchTotalPages
+        {
+            get => _fetchTotalPages;
+            set => this.RaiseAndSetIfChanged(ref _fetchTotalPages, value);
+        }
+
+
         // Static fetch phrases list
         private static readonly List<string> _fetchPhrases = new List<string>()
         {
@@ -245,7 +262,7 @@ namespace ToucanUI.ViewModels
             // Fetch list of mods from spacedock api
             FetchMods(SpacedockAPI.Category.All);
 
-            var observableSearchFilter = this.WhenAnyValue(viewModel => viewModel.SearchText).Select(SearchName);
+            var observableSearchFilter = this.WhenAnyValue(viewModel => viewModel.SearchText).Select(SearchNameAndAuthor);
             var InstalledFilter = this.WhenAnyValue(x => x.MainViewModel.ControlPanelVM.FilterInstalled).Select(SetInstalledFilter);
             var NotInstalledFilter = this.WhenAnyValue(x => x.MainViewModel.ControlPanelVM.FilterNotInstalled).Select(SetNotInstalledFilter);
             var VersionFilter = this.WhenAnyValue(x => x.MainViewModel.ControlPanelVM.FilterVersion).Select(SetVersionFilter);
@@ -276,15 +293,16 @@ namespace ToucanUI.ViewModels
         // =====================
 
         // Search bar filter
-        private Func<ModViewModel, bool> SearchName(string name)
+        private Func<ModViewModel, bool> SearchNameAndAuthor(string searchText)
         {
-            if (string.IsNullOrEmpty(name)) //If searchbar is empty, show all the mods
+            if (string.IsNullOrEmpty(searchText)) //If searchbar is empty, show all the mods
             {
                 return Mod => true;
             }
             else
             {
-                return Mod => Mod.ModObject.Name.Contains(name, StringComparison.OrdinalIgnoreCase);
+                return Mod => Mod.ModObject.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                              Mod.ModObject.Author.Contains(searchText, StringComparison.OrdinalIgnoreCase);
             }
         }
 
@@ -377,13 +395,21 @@ namespace ToucanUI.ViewModels
             ModList.Clear();
             SelectedBulkMods.Clear();
 
+            // Set defaults for progress bar
+            FetchTotalPages = 1;
+            FetchCurrentPage = 0;
+
             // Set the fetching message
             FetchingMessage = _fetchPhrases[new Random().Next(0, _fetchPhrases.Count)];
             FetchState = FetchStateEnum.Fetching;
 
 
             // Get the modlist from the API
-            var mods = await api.GetMods(category).ConfigureAwait(false);
+            var mods = await api.GetMods((currentPage, totalPages) =>
+            {
+                FetchCurrentPage = currentPage;
+                FetchTotalPages = totalPages;
+            }, category).ConfigureAwait(false);
 
             // Update ModList on the UI thread
             await Dispatcher.UIThread.InvokeAsync(() =>
@@ -426,12 +452,6 @@ namespace ToucanUI.ViewModels
                             {
                                 SelectedBulkMods.Remove(modViewModel);
                             }
-
-                            //if (SelectedBulkMods.Count > 0)
-                            //{
-                            //    Trace.WriteLine($"Checked mods: {string.Join(", ", SelectedBulkMods.Items.Select(m => m.ModObject.Name))}");
-                            //}
-
 
                         });
                 }

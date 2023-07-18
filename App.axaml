@@ -41,12 +41,12 @@
     <!-- CONVERTERS -->
     <converters:ProgressToBrushConverter x:Key="ProgressToBrushConverter"/>
     <converters:ProgressToStatusConverter x:Key="ProgressToStatusConverter"/>
-    <converters:BitmapAssetValueConverter x:Key="BitmapAssetValueConverter"/>
     <converters:ProgressToBooleanConverter x:Key="ProgressToBooleanConverter"/>
     <converters:CountToBooleanConverter x:Key="CountToBooleanConverter"/>
     <converters:ModStateToVisibilityConverter x:Key="ModStateToVisibilityConverter"/>
     <converters:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
     <converters:MultiEnumToVisibilityConverter x:Key="MultiEnumToVisibilityConverter"/>
+    <converters:UpdateVisibilityConverter x:Key="UpdateVisibilityConverter"/>
     
     
     <!-- FONTS -->

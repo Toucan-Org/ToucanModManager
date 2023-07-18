@@ -335,8 +335,6 @@ namespace ToucanUI.Services
             return isDeleted;
         }
 
-
-
         private void WriteToManifest(string fileName, ModViewModel mod) //Manifests are used to keep track of files downloaded for each mod
         {
             try
@@ -346,30 +344,44 @@ namespace ToucanUI.Services
                     Directory.CreateDirectory(ToucanFolder + @".\Manifests");
                 }
 
-                //Gets the contents of the zip. May be useful if a manifest is used to delete mods
+                // Check if the root folder in the zip is "BepInEx"
+                bool isBepInExRoot = false;
+                using (ZipArchive archive = ZipFile.OpenRead(fileName))
+                {
+                    ZipArchiveEntry firstEntry = archive.Entries[0];
+                    // Split on /, //, \, and \\
+                    string rootFolderName = Regex.Split(firstEntry.FullName, @"[/]{1,2}|[\\]{1,2}")[0];
+                    if (rootFolderName.Equals("BepInEx", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        isBepInExRoot = true;
+                    }
+                }
+
+                //Gets the contents of the zip
                 using (ZipArchive archive = ZipFile.OpenRead(fileName))
                 {
                     using (StreamWriter outputFile = new StreamWriter(System.IO.Path.Combine(ToucanFolder + @".\Manifests", mod.ModObject.Name + "-Manifest.txt")))
                     {
                         foreach (ZipArchiveEntry entry in archive.Entries)
-
                         {
-                            outputFile.WriteLine(entry.FullName.Replace('/', Path.DirectorySeparatorChar)); // This should work cross-platform
+                            // Prepend "BepInEx\plugins\" if the mod files are meant to be placed in the "BepInEx\plugins" directory
+                            string entryPath = entry.FullName.Replace('/', Path.DirectorySeparatorChar); // This should work cross-platform
+                            if (!isBepInExRoot)
+                            {
+                                entryPath = Path.Combine("BepInEx", "plugins", entryPath);
+                            }
 
+                            outputFile.WriteLine(entryPath);
                         }
                     }
-
                 }
-
             }
             catch (Exception ex)
             {
-
                 Trace.WriteLine($"[ERROR] Could not create manifest! {ex.Message}");
-
             }
-
         }
+
 
         public async Task<BepInExStatusEnum> CheckIfBepInEx()
         {
@@ -464,6 +476,7 @@ namespace ToucanUI.Services
                     Trace.WriteLine($"[INFO] Extracting files from {bepinexZipPath} to {KSProot}");
                     await Task.Run(() => ZipFile.ExtractToDirectory(bepinexZipPath, KSProot, overwriteFiles: true));
                     bepinexViewModel.GetLatestVersion().IsInstalled = true;
+                    bepinexViewModel.IsModifiable = false;
 
                     // Also need to Install UITK which is a dependency for BepInEx
                     modlistViewModel.FetchingMessage = "Installing UITK...";
