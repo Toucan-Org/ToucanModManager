@@ -38,8 +38,8 @@
     <ListBox.ItemTemplate>
       <DataTemplate>
         <Border Background="#90202020" CornerRadius="15" Padding="5">
-          <Grid RowDefinitions="*, Auto" Margin="5"
-                ColumnDefinitions="Auto, 3*, 2*, *, Auto, Auto">
+          <Grid RowDefinitions="*, Auto" Margin="5" ClipToBounds="True"
+                ColumnDefinitions="Auto, 3*, 2*, Auto, Auto">
             
             <!-- CHECKBOX -->
             <CheckBox Grid.Row="0" Grid.Column="0" Margin="10 5"
@@ -47,7 +47,7 @@
 
 
             <!-- NAME AND AUTHOR -->
-            <StackPanel Grid.Row="0" Grid.Column="1" MinWidth="250"
+            <StackPanel Grid.Row="0" Grid.Column="1" ClipToBounds="True"
                         VerticalAlignment="Center" HorizontalAlignment="Left">
               
               <TextBlock Text="{Binding ModObject.Name}" FontWeight="Bold" Margin="10 5"/>
@@ -55,7 +55,7 @@
             </StackPanel>
             
             <!-- MOD DETAILS -->
-            <StackPanel Grid.Row="0" Grid.Column="2"
+            <StackPanel Grid.Row="0" Grid.Column="2" ClipToBounds="True"
                         Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
               <StackPanel>
                 <TextBlock Text="Game Version" FontSize="10" Margin="20 5"/>
@@ -84,7 +84,7 @@
             </StackPanel>
 
             <!-- DOWNLOAD ICONS -->
-            <Grid Grid.Row="0" Grid.Column="4" Margin="5">
+            <Grid Grid.Row="0" Grid.Column="3" Margin="5">
               <Button Background="Transparent" Width="50" Height="50" Cursor="Hand"
                       Command="{Binding DataContext.DownloadModCommand, ElementName=ModListBox}"
                       CommandParameter="{Binding}" ToolTip.Tip="Download and Install"
@@ -169,7 +169,7 @@
 
 
             <!-- SELECTED ICON -->
-            <StackPanel Grid.Row="0" Grid.Column="5" Margin="5" Cursor="Hand">
+            <StackPanel Grid.Row="0" Grid.Column="4" Margin="5" Cursor="Hand">
               <Image Width="50" Height="50"
                      Classes.opened="{Binding $parent[ListBoxItem].IsSelected}"
                      Classes.notOpened="{Binding !$parent[ListBoxItem].IsSelected}" />
