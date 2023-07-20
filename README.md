@@ -8,9 +8,10 @@ Toucan Mod Manager is a sleek and performant mod manager for KSP2 (and soon to b
 
 
 ## Installation
-1. Extract the .zip file to a folder of your choice.
-2. [***Optional***] Right click on Toucan.exe and select `Send to > Desktop (Create Shortcut)`.
-3. Run the application.
+1. Download the latest version for your operating system from our [releases page](https://github.com/KSP2-Toucan/ToucanModManager/releases).
+2. Extract the `.zip` file to a folder of your choice.
+3. [***Optional***] Right click on Toucan.exe and select `Send to > Desktop (Create Shortcut)`.
+4. Run the application.
 5. Enjoy!
 
 
