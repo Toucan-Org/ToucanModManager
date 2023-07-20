@@ -117,11 +117,11 @@ namespace ToucanUI.ViewModels
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                osZipSuffix = "_linux";
+                osZipSuffix = "_linux_x64";
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                osZipSuffix = "_osx";
+                osZipSuffix = "_osx_x64";
             }
             else
             {
@@ -187,7 +187,7 @@ namespace ToucanUI.ViewModels
                     {
                         var latestReleaseTagName = tagNameElement.GetString();
 
-
+                        // If the latest release tag name is not the same as the current version of Toucan, then an update is available
                         if (!string.Equals(latestReleaseTagName, MainViewModel.FooterVM.ToucanVersion, StringComparison.OrdinalIgnoreCase))
                         {
                             Trace.WriteLine($"[INFO] Update {latestReleaseTagName} available! (Currently on {MainViewModel.FooterVM.ToucanVersion}");
@@ -206,16 +206,16 @@ namespace ToucanUI.ViewModels
                                 });
 
                             var result = await messageBoxCustomWindow.Show();
-                        if (result == "Manual Update")
-                        {
-                            Process.Start(new ProcessStartInfo
+                            if (result == "Manual Update")
                             {
-                                FileName = "https://github.com/KSP2-Toucan/ToucanModManager/releases/latest",
-                                UseShellExecute = true
-                            });
-                        }
+                                Process.Start(new ProcessStartInfo
+                                {
+                                    FileName = "https://github.com/KSP2-Toucan/ToucanModManager/releases/latest",
+                                    UseShellExecute = true
+                                });
+                            }
 
-                        else if (result == "Auto Update")
+                            else if (result == "Auto Update")
                             {
 
                                 string browserDownloadUrl = null;
@@ -237,10 +237,7 @@ namespace ToucanUI.ViewModels
                                     }
                                 }
 
-
-
-
-                            if (browserDownloadUrl != null)
+                                if (browserDownloadUrl != null)
                                 {
                                     // Pass the browserDownloadUrl to the UpdateToucan function
                                     UpdateToucan(browserDownloadUrl);
@@ -251,9 +248,26 @@ namespace ToucanUI.ViewModels
                                 }
                             }
                         }
-                    }
 
-                    else
+                    // Else the version is up to date (Disabled this as it was annoying getting a popup everytime the program runs)
+                    //else
+                    //{
+
+                    //    var messageBoxStandardWindow = MessageBox.Avalonia.MessageBoxManager
+                    //      .GetMessageBoxStandardWindow(new MessageBoxStandardParams
+                    //      {
+                    //          Icon = MessageBox.Avalonia.Enums.Icon.Success,
+                    //          ContentHeader = "Toucan Mod Manager is up to date!",
+                    //          ContentMessage = $"{MainViewModel.FooterVM.ToucanVersion} is the latest version.",
+
+                    //      });
+
+                    //    await messageBoxStandardWindow.Show();
+                    //}
+
+                }
+
+                else
                     {
                         Trace.WriteLine("[ERROR] tag_name property not found in the JSON response");
                     }
