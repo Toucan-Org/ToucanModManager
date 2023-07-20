@@ -192,6 +192,7 @@ namespace ToucanUI.ViewModels
                             BepInExState = BepInExStatusEnum.Installed;
                             InitializeInstaller();
                             ValidGameFound = true;
+                            ModlistVM.FetchMods(SpacedockAPI.Category.All);
                         }
                         else
                         {
