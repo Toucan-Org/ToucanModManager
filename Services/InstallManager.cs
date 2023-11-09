@@ -585,6 +585,44 @@ namespace ToucanUI.Services
             }
         }
 
+        public bool DisableBepInEx(bool status)
+        {
+            string DisabledBepInExLocation = Path.Combine(KSProot, "_BepInEx");
+
+            if (status)
+            {
+                try
+                {
+                    Directory.Move(BepInExLocation, DisabledBepInExLocation);
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    // Log the error
+                    Trace.WriteLine($"[ERROR] Failed to rename BepInEx! {e.Message}");
+
+                    // An error occurred, so the deletion was not successful
+                    return false;
+                }
+            }
+            else
+            {
+                try
+                {
+                    Directory.Move(DisabledBepInExLocation, BepInExLocation);
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    // Log the error
+                    Trace.WriteLine($"[ERROR] Failed to rename BepInEx! {e.Message}");
+
+                    // An error occurred, so the deletion was not successful
+                    return false;
+                }
+            }
+        }
+
 
 
     }
