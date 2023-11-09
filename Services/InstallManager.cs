@@ -28,6 +28,7 @@ namespace ToucanUI.Services
         private readonly int UitkId = 3363;
         string PluginsLocation;
         string BepInExLocation;
+        string DisabledBepInExLocation;
         string KSProot;
         string ToucanFolder;
 
@@ -49,6 +50,7 @@ namespace ToucanUI.Services
                     CreateToucanFolder(); // Call the method to create the Toucan folder
                     PluginsLocation = Path.Combine(KSProot, "BepInEx", "plugins");
                     BepInExLocation = Path.Combine(KSProot, "BepInEx");
+                    DisabledBepInExLocation = Path.Combine(KSProot, "_BepInEx");
 
                 }
                 else
@@ -382,17 +384,17 @@ namespace ToucanUI.Services
             }
         }
 
-
         public async Task<BepInExStatusEnum> CheckIfBepInEx()
         {
             try
             {
-                if (Directory.Exists(BepInExLocation))
+                if (Directory.Exists(DisabledBepInExLocation))
                 {
                     // Check for the existence of BepInEx.dll in the core directory
-                    if (Directory.Exists(Path.Combine(BepInExLocation, "core")) && File.Exists(Path.Combine(BepInExLocation, "core", "BepInEx.dll")))
+                    if ((Directory.Exists(Path.Combine(BepInExLocation, "core")) && File.Exists(Path.Combine(BepInExLocation, "core", "BepInEx.dll"))) || (Directory.Exists(Path.Combine(DisabledBepInExLocation, "core")) && File.Exists(Path.Combine(DisabledBepInExLocation, "core", "BepInEx.dll")))) 
                     {
-                        if (!Directory.Exists(PluginsLocation))
+                        //Don't want to create another plugins folder if BepInEx is in disabled state
+                        if (!Directory.Exists(PluginsLocation) && !Directory.Exists(DisabledBepInExLocation))
                         {
                             Directory.CreateDirectory(PluginsLocation);
                         }
