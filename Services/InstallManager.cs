@@ -388,7 +388,7 @@ namespace ToucanUI.Services
         {
             try
             {
-                if (Directory.Exists(DisabledBepInExLocation))
+                if (Directory.Exists(DisabledBepInExLocation) || Directory.Exists(BepInExLocation))
                 {
                     // Check for the existence of BepInEx.dll in the core directory
                     if ((Directory.Exists(Path.Combine(BepInExLocation, "core")) && File.Exists(Path.Combine(BepInExLocation, "core", "BepInEx.dll"))) || (Directory.Exists(Path.Combine(DisabledBepInExLocation, "core")) && File.Exists(Path.Combine(DisabledBepInExLocation, "core", "BepInEx.dll")))) 
