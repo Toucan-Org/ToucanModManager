@@ -115,7 +115,7 @@ namespace ToucanUI.Services
 
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                fileName = "KSP2.x86_64";
+                fileName = "KSP2_x64";
             }
             else
             {
