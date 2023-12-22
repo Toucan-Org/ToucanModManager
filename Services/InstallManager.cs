@@ -186,6 +186,7 @@ namespace ToucanUI.Services
                         // Set the Mod State to Installed and set the version to installed
                         mod.ModState = ModViewModel.ModStateEnum.Installed;
                         mod.SelectedVersionViewModel.VersionObject.IsInstalled = true;
+                        Trace.WriteLine($"[INFO] Successfully installed UITK...");
 
                         WriteToManifest(fileName, mod);
                         MoveToPlugins(fileName, mod);
@@ -200,6 +201,7 @@ namespace ToucanUI.Services
                     else
                     {
                         mod.ModState = ModViewModel.ModStateEnum.NotInstalled;
+                        Trace.WriteLine($"[INFO] Could not install UITK...");
 
                         tcs.TrySetCanceled();
                     }
@@ -482,8 +484,8 @@ namespace ToucanUI.Services
 
                     // Also need to Install UITK which is a dependency for BepInEx
                     modlistViewModel.FetchingMessage = "Installing UITK...";
+                    Trace.WriteLine($"[INFO] Installing UITK (ID:{UitkId})");
                     ModViewModel UiTKMod = new ModViewModel(await api.GetMod(UitkId));
-
                     // Check if UiTK is already in the modList
                     var existingUiTK = modList.FirstOrDefault(m => m.ModObject.Id == UiTKMod.ModObject.Id);
                     if (existingUiTK != null)
